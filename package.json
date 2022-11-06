@@ -1,0 +1,35 @@
+{
+  "name": "skill-sharing",
+  "version": "1.0.0",
+  "main": "server.js",
+  "description": "Skill-sharing website example from Eloquent JavaScript",
+  "scripts": {
+    "start": "nodemon server.js"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.0",
+    "colors": "^1.4.0",
+    "dotenv": "^16.0.3",
+    "ecstatic": "^3.1.0",
+    "express": "^4.18.2",
+    "express-async-handler": "^1.2.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.7.1",
+    "nodemon": "^2.0.20",
+    "socket.io": "^4.5.3"
+  },
+  "license": "MIT",
+  "bugs": "https://github.com/marijnh/Eloquent-JavaScript/issues",
+  "homepage": "https://eloquentjavascript.net/21_skillsharing.html",
+  "maintainers": [
+    {
+      "name": "Marijn Haverbeke",
+      "email": "marijnh@gmail.com",
+      "web": "https://marijnhaverbeke.nl/"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/marijnh/Eloquent-JavaScript.git"
+  }
+}
