@@ -3,7 +3,7 @@ const asyncHandler = require('express-async-handler');
 const generateToken = require('../config/generateToken');
 const Talk = require('../models/Talk');
 
-const registerUser = asyncHandler( async(req, res, next) => {
+const registerUser = asyncHandler( async(req, res) => {
     const emailRegex = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
     const { name, email, password, pic } = req.body;
 
@@ -49,7 +49,7 @@ const registerUser = asyncHandler( async(req, res, next) => {
 
 });
 
-const authUser = asyncHandler( async(req, res, next) => {
+const authUser = asyncHandler( async(req, res) => {
         const { email, password } = req.body
 
         if(!email || !password){
@@ -81,7 +81,7 @@ const authUser = asyncHandler( async(req, res, next) => {
         }
 })
 
-const getUser = asyncHandler( async(req, res, next) => {
+const getUser = asyncHandler( async(req, res) => {
         const userId = req.params.id;
 
         const user = await User.findById({_id: userId});
@@ -114,4 +114,25 @@ const getTalks = asyncHandler( async(req, res) => {
       }
 })
 
-module.exports = { registerUser, authUser, getUser, getTalks}
+const updateUser = asyncHandler( async(req, res) => {
+  const userId = req.params.id;
+
+  const { name, email, pic } = req.body;
+
+  const userParams = {
+      name, 
+      email, 
+      pic
+  }
+
+  try {
+      const updatedUser = await User.findByIdAndUpdate(userId,{
+          $set: userParams
+      }, {new: true})
+      res.status(200).send(updatedUser)    
+  } catch (error) {
+      res.status(404).send(error)
+  }
+})
+
+module.exports = { registerUser, authUser, getUser, getTalks, updateUser}
