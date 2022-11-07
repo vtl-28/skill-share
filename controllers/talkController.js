@@ -31,7 +31,24 @@ const createTalk = asyncHandler( async(req, res, next) => {
 })
 
 const updateTalk = asyncHandler( async(req, res, next) => {
+        const userId = req.params.id;
 
+        const { title, body, pic } = req.body;
+
+        const talkParams = {
+            title,
+            body,
+            pic
+        }
+
+        try {
+            const updatedTalk = await Talk.findByIdAndUpdate(userId,{
+                $set: talkParams
+            }, {new: true})
+            res.status(200).send(updatedTalk)    
+        } catch (error) {
+            res.status(404).send(error)
+        }
 })
 
 module.exports = { createTalk, updateTalk};

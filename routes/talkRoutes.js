@@ -1,11 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const { protect } = require('../middlewares/authMiddleware');
-const { createTalk } = require('../controllers/talkController');
+const { createTalk, updateTalk } = require('../controllers/talkController');
 
 //create talk
 router.post('/', protect, createTalk);
 //edit talk
+router.put('/edit/:id', protect, updateTalk )
 //delete talk
 //list particular user talks
 //list all talks
