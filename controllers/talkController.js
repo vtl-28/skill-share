@@ -51,4 +51,14 @@ const updateTalk = asyncHandler( async(req, res, next) => {
         }
 })
 
-module.exports = { createTalk, updateTalk};
+const deleteTalk = asyncHandler( async(req, res) => {
+        const userId = req.params.id;
+
+       try {
+        const talk = await Talk.findByIdAndDelete({_id: userId});
+        res.status(200).send(talk)
+       } catch (error) {
+            res.status(400).send(error);
+       }
+})
+module.exports = { createTalk, updateTalk, deleteTalk};
