@@ -20,7 +20,7 @@ app.use(
   ); // to accept json data
 
 app.use("/api/user", userRoutes);
-//app.use("/api/talk", talkRoutes);
+app.use("/api/talk", talkRoutes);
 
 // Error Handling middlewares
 app.use(notFound);

@@ -6,8 +6,16 @@ const talkSchema = mongoose.Schema({
     },
     hostedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     body: { type: "String", required: true, trim: true },
-    comments: [{
-        type: mongoose.Schema.Types.ObjectId, ref: "Comments"
+    pic: {
+        type: "String",
+        required: true,
+        default:
+          "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg",
+      }, 
+    likes:[{type: mongoose.Schema.Types.ObjectId, ref:"User"}],
+    comments:[{
+        text:"String",
+        postedBy:{type: mongoose.Schema.Types.ObjectId, ref:"User"}
     }]
 },
 {
