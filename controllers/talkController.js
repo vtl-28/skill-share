@@ -70,4 +70,25 @@ const getTalks = asyncHandler( async(rew, res) => {
             res.status(400).send(error);
         }
 })
-module.exports = { createTalk, updateTalk, deleteTalk, getTalks};
+
+const searchTalk = asyncHandler( async(req, res) => {
+    const query = req.query.search;
+
+    if(!query){
+        res.status(400).send('Please enter field');
+    }
+
+    try {
+        const keyword = query
+            ? {
+                title: { $regex: req.query.search, $options: "i" }  
+            }
+            : {};
+
+            const talk = await Talk.find(keyword).populate('hostedBy', '_id name email pic');
+            res.status(200).send(talk);
+    } catch (error) {
+        res.status(400).send(error);
+    }
+})
+module.exports = { createTalk, updateTalk, deleteTalk, getTalks, searchTalk};

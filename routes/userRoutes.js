@@ -12,6 +12,6 @@ router.get('/:id', protect, getUser);
 //list particular user talks
 router.get('/talks/:id', protect, getTalks);
 //edit user profile
-router.put('/edit/:id', protect, updateUser)
+router.put('/edit/:id', protect, updateUser);
 
 module.exports = router;
