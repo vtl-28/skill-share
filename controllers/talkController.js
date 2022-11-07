@@ -31,7 +31,7 @@ const createTalk = asyncHandler( async(req, res, next) => {
 })
 
 const updateTalk = asyncHandler( async(req, res, next) => {
-        const userId = req.params.id;
+        const talkId = req.params.id;
 
         const { title, body, pic } = req.body;
 
@@ -42,7 +42,7 @@ const updateTalk = asyncHandler( async(req, res, next) => {
         }
 
         try {
-            const updatedTalk = await Talk.findByIdAndUpdate(userId,{
+            const updatedTalk = await Talk.findByIdAndUpdate(talkId,{
                 $set: talkParams
             }, {new: true})
             res.status(200).send(updatedTalk)    

@@ -9,7 +9,6 @@ router.post('/', protect, createTalk);
 router.put('/edit/:id', protect, updateTalk);
 //delete talk
 router.delete('/delete/:id', protect, deleteTalk);
-//list particular user talks
 //list all talks
 router.get('/talks', protect, getTalks);
 //comment on talk
