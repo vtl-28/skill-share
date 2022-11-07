@@ -61,4 +61,13 @@ const deleteTalk = asyncHandler( async(req, res) => {
             res.status(400).send(error);
        }
 })
-module.exports = { createTalk, updateTalk, deleteTalk};
+
+const getTalks = asyncHandler( async(rew, res) => {
+        try {
+            const talks = await Talk.find().populate('hostedBy', '_id name email pic');
+            res.status(200).send(talks);
+        } catch (error) {
+            res.status(400).send(error);
+        }
+})
+module.exports = { createTalk, updateTalk, deleteTalk, getTalks};
