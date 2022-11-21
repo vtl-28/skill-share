@@ -3,9 +3,9 @@ const asyncHandler = require('express-async-handler');
 const Talk = require('../models/Talk');
 
 const createTalk = asyncHandler( async(req, res, next) => {
-    const { title, body, pic } = req.body;
+    const { title, body, pic, city } = req.body;
 
-    if(!title || !body || !pic){
+    if(!title || !body || !pic, !city){
         res.status(400).send('Please enter all the fields');
         return;
     }
@@ -17,10 +17,11 @@ const createTalk = asyncHandler( async(req, res, next) => {
     }
 
     let newTalk = {
+        hostedBy: req.user._id,
         title,
         body,
         pic,
-        hostedBy: req.user._id
+        city
     };
     try {
         const talk = await (await Talk.create(newTalk)).populate('hostedBy', '_id name email pic');

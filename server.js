@@ -5,13 +5,14 @@ const userRoutes = require("./routes/userRoutes");
 const talkRoutes = require("./routes/talkRoutes");
 const { notFound, errorHandler } = require("./middlewares/errorMiddleware");
 const path = require("path");
+const cors = require("cors");
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3002;
 const app = express();
 dotenv.config();
 connectDB();
 
-
+app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 app.use(
     express.urlencoded({
@@ -19,8 +20,8 @@ app.use(
     })
   ); // to accept json data
 
-app.use("/api/user", userRoutes);
-app.use("/api/talk", talkRoutes);
+app.use(userRoutes);
+app.use(talkRoutes);
 
 // Error Handling middlewares
 app.use(notFound);

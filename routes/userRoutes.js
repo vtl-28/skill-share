@@ -4,7 +4,7 @@ const { registerUser, authUser, getUser, getTalks, updateUser } = require('../co
 const { protect } = require('../middlewares/authMiddleware');
 
 //sign up user
-router.post('/', registerUser);
+router.post('/user/signup', registerUser);
 //log in user
 router.post('/login', authUser);
 //get user

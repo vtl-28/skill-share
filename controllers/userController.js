@@ -3,11 +3,11 @@ const asyncHandler = require('express-async-handler');
 const generateToken = require('../config/generateToken');
 const Talk = require('../models/Talk');
 
-const registerUser = asyncHandler( async(req, res) => {
+const registerUser = async(req, res) => {
+    const { name, email, password, confirmpassword, pic, about, city, profession } = req.body;
     const emailRegex = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
-    const { name, email, password, pic } = req.body;
 
-    if(!name || !email || !password){
+    if(!name || !email || !password || !about || !profession || !city){
       res.status(400).send('Please enter all the fields');
       return;
     }
@@ -24,12 +24,20 @@ const registerUser = asyncHandler( async(req, res) => {
         return
     }
 
+    if(password !== confirmpassword){
+      res.status(400).send('Passwords do not match');
+      return
+    }
+
     try {
       const user = await User.create({
         name,
         email,
         password,
         pic,
+        about,
+        profession,
+        city
       });
     
       if(user){
@@ -38,8 +46,13 @@ const registerUser = asyncHandler( async(req, res) => {
           name: user.name,
           email: user.email,
           pic: user.pic,
-          token: generateToken(user._id),
+          about: user.about,
+          profession: user.profession,
+          city: user.city,
+          password: user.password,
+            token: generateToken(user._id),
         });
+        console.log(user)
       }else{
         res.status(400).send('Could not register user');
       }
@@ -47,7 +60,7 @@ const registerUser = asyncHandler( async(req, res) => {
       res.status(400).send(error);
     }
 
-});
+};
 
 const authUser = asyncHandler( async(req, res) => {
         const { email, password } = req.body

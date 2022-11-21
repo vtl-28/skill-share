@@ -11,7 +11,10 @@ const talkSchema = mongoose.Schema({
         required: true,
         default:
           "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg",
-      }, 
+      },
+      city: {
+        type: "String", required: true, trim: true
+      },
     likes:[{type: mongoose.Schema.Types.ObjectId, ref:"User"}],
     comments:[{
         text:"String",
