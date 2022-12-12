@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react';
 import { Button, Form, Toast, ToastContainer, ToastHeader } from 'react-bootstrap';
 import LoadingSpinner from './LoadingSpinner';
 import UserTalksList from './UserTalksList';
@@ -9,7 +9,8 @@ const HostTalk = () => {
     const talkDetails = `   What's the purpose of the talk? 
     Who should join? 
     What will you do at your talks?`
-    const { userTalks, setUserTalks } = useContext(TalkContext);
+    const { user, userTalks, setUserTalks } = useContext(TalkContext);
+    const { _id } = user;
     const [title, setTitle] = useState('');
     const [body, setBody] = useState('');
     const [location, setLocation] = useState('');
@@ -24,6 +25,21 @@ const HostTalk = () => {
 
     const toggleSuccessToast = () => setShowSuccessToast(!showSuccessToast);
     const toggleErrorToast = () => setShowErrorToast(!showErrorToast);
+
+    useEffect(() => {
+        
+        axios.get(`/talks/${_id}`, {
+            headers: {
+                'Authorization':"Bearer "+localStorage.getItem("jwt").replace(/"/g,"")
+            }
+        }).then(response => {
+            console.log(response.data)
+            setUserTalks(response.data);
+        }).catch(error => {
+            console.log(error.response.data)
+        })
+    }, [user._id])
+
 
     const successToast = (message) => {
         return <ToastContainer position="top-end">
@@ -69,8 +85,8 @@ const HostTalk = () => {
                 setDate('')
                 setLocation('')
                 setCity('')
-                setUserTalks([...userTalks, response.data]) 
-                localStorage.setItem('userTalks', [...userTalks]);
+                //setUserTalks([...userTalks, response.data])
+                displayTalks();
                 toggleSuccessToast();
         }).catch(error => {
             setIsLoading(false);
@@ -78,8 +94,7 @@ const HostTalk = () => {
             toggleErrorToast();
         })
     }
-    console.log(userTalks)
-    console.log(localStorage.getItem('userTalks'))
+
     const postDetails = (pics) => {
         setIsLoading(true);
         if (pics === undefined) {
@@ -123,7 +138,11 @@ const HostTalk = () => {
             return <UserTalksList talk={talk}/>
         })}</ul>
       }
-      const displayHeader = (<h1>Your hosted talks will be listed here</h1>);
+      const displayHeader = (
+        <div>
+            <h1>Your hosted talks will be listed here</h1>
+        </div>
+      );
         
       
   return (
@@ -132,7 +151,7 @@ const HostTalk = () => {
         <div className='grid grid-rows-6 grid-cols-12 py-8'>
             
             <div className='col-start-1 col-span-5'>
-                { !userTalks ? displayHeader: displayTalks()}
+                {userTalks ? displayTalks(): displayHeader}
                
             </div>
             {showSuccessToast && successToast(successMessage)}

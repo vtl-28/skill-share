@@ -1,6 +1,11 @@
 import { Button, Container, Nav, Navbar, Form } from "react-bootstrap";
+import React, { useContext } from 'react';
+import { TalkContext } from '../Context/TalkProvider';
+import { useNavigate } from "react-router-dom";
 
 function NavBar(){
+    const { user, setUser } = useContext(TalkContext);
+    const navigate = useNavigate();
     return(
       <div>
           <Navbar bg="light" expand="md">
@@ -22,9 +27,14 @@ function NavBar(){
               style={{ maxHeight: '100px' }}
          
             >
-              <Nav.Link href="#action1" className="mr-4">Host talk</Nav.Link>
+              <Nav.Link href="/hostTalk" className="mr-4">Host talk</Nav.Link>
               <Nav.Link href="#action2" className="mr-4">Profile</Nav.Link>
-              <Nav.Link href="#action2">Log out</Nav.Link>
+              <Nav.Link href="#action2" onClick={() => {
+                 localStorage.clear();
+                 setUser({});
+                 navigate('/')
+              }
+              }>Log out</Nav.Link>
             </Nav>
           </Navbar.Collapse>
         </Container>

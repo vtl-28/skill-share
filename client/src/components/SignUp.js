@@ -156,7 +156,7 @@ const SignUp = () => {
                                     <Button type="submit" className="w-1/3 text-black" onClick={submitForm}>
                                         Sign Up  {isLoading && <LoadingSpinner />}
                                     </Button>
-                                    <Button type="button" className="w-1/3 text-black" onClick={submitForm}>
+                                    <Button type="button" className="w-1/3 text-black">
                                         <Link to="/">Back</Link>
                                     </Button>
                                 </div>
