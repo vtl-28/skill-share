@@ -4,13 +4,13 @@ import { Button, Form, Toast, ToastContainer, ToastHeader } from 'react-bootstra
 import LoadingSpinner from './LoadingSpinner';
 import UserTalksList from './UserTalksList';
 import { TalkContext } from '../Context/TalkProvider';
+import { useQuery } from '@tanstack/react-query';
 
 const HostTalk = () => {
     const talkDetails = `   What's the purpose of the talk? 
     Who should join? 
     What will you do at your talks?`
-    const { user, userTalks, setUserTalks } = useContext(TalkContext);
-    const { _id } = user;
+    const { user } = useContext(TalkContext);
     const [title, setTitle] = useState('');
     const [body, setBody] = useState('');
     const [location, setLocation] = useState('');
@@ -25,21 +25,44 @@ const HostTalk = () => {
 
     const toggleSuccessToast = () => setShowSuccessToast(!showSuccessToast);
     const toggleErrorToast = () => setShowErrorToast(!showErrorToast);
+    console.log(user)
+    const { _id } = user;
+    console.log(_id)
 
-    useEffect(() => {
-        
-        axios.get(`/talks/${_id}`, {
-            headers: {
-                'Authorization':"Bearer "+localStorage.getItem("jwt").replace(/"/g,"")
-            }
-        }).then(response => {
-            console.log(response.data)
-            setUserTalks(response.data);
-        }).catch(error => {
-            console.log(error.response.data)
-        })
-    }, [user._id])
+    
+    function fetchUserTalks(){
+    
+            return axios.get(`/talks/${_id}`, {
+                headers: {
+                    'Authorization':"Bearer "+localStorage.getItem("jwt").replace(/"/g,"")
+                }
+            }).then(response => {
+               return response.data;      
+            }).catch(error => {
+                return error.response.data;
+            })
+       
+       
+                
+            
+    }
 
+
+    const { data: userTalks, error, status, isError } = useQuery({ queryKey: ['userChats'], queryFn: fetchUserTalks})
+    if (status === 'loading') {
+        return <div>loading...</div> // loading state
+      }
+    
+      if (status === 'error') {
+        return <div>{error.message}</div> // error state
+      } 
+    console.log(userTalks);
+
+    const displayTalks = () => {
+        return <ul>{userTalks.map(talk => {
+            return <UserTalksList key={talk._id} talk={talk}/>
+        })}</ul>
+      }
 
     const successToast = (message) => {
         return <ToastContainer position="top-end">
@@ -70,7 +93,7 @@ const HostTalk = () => {
             title, body, pic,location, city, date
         }
 
-        axios.post('/', data, {
+        axios.post('/addTalk', data, {
             headers: {
                 'Authorization':"Bearer "+localStorage.getItem("jwt").replace(/"/g,"")
             }
@@ -86,7 +109,7 @@ const HostTalk = () => {
                 setLocation('')
                 setCity('')
                 //setUserTalks([...userTalks, response.data])
-                displayTalks();
+                //displayTalks();
                 toggleSuccessToast();
         }).catch(error => {
             setIsLoading(false);
@@ -133,16 +156,16 @@ const HostTalk = () => {
           return;
         }
       };
-      const displayTalks = () => {
-        return <ul>{userTalks.map(talk => {
-            return <UserTalksList talk={talk}/>
-        })}</ul>
-      }
-      const displayHeader = (
-        <div>
-            <h1>Your hosted talks will be listed here</h1>
-        </div>
-      );
+    //   const displayTalks = () => {
+    //     return <ul>{userTalks.map(talk => {
+    //         return <UserTalksList talk={talk}/>
+    //     })}</ul>
+    //   }
+    //   const displayHeader = (
+    //     <div>
+    //         <h1>Your hosted talks will be listed here</h1>
+    //     </div>
+    //   );
         
       
   return (
@@ -151,8 +174,8 @@ const HostTalk = () => {
         <div className='grid grid-rows-6 grid-cols-12 py-8'>
             
             <div className='col-start-1 col-span-5'>
-                {userTalks ? displayTalks(): displayHeader}
-               
+
+               {userTalks ? displayTalks() : <div>ahaha</div>}
             </div>
             {showSuccessToast && successToast(successMessage)}
             {showErrorToast && errorToast(errorMessage)}

@@ -1,13 +1,13 @@
 const User = require('../models/User');
-const asyncHandler = require('express-async-handler');
 const generateToken = require('../config/generateToken');
 const Talk = require('../models/Talk');
+const { default: mongoose } = require('mongoose');
 
 const registerUser = async(req, res) => {
     const { name, email, password, confirmpassword, pic, about, city, profession } = req.body;
     const emailRegex = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
 
-    if(!name || !email || !password || !about || !profession || !city){
+    if(!name || !email || !password || !about || !profession || !city || !confirmpassword){
       res.status(400).send('Please enter all the fields');
       return;
     }
@@ -41,18 +41,9 @@ const registerUser = async(req, res) => {
       });
     
       if(user){
-        res.status(201).send({
-          _id: user._id,
-          name: user.name,
-          email: user.email,
-          pic: user.pic,
-          about: user.about,
-          profession: user.profession,
-          city: user.city,
-          password: user.password,
-            token: generateToken(user._id),
-        });
-        console.log(user)
+        const token = generateToken(user._id);
+        user.token = token
+        res.status(201).send(user);
       }else{
         res.status(400).send('Could not register user');
       }
@@ -62,7 +53,7 @@ const registerUser = async(req, res) => {
 
 };
 
-const authUser = asyncHandler( async(req, res) => {
+const authUser = async(req, res) => {
         const { email, password } = req.body
 
         if(!email || !password){
@@ -79,22 +70,18 @@ const authUser = asyncHandler( async(req, res) => {
 
         try {
           if (user && (await user.matchPassword(password))) {
-            res.status(201).send({
-              _id: user._id,
-              name: user.name,
-              email: user.email,
-              pic: user.pic,
-              token: generateToken(user._id),
-            });
+            const token = generateToken(user._id);
+            user.token = token
+            res.status(201).send(user);
           } else {
             res.status(401).send('Invalid Email or Password');
           }
         } catch (error) {
           res.status(401).send(error);
-        }
-})
+        } 
+};
 
-const getUser = asyncHandler( async(req, res) => {
+const getUser = async(req, res) => {
         const userId = req.params.id;
 
         const user = await User.findById({_id: userId});
@@ -115,19 +102,22 @@ const getUser = asyncHandler( async(req, res) => {
         }
 
        
-})
+}
 
-const getTalks = asyncHandler( async(req, res) => {
-     
+const getTalks = async(req, res) => {
+  debugger
+  // const params = req.params.id;
+  const { _id } = req.user._id
+  //console.log(req.user)
       try {
-        const talks = await Talk.find({hostedBy: req.user._id})
+        const talks = await Talk.find({hostedBy: mongoose.Types.ObjectId(_id)}).populate('hostedBy', '_id name email pic city body profession')
         res.status(200).send(talks);
       } catch (error) {
         res.status(400).send(error);
       }
-})
+}
 
-const updateUser = asyncHandler( async(req, res) => {
+const updateUser = async(req, res) => {
   const userId = req.params.id;
 
   const { name, email, pic } = req.body;
@@ -146,6 +136,28 @@ const updateUser = asyncHandler( async(req, res) => {
   } catch (error) {
       res.status(404).send(error)
   }
-})
+}
 
-module.exports = { registerUser, authUser, getUser, getTalks, updateUser}
+const searchTalk = async(req, res) => {
+  const query = req.query.search;
+
+  if(!query){
+      res.status(400).send('Please enter field');
+  }
+  //console.log(query)
+
+  try {
+      const keyword = query
+          ? {
+              title: { $regex: req.query.search, $options: "i" }  
+          }
+          : {};
+
+          const talk = await Talk.find(keyword).populate('hostedBy', '_id name email pic');
+          res.status(200).send(talk);
+  } catch (error) {
+      res.status(400).send(error);
+  }
+}
+
+module.exports = { registerUser, authUser, getUser, getTalks, updateUser, searchTalk}

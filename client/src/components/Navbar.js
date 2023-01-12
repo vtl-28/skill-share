@@ -4,7 +4,7 @@ import { TalkContext } from '../Context/TalkProvider';
 import { useNavigate } from "react-router-dom";
 
 function NavBar(){
-    const { user, setUser } = useContext(TalkContext);
+    const { data, setUser } = useContext(TalkContext);
     const navigate = useNavigate();
     return(
       <div>
@@ -28,10 +28,9 @@ function NavBar(){
          
             >
               <Nav.Link href="/hostTalk" className="mr-4">Host talk</Nav.Link>
-              <Nav.Link href="#action2" className="mr-4">Profile</Nav.Link>
+              <Nav.Link href="/host" className="mr-4">Profile</Nav.Link>
               <Nav.Link href="#action2" onClick={() => {
                  localStorage.clear();
-                 setUser({});
                  navigate('/')
               }
               }>Log out</Nav.Link>

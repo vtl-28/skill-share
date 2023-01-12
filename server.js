@@ -7,7 +7,7 @@ const { notFound, errorHandler } = require("./middlewares/errorMiddleware");
 const path = require("path");
 const cors = require("cors");
 
-const PORT = process.env.PORT || 3002;
+const PORT = process.env.PORT || 3001;
 const app = express();
 dotenv.config();
 connectDB();
@@ -20,8 +20,8 @@ app.use(
     })
   ); // to accept json data
 
-app.use(userRoutes);
-app.use(talkRoutes);
+app.use('/api/user',userRoutes);
+app.use('/api/talks',talkRoutes);
 
 // Error Handling middlewares
 app.use(notFound);

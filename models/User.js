@@ -21,6 +21,9 @@ const userSchema = mongoose.Schema({
     profession: {
       type: "String", required: true, trim: true
     },
+    token: {
+      type: "String"
+    }
 
 },
 {

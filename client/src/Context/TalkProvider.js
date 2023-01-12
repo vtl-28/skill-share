@@ -1,13 +1,13 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate} from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 
 export const TalkContext = createContext(null);
 
 const TalkProvider = ({ children }) => {
-  const [talk, setTalk] = useState({});
+  const [userTalks, setUserTalks] = useState([]);
   const [user, setUser] = useState({});
   const [notification, setNotification] = useState([]);
-
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -17,14 +17,21 @@ const TalkProvider = ({ children }) => {
     if (!userInfo) navigate("/");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [navigate]);
+  // const { data, error, status } = useQuery({ queryKey: ['userInfo'],
+  // queryFn: getUser})
+
+  // console.log(data)
+  // function getUser(){
+  //   return JSON.parse(localStorage.getItem("userInfo"));
+  // }
+
 
   return (
     <TalkContext.Provider
       value={{
-        talk,
-        setTalk,
+        userTalks,
+        setUserTalks,
         user,
-        setUser,
         notification,
         setNotification
       }}

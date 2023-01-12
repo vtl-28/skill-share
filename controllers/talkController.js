@@ -1,11 +1,11 @@
 const User = require('../models/User');
-const asyncHandler = require('express-async-handler');
 const Talk = require('../models/Talk');
 
-const createTalk = asyncHandler( async(req, res, next) => {
-    const { title, body, pic, city } = req.body;
+const createTalk = async(req, res, next) => {
+    debugger;
+    const { title, body, pic, city, location, date } = req.body;
 
-    if(!title || !body || !pic, !city){
+    if(!title || !body || !pic, !city || !location || !date){
         res.status(400).send('Please enter all the fields');
         return;
     }
@@ -21,38 +21,43 @@ const createTalk = asyncHandler( async(req, res, next) => {
         title,
         body,
         pic,
-        city
+        city,
+        location,
+        date
     };
     try {
         const talk = await (await Talk.create(newTalk)).populate('hostedBy', '_id name email pic');
-        res.json(talk);
+        res.status(200).send(talk);
     } catch (error) {
         res.status(404).send(error);
     }
-})
+}
 
-const updateTalk = asyncHandler( async(req, res, next) => {
+const updateTalk = (req, res) => {
         const talkId = req.params.id;
+        console.log(talkId)
 
-        const { title, body, pic } = req.body;
+        //const { title, body, pic, city } = req.body;
 
-        const talkParams = {
-            title,
-            body,
-            pic
+        let talkParams = {
+            title: req.body.title,
+            body: req.body.body,
+            pic: req.body.pic,
+            city: req.body.city
         }
+        console.log(talkParams)
+            Talk.findByIdAndUpdate(talkId,{
+                $set: talkParams,
+            }).then(talk => {
+                console.log(talk)
+                res.status(200).send(talk)  
+            }).catch(error => {
+                console.log(error)
+                res.status(404).send(error)
+            })
+}
 
-        try {
-            const updatedTalk = await Talk.findByIdAndUpdate(talkId,{
-                $set: talkParams
-            }, {new: true})
-            res.status(200).send(updatedTalk)    
-        } catch (error) {
-            res.status(404).send(error)
-        }
-})
-
-const deleteTalk = asyncHandler( async(req, res) => {
+const deleteTalk = async(req, res) => {
         const userId = req.params.id;
 
        try {
@@ -61,35 +66,17 @@ const deleteTalk = asyncHandler( async(req, res) => {
        } catch (error) {
             res.status(400).send(error);
        }
-})
+}
 
-const getTalks = asyncHandler( async(rew, res) => {
-        try {
-            const talks = await Talk.find().populate('hostedBy', '_id name email pic');
-            res.status(200).send(talks);
-        } catch (error) {
-            res.status(400).send(error);
-        }
-})
-
-const searchTalk = asyncHandler( async(req, res) => {
-    const query = req.query.search;
-
-    if(!query){
-        res.status(400).send('Please enter field');
-    }
-
-    try {
-        const keyword = query
-            ? {
-                title: { $regex: req.query.search, $options: "i" }  
-            }
-            : {};
-
-            const talk = await Talk.find(keyword).populate('hostedBy', '_id name email pic');
-            res.status(200).send(talk);
-    } catch (error) {
+const getTalks = (req, res) => {
+    debugger;
+    Talk.find({}).then(talks => {
+        res.status(200).send(talks);
+    }).catch(error => {
         res.status(400).send(error);
-    }
-})
-module.exports = { createTalk, updateTalk, deleteTalk, getTalks, searchTalk};
+    })
+      
+}
+
+
+module.exports = { createTalk, updateTalk, deleteTalk, getTalks};

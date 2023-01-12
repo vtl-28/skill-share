@@ -6,6 +6,7 @@ import OtherTalks from './OtherTalks'
 import { TalkContext } from '../Context/TalkProvider';
 import axios from "axios";
 import UserTalksList from "./UserTalksList";
+import { useQuery } from "@tanstack/react-query";
 
 // function WelcomeMessage(){
 //   const { user } = useContext(TalkContext);
@@ -16,29 +17,59 @@ import UserTalksList from "./UserTalksList";
 
 function Dashboard(){
     const [value, onChange] = useState(new Date());
-    const { user, userTalks } = useContext(TalkContext);
+    const { user } = useContext(TalkContext);
+
+    // useEffect(() => {
+    //   function fetchTalks(){
+    //     return axios.get('/', {
+    //         headers: {
+    //             'Authorization':"Bearer "+localStorage.getItem("jwt").replace(/"/g,"")
+    //         }
+    //     }).then(response => {
+    //       console.log(response.data)
+    //        return response.data;      
+    //     }).catch(error => {
+    //         return error.response.data;
+    //     })
+
+    //   }
+    //   fetchTalks();
+    // }, [])
+    
+
+
+    const { data, error, status, isError } = useQuery({ queryKey: ['talks'], queryFn: fetchTalks})
+    if (status === 'loading') {
+        return <div>loading...</div> // loading state
+      }
+    
+      if (status === 'error') {
+        return <div>{error.message}</div> // error state
+      }
+      const talks = Object.keys(data)
+     talks.forEach(talk => {
+        console.log(data[talk]);
+      })
    
-       //useEffect(() => {
-        // const instance = axios.create({
-        //   baseURL: 'http://localhost:3001',
-        //   headers: {
-        //     'Authorization':"Bearer "+localStorage.getItem("jwt").replace(/"/g,"")
-        //   }
-        // })
-      //   axios.get('/talks', {
-      //     headers: {
-      //       'Authorization':"Bearer "+localStorage.getItem("jwt").replace(/"/g,"")
-      //     }
-      //   }).then(response => {
-      //     console.log(response.data)
-      //   }).catch(error => {
-      //     console.log(error.response)
-      //   })
-        
-      // }, [])
+
+
+    function fetchTalks(){
+      return axios.get('/api/talks/list', {
+        headers: {
+            'Authorization':"Bearer "+localStorage.getItem("jwt").replace(/"/g,"")
+        }
+    }).then(response => {
+        //console.log(response.data)
+         return response.data;      
+      }).catch(error => {
+          return error.response.data;
+      })
+
+    }
+ 
       const displayTalks = () => {
-        return <ul>{userTalks.map(talk => {
-            return <UserTalksList talk={talk}/>
+        return <ul>{talks.map(talk => {
+            return <UserTalksList key={data[talk._id]}   talk={data[talk]}/>
         })}</ul>
       }
 
@@ -57,7 +88,7 @@ function Dashboard(){
       <div>
         <NavBar />
         <div className="container">
-        <h1 className="text-xl mt-11">Welcome, {user ? user.name: ''} <Emoji symbol="👋" label="Hey"/></h1>
+        <h1 className="text-xl mt-11">Welcome, {user ? user.name : ''} <Emoji symbol="👋" label="Hey"/></h1>
           <div className="grid h-full grid-cols-12 grid-rows-6">
             <div className="col-span-4 col-start-1 mt-8">
               <Calendar onChange={onChange} showWeekNumbers value={value} />
@@ -71,11 +102,11 @@ function Dashboard(){
                 </div>
               </div>
               <div className="flex flex-col col-span-4 col-start-1 mt-8">
-                {userTalks ? displayTalks(): hostedTalksPlaceholder}
+               
               </div>
             </div>
             <div className="col-span-7 col-start-6 mt-8">
-              <OtherTalks />
+            { talks ? displayTalks() : ''}
             </div>
           </div>
         </div>

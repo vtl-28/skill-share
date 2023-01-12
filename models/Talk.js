@@ -15,9 +15,15 @@ const talkSchema = mongoose.Schema({
       city: {
         type: "String", required: true, trim: true
       },
+      location: {
+        type: "String", required: true
+      },
+      date: {
+        type: Date, required: true
+      },
     likes:[{type: mongoose.Schema.Types.ObjectId, ref:"User"}],
     comments:[{
-        text:"String",
+        text: {type: "String"},
         postedBy:{type: mongoose.Schema.Types.ObjectId, ref:"User"}
     }]
 },
