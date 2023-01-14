@@ -21,7 +21,7 @@ function Home(){
         e.preventDefault();
         setIsLoading(true);
 
-        axios.post('/login', { email, password})
+        axios.post('/api/user/login', { email, password})
         .then(response => {
             localStorage.setItem("userInfo", JSON.stringify(response.data));
             localStorage.setItem("jwt", JSON.stringify(response.data.token));

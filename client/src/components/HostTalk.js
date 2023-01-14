@@ -32,7 +32,7 @@ const HostTalk = () => {
     
     function fetchUserTalks(){
     
-            return axios.get(`/talks/${_id}`, {
+            return axios.get(`/api/user/talks/${_id}`, {
                 headers: {
                     'Authorization':"Bearer "+localStorage.getItem("jwt").replace(/"/g,"")
                 }
@@ -93,7 +93,7 @@ const HostTalk = () => {
             title, body, pic,location, city, date
         }
 
-        axios.post('/addTalk', data, {
+        axios.post('/api/talks/addTalk', data, {
             headers: {
                 'Authorization':"Bearer "+localStorage.getItem("jwt").replace(/"/g,"")
             }

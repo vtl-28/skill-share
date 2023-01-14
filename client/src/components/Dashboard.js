@@ -40,7 +40,7 @@ function Dashboard(){
 
     const { data, error, status, isError } = useQuery({ queryKey: ['talks'], queryFn: fetchTalks})
     if (status === 'loading') {
-        return <div>loading...</div> // loading state
+        return <div>loading talks</div> // loading state
       }
     
       if (status === 'error') {
