@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'react-calendar/dist/Calendar.css';
 import './index.css';
+import './App.css';
 import App from './App';
 import TalkProvider from '../src/Context/TalkProvider';
 import {
@@ -13,6 +14,8 @@ import {
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/react-query'
+import { ThemeProvider } from 'react-ui'
+import { tokens, components } from 'react-ui/themes/light'
 
 const queryClient = new QueryClient()
 
@@ -22,7 +25,9 @@ root.render(
     <BrowserRouter>
       <QueryClientProvider client={queryClient}>
         <TalkProvider>
-          <App />
+          <ThemeProvider tokens={tokens} components={components}>
+            <App />
+          </ThemeProvider>
         </TalkProvider>
       </QueryClientProvider>
      
