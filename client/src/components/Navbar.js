@@ -7,11 +7,15 @@ import { useQuery } from "@tanstack/react-query";
 import TalkLoading from "./miscellaneous/TalkLoading";
 
 function NavBar(){
-    const { data, setUser } = useContext(TalkContext);
+    const { user, setUser } = useContext(TalkContext);
     const [ search , setSearch ] = useState('')
     const [ searchResult , setSearchResult ] = useState([])
     const [ loading, setLoading ] = useState(false)
     const navigate = useNavigate();
+    const { _id } = user;
+    console.log(user)
+    console.log(_id)
+    const api = `/profile/${_id}`;
 
     function getSearch(){
       return axios.get(`/api/talks/searchTalk?search=${search}`,  {
@@ -55,7 +59,7 @@ function NavBar(){
       <div>
           <Navbar bg="light" expand="md">
         <Container>
-          <Navbar.Brand href="#">Skill-share</Navbar.Brand>
+          <Navbar.Brand href="/dashboard">Skill-share</Navbar.Brand>
           <Form className="ml-12 d-flex">
               <Form.Control
                 type="search"
@@ -80,8 +84,8 @@ function NavBar(){
          
             >
               <Nav.Link href="/hostTalk" className="mr-4">Host talk</Nav.Link>
-              <Nav.Link href="/host" className="mr-4">Profile</Nav.Link>
-              <Nav.Link href="#action2" onClick={() => {
+              <Nav.Link href={api} className="mr-4">Profile</Nav.Link>
+              <Nav.Link href="/" onClick={() => {
                  localStorage.removeItem('userInfo');
                  navigate('/')
               }
