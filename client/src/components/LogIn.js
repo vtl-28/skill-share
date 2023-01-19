@@ -9,34 +9,46 @@ import SignUp from './SignUp'
 import { Link, useNavigate } from 'react-router-dom'
 import LoadingSpinner from "./LoadingSpinner";
 import axios from "axios";
-
+import { ErrorToast } from './miscellaneous/Toasts';
+import { loginHost } from './miscellaneous/Utils';
 
 function Home(){
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [showErrorToast, setShowErrorToast] = useState(false);
+    const [errorMessage, setErrorMessage] = useState([]);
+
+    const toggleErrorToast = () => setShowErrorToast(!showErrorToast);
     const navigate = useNavigate();
 
-    const submitForm = (e) =>{
+    const submitForm = async(e) =>{
         e.preventDefault();
         setIsLoading(true);
 
-        axios.post('/api/user/login', { email, password})
-        .then(response => {
-            localStorage.setItem("userInfo", JSON.stringify(response.data));
-            localStorage.setItem("jwt", JSON.stringify(response.data.token));
-            setIsLoading(false);    
-            navigate("/dashboard", {state: response.data});
-        }).catch(error => {
-            setIsLoading(false);
-        })  
+        const data = {
+            email, password
+        }
+        let response = await loginHost(data);
+       //const answer = response === 'Please enter all fields'|| response === 'User does not exist' || response === 'Invalid Email or Password' ? 'no' : 'yes'
+       const hostDetailsValidation = typeof response === 'object' ? 'yes' : 'no' 
        
-        
+        if(hostDetailsValidation === 'no'){
+            console.log(response)
+            setIsLoading(false);
+            setErrorMessage(response)
+            toggleErrorToast() 
+        }else{
+            console.log(response)
+            setIsLoading(false);
+            navigate("/dashboard", {state: response});
+        }
     }
     return(
         <div className="container w-full h-full px-12 mx-auto border-2 border-red-200">
             <div className="grid grid-cols-6 grid-rows-6">
                 <div className="h-full col-span-2 col-start-3 row-span-2 row-start-2 border-2 border-green-300">
+                {showErrorToast && <ErrorToast message={errorMessage} showErrorToast={showErrorToast} toggleErrorToast={toggleErrorToast} />}
                     <Form className='border rounded-md'>
                         <Form.Group className="mb-3">
                             <Form.Control type="text" name="email" value={email} placeholder="Enter email" onChange={(e) => setEmail(e.target.value)}/>

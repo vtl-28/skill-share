@@ -7,36 +7,12 @@ import { TalkContext } from '../Context/TalkProvider';
 import axios from "axios";
 import UserTalksList from "./UserTalksList";
 import { useQuery } from "@tanstack/react-query";
-
-// function WelcomeMessage(){
-//   const { user } = useContext(TalkContext);
-//   return(
-//     <h1 className="text-xl mt-11">Welcome, {user ? user.name: ''} <Emoji symbol="👋" label="Hey"/></h1>
-//   )
-// }
+import {displayTalks} from './miscellaneous/DisplayItems'
+import {fetchTalks} from './miscellaneous/Utils'
 
 function Dashboard(){
     const [value, onChange] = useState(new Date());
     const { user } = useContext(TalkContext);
-
-    // useEffect(() => {
-    //   function fetchTalks(){
-    //     return axios.get('/', {
-    //         headers: {
-    //             'Authorization':"Bearer "+localStorage.getItem("jwt").replace(/"/g,"")
-    //         }
-    //     }).then(response => {
-    //       console.log(response.data)
-    //        return response.data;      
-    //     }).catch(error => {
-    //         return error.response.data;
-    //     })
-
-    //   }
-    //   fetchTalks();
-    // }, [])
-    
-
 
     const { data, error, status, isError } = useQuery({ queryKey: ['talks'], queryFn: fetchTalks})
     if (status === 'loading') {
@@ -45,32 +21,6 @@ function Dashboard(){
     
       if (status === 'error') {
         return <div>{error.message}</div> // error state
-      }
-      const talks = Object.keys(data)
-     talks.forEach(talk => {
-        console.log(data[talk]);
-      })
-   
-
-
-    function fetchTalks(){
-      return axios.get('/api/talks/list', {
-        headers: {
-            'Authorization':"Bearer "+localStorage.getItem("jwt").replace(/"/g,"")
-        }
-    }).then(response => {
-        //console.log(response.data)
-         return response.data;      
-      }).catch(error => {
-          return error.response.data;
-      })
-
-    }
- 
-      const displayTalks = () => {
-        return <ul>{talks.map(talk => {
-            return <UserTalksList key={data[talk._id]}   talk={data[talk]}/>
-        })}</ul>
       }
 
       const hostedTalksPlaceholder = (
@@ -106,7 +56,7 @@ function Dashboard(){
               </div>
             </div>
             <div className="col-span-7 col-start-6 mt-8">
-            { talks ? displayTalks() : ''}
+              { data ? displayTalks(data) : ''}
             </div>
           </div>
         </div>

@@ -5,6 +5,8 @@ import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom'
 import Toast from 'react-bootstrap/Toast';
 import LoadingSpinner from './LoadingSpinner'
+import { SuccessToast, ErrorToast } from '../components/miscellaneous/Toasts'
+import { registerHost } from '../components/miscellaneous/Utils'
 
 const SignUp = () => {
     const navigate = useNavigate();
@@ -26,53 +28,17 @@ const SignUp = () => {
     const toggleSuccessToast = () => setShowSuccessToast(!showSuccessToast);
     const toggleErrorToast = () => setShowErrorToast(!showErrorToast);
 
-    const successToast = (message) => {
-        return <ToastContainer position="top-end">
-            <Toast bg='success' show={showSuccessToast} onClose={toggleSuccessToast} delay={3000} autohide>
-            <ToastHeader>
-                <small>Success!</small>
-            </ToastHeader>
-            <Toast.Body>{message}</Toast.Body>
-          </Toast>
-        </ToastContainer>
-    }
-    const errorToast = (message) => {
-        return <ToastContainer position="top-end" >
-            <Toast bg='danger' show={showErrorToast} onClose={toggleErrorToast} delay={3000} autohide>
-            <ToastHeader>
-                <small>Error occurred!</small>
-            </ToastHeader>
-            <Toast.Body>{message}</Toast.Body>
-          </Toast>
-        </ToastContainer>
-    }
         
         const submitForm = (e) => {
             e.preventDefault();
+
             setIsLoading(true);
-            // const config = {
-            //     headers: {
-            //       "Content-type": "application/json",
-            //     },
-            // };
+          
             const data = {
                 name, email, pic,about, city, profession, password, confirmpassword
             }
-
-           
-            axios.post('/user/signup', data)
-            .then(response => {
-                    setIsLoading(false);
-                    setSuccessMessage("Sign up successful")
-                    toggleSuccessToast();
-                    localStorage.setItem("userInfo", JSON.stringify(response.data));
             
-            }).catch(error => {
-                setIsLoading(false);
-                setErrorMessage(error.response.data)
-                toggleErrorToast();
-            })
-          
+            registerHost(data, setIsLoading, setSuccessMessage, toggleSuccessToast, setErrorMessage, toggleErrorToast) 
         }
 
         const postDetails = (pics) => {
@@ -96,7 +62,7 @@ const SignUp = () => {
               .then(response => {
                 const { url } = response.data;
                 setPic(url);
-                console.log(pic);
+                console.log(response.data);
                 setIsLoading(false);
               }).catch(error => {
                 console.log(error.response.data);
@@ -119,8 +85,8 @@ const SignUp = () => {
     <div className="container w-full px-12 mx-auto border-2 border-red-200">
             <div className="grid grid-cols-6 grid-rows-6">
                 <div className="col-span-2 col-start-3 row-span-2 row-start-2">
-                {showSuccessToast && successToast(successMessage)}
-                {showErrorToast && errorToast(errorMessage)}
+                {showSuccessToast && <SuccessToast message={successMessage} showSuccessToast={showSuccessToast} toggleSuccessToast={toggleSuccessToast}/>}
+                {showErrorToast && <ErrorToast message={errorMessage} showErrorToast={showErrorToast} toggleErrorToast={toggleErrorToast} />}
                 
                 <Form className='border rounded-md'>
                                 <Form.Group className="mb-3">

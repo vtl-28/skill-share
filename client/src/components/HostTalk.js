@@ -5,6 +5,10 @@ import LoadingSpinner from './LoadingSpinner';
 import UserTalksList from './UserTalksList';
 import { TalkContext } from '../Context/TalkProvider';
 import { useQuery } from '@tanstack/react-query';
+import NavBar from './Navbar';
+import {fetchHostTalks, addHostTalk, uploadImage} from './miscellaneous/Utils'
+import {displayHostTalks} from './miscellaneous/DisplayItems'
+import { SuccessToast, ErrorToast, UploadImage, UploadImageToast } from '../components/miscellaneous/Toasts'
 
 const HostTalk = () => {
     const talkDetails = `   What's the purpose of the talk? 
@@ -22,70 +26,26 @@ const HostTalk = () => {
     const [showErrorToast, setShowErrorToast] = useState(false);
     const [successMessage, setSuccessMessage] = useState("");
     const [errorMessage, setErrorMessage] = useState([]);
+    const [ showHostTalks, setShowHostTalks ] = useState(true)
 
     const toggleSuccessToast = () => setShowSuccessToast(!showSuccessToast);
     const toggleErrorToast = () => setShowErrorToast(!showErrorToast);
-    console.log(user)
     const { _id } = user;
-    console.log(_id)
+ 
 
-    
-    function fetchUserTalks(){
-    
-            return axios.get(`/api/user/talks/${_id}`, {
-                headers: {
-                    'Authorization':"Bearer "+localStorage.getItem("jwt").replace(/"/g,"")
-                }
-            }).then(response => {
-               return response.data;      
-            }).catch(error => {
-                return error.response.data;
-            })
-       
-       
-                
-            
-    }
-
-
-    const { data: userTalks, error, status, isError } = useQuery({ queryKey: ['userChats'], queryFn: fetchUserTalks})
+    const { data: userTalks, error, status, isError } = useQuery({ queryKey: ['userChats'], queryFn: () => fetchHostTalks(_id)})
     if (status === 'loading') {
-        return <div>loading...</div> // loading state
+        return <div>loading user talks...</div> // loading state
       }
     
       if (status === 'error') {
         return <div>{error.message}</div> // error state
-      } 
-    console.log(userTalks);
-
-    const displayTalks = () => {
-        return <ul>{userTalks.map(talk => {
-            return <UserTalksList key={talk._id} talk={talk}/>
-        })}</ul>
       }
+     const saySomething = (<div>You have not hosted any talks. Talks you have hosted will appear here</div>)
+      
 
-    const successToast = (message) => {
-        return <ToastContainer position="top-end">
-            <Toast bg='success' show={showSuccessToast} onClose={toggleSuccessToast} delay={3000} autohide>
-            <ToastHeader>
-                <small>Success!</small>
-            </ToastHeader>
-            <Toast.Body>{message}</Toast.Body>
-          </Toast>
-        </ToastContainer>
-    }
-    const errorToast = (message) => {
-        return <ToastContainer position="top-end" >
-            <Toast bg='danger' show={showErrorToast} onClose={toggleErrorToast} delay={3000} autohide>
-            <ToastHeader>
-                <small>Error occurred!</small>
-            </ToastHeader>
-            <Toast.Body>{message}</Toast.Body>
-          </Toast>
-        </ToastContainer>
-    }
 
-    const submitForm = (e) => {
+    const submitForm = async(e) => {
         e.preventDefault();
         setIsLoading(true);
 
@@ -93,40 +53,31 @@ const HostTalk = () => {
             title, body, pic,location, city, date
         }
 
-        axios.post('/api/talks/addTalk', data, {
-            headers: {
-                'Authorization':"Bearer "+localStorage.getItem("jwt").replace(/"/g,"")
-            }
-        })
-        .then(response => {
-            // console.log(response.data)
-                setIsLoading(false);
-                setSuccessMessage("Successfully created talk event");
-                setTitle('')
-                setBody('')
-                setPic('')
-                setDate('')
-                setLocation('')
-                setCity('')
-                //setUserTalks([...userTalks, response.data])
-                //displayTalks();
-                toggleSuccessToast();
-        }).catch(error => {
+        let response = await addHostTalk(data)
+        const hostDetailsValidation = typeof response === 'object' ? 'yes' : 'no' 
+
+        if(hostDetailsValidation === 'no'){
             setIsLoading(false);
-            setErrorMessage(error.response.data)
-            toggleErrorToast();
-        })
+            setErrorMessage(response)
+            toggleErrorToast() 
+        }else{
+            setIsLoading(false);
+            setSuccessMessage("Successfully created talk");
+            setTitle('')
+            setBody('')
+            setPic('')
+            setDate('')
+            setLocation('')
+            setCity('')
+            toggleSuccessToast();
+        }
+       
     }
 
-    const postDetails = (pics) => {
+    const postDetails = async(pics) => {
         setIsLoading(true);
         if (pics === undefined) {
-            <Toast delay={3000} autohide bg='danger'>
-                <Toast.Header>
-                    <strong className="me-auto">Error occurred</strong>
-                </Toast.Header>
-                <Toast.Body>Please select an image</Toast.Body>
-            </Toast>
+            <UploadImageToast />
           return;
         }
 
@@ -135,52 +86,38 @@ const HostTalk = () => {
           data.append("file", pics);
           data.append("upload_preset", "skill-share");
           data.append("cloud_name", "dd1jqwp94");
-          axios.post("https://api.cloudinary.com/v1_1/dd1jqwp94/image/upload", data)
-          .then(response => {
-            const { url } = response.data;
-            setPic(url);
-            console.log(pic);
+
+         let {url} = await uploadImage(data);
+         let imageUploadValidation = url.match(/cloudinary/i)
+         if(imageUploadValidation){
+             setPic(url);
+             setIsLoading(false);
+         }else{
+            setErrorMessage("Problem uploading image")
             setIsLoading(false);
-          }).catch(error => {
-            console.log(error.response.data);
-            setIsLoading(false);
-          })
+         }
+    
         }else{
-            <Toast delay={3000} autohide bg='danger'>
-                <Toast.Header>
-                    <strong className="me-auto">Error occurred</strong>
-                </Toast.Header>
-                <Toast.Body>Please select an image</Toast.Body>
-            </Toast>
+           <UploadImageToast />
           setIsLoading(false);
           return;
         }
       };
-    //   const displayTalks = () => {
-    //     return <ul>{userTalks.map(talk => {
-    //         return <UserTalksList talk={talk}/>
-    //     })}</ul>
-    //   }
-    //   const displayHeader = (
-    //     <div>
-    //         <h1>Your hosted talks will be listed here</h1>
-    //     </div>
-    //   );
-        
-      
   return (
-    <div className='container mx-auto'>
+        <div>
+        <NavBar />
+                <div className='container mx-auto'>
         <h1 className='flex justify-center mt-4'>Host Talk</h1>
-        <div className='grid grid-rows-6 grid-cols-12 py-8'>
+        <div className='grid grid-cols-12 grid-rows-6 py-8'>
             
-            <div className='col-start-1 col-span-5'>
+            <div className='col-span-5 col-start-1'>
 
-               {userTalks ? displayTalks() : <div>ahaha</div>}
+               {userTalks.length > 1 ? displayHostTalks(userTalks) : saySomething }
             </div>
-            {showSuccessToast && successToast(successMessage)}
-            {showErrorToast && errorToast(errorMessage)}
-            <div className='col-start-7 col-span-5'>
-                <h1 className='text-center mb-4'>Fill in the form below to host your own talk</h1>
+            {showSuccessToast && <SuccessToast message={successMessage} showSuccessToast={showSuccessToast} toggleSuccessToast={toggleSuccessToast}/>}
+            {showErrorToast && <ErrorToast message={errorMessage} showErrorToast={showErrorToast} toggleErrorToast={toggleErrorToast} />}
+            <div className='col-span-5 col-start-7'>
+                <h1 className='mb-4 text-center'>Fill in the form below to host your own talk</h1>
                 <Form>
                     <Form.Group className="mb-3" controlId="formBasicEmail">
                         <Form.Control type="text" value={title} onChange={(e) => setTitle(e.target.value)} name="title" placeholder="Enter the title of the talk" />
@@ -203,7 +140,7 @@ const HostTalk = () => {
                         <Form.Control type="file"/>
                     </Form.Group>
 
-                    <Button type="submit" className="text-black w-full" onClick={submitForm}>
+                    <Button type="submit" className="w-full text-black" onClick={submitForm}>
                                     Submit {isLoading && <LoadingSpinner />}
                     </Button>
                 </Form>
@@ -211,6 +148,7 @@ const HostTalk = () => {
 
         </div>
     </div>
+        </div>
   )
 }
 
