@@ -4,6 +4,8 @@ import React, { useState } from 'react';
 import { Button, Form, Nav, Toast } from 'react-bootstrap';
 import Navbar from './Navbar';
 import { useParams } from 'react-router-dom';
+import { SuccessToast, ErrorToast, UploadImageToast } from '../components/miscellaneous/Toasts'
+import { uploadImage, fetchUser, updateHost } from '../components/miscellaneous/Utils';
 
 const HostProfile = () => {
     let { id } = useParams();
@@ -19,7 +21,10 @@ const HostProfile = () => {
     const [successMessage, setSuccessMessage] = useState("");
     const [errorMessage, setErrorMessage] = useState([]);
 
-    const { data, error, status, isError } = useQuery({ queryKey: ['userProfile'], queryFn: fetchUser})
+    const toggleSuccessToast = () => setShowSuccessToast(!showSuccessToast);
+    const toggleErrorToast = () => setShowErrorToast(!showErrorToast);
+
+    const { data, error, status, isError } = useQuery({ queryKey: ['userProfile'], queryFn: () => fetchUser(id)})
     if (status === 'loading') {
         return <div>loading profile</div> // loading state
       }
@@ -30,24 +35,8 @@ const HostProfile = () => {
       console.log(id);
     console.log(data);
     const { name, email, pic, city, profession, about } = data;
-   
 
-
-    function fetchUser(){
-      return axios.get(`/api/user/${id}`, {
-        headers: {
-            'Authorization':"Bearer "+localStorage.getItem("jwt").replace(/"/g,"")
-        }
-    }).then(response => {
-        //console.log(response.data)
-         return response.data;      
-      }).catch(error => {
-          return error.response.data;
-      })
-
-    }
-
-    const updateUser = (e) => {
+    const updateUser = async(e) => {
         e.preventDefault();
         setIsLoading(true);
         const userDataToUpdate = {
@@ -57,56 +46,46 @@ const HostProfile = () => {
             userAbout,
             userPic
         }
+        let response = await updateHost(id,userDataToUpdate);
+        const hostDetailsValidation = typeof response === 'object' ? 'yes': 'no';
 
-        const config = {
-            headers: {
-                'Authorization':"Bearer "+localStorage.getItem("jwt").replace(/"/g,"")
-            }
-        }
-
-        axios.put(`/api/user/edit/${id}`, userDataToUpdate, config).then(response => {
-            console.log(response.data)
-            console.log(typeof response.data)
+        if(hostDetailsValidation === 'no'){
             setIsLoading(false);
-        }).catch(error => {
-            console.log(error.response.data)
-        })
+            setErrorMessage(response);
+            toggleErrorToast()
+        }else{
+            setIsLoading(false);
+            setSuccessMessage('Host details successfully updated')
+            toggleSuccessToast();
+        }
+        console.log(response)
+ 
     }
 
-    const postDetails = (pics) => {
+    const postDetails = async(pics) => {
         setIsLoading(true);
         if (pics === undefined) {
-            <Toast delay={3000} autohide bg='danger'>
-                <Toast.Header>
-                    <strong className="me-auto">Error occurred</strong>
-                </Toast.Header>
-                <Toast.Body>Please select an image</Toast.Body>
-            </Toast>
+           <UploadImageToast />
           return;
         }
 
         if (pics.type === "image/jpeg" || pics.type === "image/png") {
-          const data = new FormData();
+            const data = new FormData();
           data.append("file", pics);
           data.append("upload_preset", "skill-share");
           data.append("cloud_name", "dd1jqwp94");
-          axios.post("https://api.cloudinary.com/v1_1/dd1jqwp94/image/upload", data)
-          .then(response => {
-            const { url } = response.data;
-            setUserPic(url);
-            console.log(pic);
+
+         let {url} = await uploadImage(data);
+         let imageUploadValidation = url.match(/cloudinary/i)
+         if(imageUploadValidation){
+             setUserPic(url);
+             setIsLoading(false);
+         }else{
+            setErrorMessage("Problem uploading image")
             setIsLoading(false);
-          }).catch(error => {
-            console.log(error.response.data);
-            setIsLoading(false);
-          })
+         }
         }else{
-            <Toast delay={3000} autohide bg='danger'>
-                <Toast.Header>
-                    <strong className="me-auto">Error occurred</strong>
-                </Toast.Header>
-                <Toast.Body>Please select an image</Toast.Body>
-            </Toast>
+            <UploadImageToast />
           setIsLoading(false);
           return;
         }
@@ -122,6 +101,9 @@ const HostProfile = () => {
                     <h1 className='text-2xl'>Edit profile</h1>
                     <h4 className='mt-3'>This information will appear on your public profile</h4>
                 </div>
+                {showErrorToast && <ErrorToast message={errorMessage} showErrorToast={showErrorToast} toggleErrorToast={toggleErrorToast} />}
+                {showSuccessToast && <SuccessToast message={successMessage} showSuccessToast={showSuccessToast} toggleSuccessToast={toggleSuccessToast}/>}
+               
                 <Form className='mt-4'>
                     <div className='flex mb-3 justify-content-between'>
                         <img src={pic} value={userPic} className='rounded-full' alt='user'/>

@@ -1,5 +1,10 @@
 import axios from "axios";
 
+const config = {
+    headers: {
+        'Authorization':"Bearer "+localStorage.getItem("jwt").replace(/"/g,"")
+    }
+}
 
 export function registerHost(data, setIsLoading, setSuccessMessage, toggleSuccessToast, setErrorMessage, toggleErrorToast){
     return axios.post('/user/signup', data)
@@ -27,11 +32,7 @@ export function loginHost(data){
     })
 }
 export function fetchTalks(){
-    return axios.get('/api/talks/list', {
-      headers: {
-          'Authorization':"Bearer "+localStorage.getItem("jwt").replace(/"/g,"")
-      }
-  }).then(response => {
+    return axios.get('/api/talks/list', config).then(response => {
        return response.data;      
     }).catch(error => {
         return error.response.data;
@@ -39,23 +40,14 @@ export function fetchTalks(){
 
   }
   export function fetchHostTalks(_id){
-    
-    return axios.get(`/api/user/talks/${_id}`, {
-        headers: {
-            'Authorization':"Bearer "+localStorage.getItem("jwt").replace(/"/g,"")
-        }
-    }).then(response => {
+    return axios.get(`/api/user/talks/${_id}`, config).then(response => {
        return response.data;      
     }).catch(error => {
         return error.response.data;
     })
 }
 export function addHostTalk(data){
-    return axios.post('/api/talks/addTalk', data, {
-        headers: {
-            'Authorization':"Bearer "+localStorage.getItem("jwt").replace(/"/g,"")
-        }
-    })
+    return axios.post('/api/talks/addTalk', data, config)
     .then(response => {
             return response.data
     }).catch(error => {
@@ -73,3 +65,21 @@ export function uploadImage(data){
       return error.response.data
     })
 }
+export function fetchUser(id){
+    return axios.get(`/api/user/${id}`, config).then(response => {
+      //console.log(response.data)
+       return response.data;      
+    }).catch(error => {
+        return error.response.data;
+    })
+  }
+  export function updateHost(id, userDataToUpdate){
+    return axios.put(`/api/user/edit/${id}`, userDataToUpdate, config).then(response => {
+        console.log(response.data)
+        console.log(typeof response.data)
+        return response.data   
+    }).catch(error => {
+        console.log(error.response.data)
+        return error.response.data;   
+    })
+  }
