@@ -5,8 +5,8 @@ import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom'
 import Toast from 'react-bootstrap/Toast';
 import LoadingSpinner from './LoadingSpinner'
-import { SuccessToast, ErrorToast } from '../components/miscellaneous/Toasts'
-import { registerHost } from '../components/miscellaneous/Utils'
+import { SuccessToast, ErrorToast, UploadImageToast } from '../components/miscellaneous/Toasts'
+import { registerHost, uploadImage } from '../components/miscellaneous/Utils'
 
 const SignUp = () => {
     const navigate = useNavigate();
@@ -41,15 +41,10 @@ const SignUp = () => {
             registerHost(data, setIsLoading, setSuccessMessage, toggleSuccessToast, setErrorMessage, toggleErrorToast) 
         }
 
-        const postDetails = (pics) => {
+        const postDetails = async(pics) => {
             setIsLoading(true);
             if (pics === undefined) {
-                <Toast delay={3000} autohide bg='danger'>
-                    <Toast.Header>
-                        <strong className="me-auto">Error occurred</strong>
-                    </Toast.Header>
-                    <Toast.Body>Please select an image</Toast.Body>
-                </Toast>
+              <UploadImageToast />
               return;
             }
 
@@ -58,23 +53,17 @@ const SignUp = () => {
               data.append("file", pics);
               data.append("upload_preset", "skill-share");
               data.append("cloud_name", "dd1jqwp94");
-              axios.post("https://api.cloudinary.com/v1_1/dd1jqwp94/image/upload", data)
-              .then(response => {
-                const { url } = response.data;
-                setPic(url);
-                console.log(response.data);
-                setIsLoading(false);
-              }).catch(error => {
-                console.log(error.response.data);
-                setIsLoading(false);
-              })
+              let {url} = await uploadImage(data);
+         let imageUploadValidation = url.match(/cloudinary/i)
+         if(imageUploadValidation){
+             setPic(url);
+             setIsLoading(false);
+         }else{
+            setErrorMessage("Problem uploading image")
+            setIsLoading(false);
+         }
             }else{
-                <Toast delay={3000} autohide bg='danger'>
-                    <Toast.Header>
-                        <strong className="me-auto">Error occurred</strong>
-                    </Toast.Header>
-                    <Toast.Body>Please select an image</Toast.Body>
-                </Toast>
+                <UploadImageToast />
               setIsLoading(false);
               return;
             }

@@ -8,7 +8,7 @@ import { useQuery } from '@tanstack/react-query';
 import NavBar from './Navbar';
 import {fetchHostTalks, addHostTalk, uploadImage} from './miscellaneous/Utils'
 import {displayHostTalks} from './miscellaneous/DisplayItems'
-import { SuccessToast, ErrorToast, UploadImage, UploadImageToast } from '../components/miscellaneous/Toasts'
+import { SuccessToast, ErrorToast, UploadImageToast } from '../components/miscellaneous/Toasts'
 
 const HostTalk = () => {
     const talkDetails = `   What's the purpose of the talk? 
