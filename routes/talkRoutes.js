@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { createTalk, updateTalk, deleteTalk, getTalks} = require('../controllers/talkController');
+const { createTalk, updateTalk, deleteTalk, getTalks, searchTalk} = require('../controllers/talkController');
 const { authorizeUser } = require('../middlewares/authMiddleware');
 
 //list all talks
@@ -11,6 +11,8 @@ router.post('/addTalk', authorizeUser, createTalk);
 router.put('/edit/:id', authorizeUser, updateTalk);
 //delete talk
 router.delete('/delete/:id', deleteTalk);
+//search talk
+router.get('/searchTalk', authorizeUser, searchTalk)
 
 
 

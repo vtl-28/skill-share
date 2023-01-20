@@ -82,6 +82,7 @@ const authUser = async(req, res) => {
 };
 
 const getUser = async(req, res) => {
+
         const userId = req.params.id;
 
         const user = await User.findById({_id: userId});
@@ -92,7 +93,10 @@ const getUser = async(req, res) => {
                 _id: user._id,
                 name: user.name,
                 email: user.email,
-                pic: user.pic
+                pic: user.pic,
+                city: user.city,
+                profession: user.profession,
+                about: user.about
             })
           }else{
               res.status(400).send('Could not retrieve user');
@@ -105,7 +109,6 @@ const getUser = async(req, res) => {
 }
 
 const getTalks = async(req, res) => {
-  debugger
   // const params = req.params.id;
   const { _id } = req.user._id
   //console.log(req.user)
@@ -118,46 +121,42 @@ const getTalks = async(req, res) => {
 }
 
 const updateUser = async(req, res) => {
+  debugger;
   const userId = req.params.id;
 
-  const { name, email, pic } = req.body;
-
-  const userParams = {
-      name, 
-      email, 
-      pic
+  const { userName,userEmail,userCity,userAbout, userPic } = req.body;
+  
+  const user = await User.findOne({email: userEmail});
+  if(user !== null){
+    res.status(404).send('User with this email already exists')
+    return;
   }
-
+    const userParams = {
+      name: userName, 
+      email: userEmail, 
+      pic: userPic,
+      city: userCity,
+      about: userAbout
+  }
+  Object.keys(userParams).forEach(detail => {
+    if(userParams[detail] === ''){
+      delete userParams[detail]
+    }
+  })
+  
   try {
       const updatedUser = await User.findByIdAndUpdate(userId,{
           $set: userParams
-      }, {new: true})
+      })
       res.status(200).send(updatedUser)    
   } catch (error) {
       res.status(404).send(error)
   }
+  
+
+
+  
 }
 
-const searchTalk = async(req, res) => {
-  const query = req.query.search;
 
-  if(!query){
-      res.status(400).send('Please enter field');
-  }
-  //console.log(query)
-
-  try {
-      const keyword = query
-          ? {
-              title: { $regex: req.query.search, $options: "i" }  
-          }
-          : {};
-
-          const talk = await Talk.find(keyword).populate('hostedBy', '_id name email pic');
-          res.status(200).send(talk);
-  } catch (error) {
-      res.status(400).send(error);
-  }
-}
-
-module.exports = { registerUser, authUser, getUser, getTalks, updateUser, searchTalk}
+module.exports = { registerUser, authUser, getUser, getTalks, updateUser}

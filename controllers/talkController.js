@@ -2,7 +2,7 @@ const User = require('../models/User');
 const Talk = require('../models/Talk');
 
 const createTalk = async(req, res, next) => {
-    debugger;
+    
     const { title, body, pic, city, location, date } = req.body;
 
     if(!title || !body || !pic, !city || !location || !date){
@@ -69,7 +69,6 @@ const deleteTalk = async(req, res) => {
 }
 
 const getTalks = (req, res) => {
-    debugger;
     Talk.find({}).then(talks => {
         res.status(200).send(talks);
     }).catch(error => {
@@ -78,5 +77,28 @@ const getTalks = (req, res) => {
       
 }
 
+const searchTalk = async(req, res) => {
+    const query = req.query.search;
+  
+    if(!query){
+        res.status(400).send('Please enter field');
+    }
+    //console.log(query)
+  
+    try {
+        const keyword = query
+            ? {
+                title: { $regex: req.query.search, $options: "i" }  
+            }
+            : {};
+  
+            const talk = await Talk.find(keyword).populate('hostedBy', '_id name email pic');
+            res.status(200).send(talk);
+    } catch (error) {
+        res.status(400).send(error);
+    }
+  }
+  
 
-module.exports = { createTalk, updateTalk, deleteTalk, getTalks};
+
+module.exports = { createTalk, updateTalk, deleteTalk, getTalks, searchTalk};
