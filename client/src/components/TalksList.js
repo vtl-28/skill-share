@@ -1,9 +1,10 @@
 import React from 'react'
 
-function UserTalksList({talk}){
+function TalksList({talk}){
     const { _id, title, body, date, location, pic } = talk;
     return(
-        <div className='flex justify-between w-full border-red-200 border-y-2 py-2' key={_id}>
+      <a href={`/talk/${_id}`} key={_id} target='blank'>
+          <div className='flex justify-between w-full border-red-200 border-y-2 py-2'>
             <div className='w-1/5'>
                 <img src={pic} alt='logo'/>
             </div>
@@ -16,7 +17,8 @@ function UserTalksList({talk}){
                 <h1>Suggested</h1>
             </div>
         </div>
+      </a>
     )
 }
 
-export default UserTalksList;
+export default TalksList;
