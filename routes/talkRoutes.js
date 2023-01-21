@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { createTalk, updateTalk, deleteTalk, getTalks, searchTalk} = require('../controllers/talkController');
+const { createTalk, updateTalk, deleteTalk, getTalks, searchTalk, getTalk} = require('../controllers/talkController');
 const { authorizeUser } = require('../middlewares/authMiddleware');
 
 //list all talks
@@ -13,6 +13,8 @@ router.put('/edit/:id', authorizeUser, updateTalk);
 router.delete('/delete/:id', deleteTalk);
 //search talk
 router.get('/searchTalk', authorizeUser, searchTalk)
+//get individual talk
+router.get('/:id', authorizeUser, getTalk)
 
 
 

@@ -98,7 +98,23 @@ const searchTalk = async(req, res) => {
         res.status(400).send(error);
     }
   }
+
+  const getTalk = async(req, res) => {
+    debugger;
+    const talkId = req.params.id;
+
+    try {
+        let talk = await Talk.findById({_id: talkId})
+        let hostedByConverted = talk.hostedBy.toString()
+         let host = await User.findById({_id: hostedByConverted})
+         talk.hostedBy = host;
+       
+        res.status(200).send(talk);
+    } catch (error) {
+        res.status(400).send(error);
+    }
+  }
   
 
 
-module.exports = { createTalk, updateTalk, deleteTalk, getTalks, searchTalk};
+module.exports = { createTalk, updateTalk, deleteTalk, getTalks, searchTalk, getTalk};

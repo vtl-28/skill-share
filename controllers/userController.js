@@ -121,7 +121,7 @@ const getTalks = async(req, res) => {
 }
 
 const updateUser = async(req, res) => {
-  debugger;
+  
   const userId = req.params.id;
 
   const { userName,userEmail,userCity,userAbout, userPic } = req.body;
