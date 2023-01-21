@@ -1,27 +1,46 @@
 import React from 'react'
+import { useParams} from 'react-router-dom'
 import Navbar from './Navbar'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faClock,  faCompass } from '@fortawesome/free-regular-svg-icons'
+import { useQuery } from '@tanstack/react-query'
+import { getTalk } from '../components/miscellaneous/Utils';
+
 
 const Talk = () => {
+    const { id } = useParams();
+
+    const { data, error, status, isError } = useQuery({ queryKey: ['userProfile'], queryFn: () => getTalk(id)})
+    if (status === 'loading') {
+        return <div>loading profile</div> // loading state
+      }
+    
+      if (status === 'error') {
+        return <div>{error.message}</div> // error state
+      }
+      const { title, hostedBy, body, talkPic } = data;
+
+      const { _id, name, email, about, profession, hostPic } = hostedBy;
+
+    
   return (
     <div>
       <Navbar />
       <div className='container mx-auto'>
         <div className='flex flex-col mx-28 py-6 border-b-2 border-red-400'>
-            <h1 className='text font-bold text-2xl'>How to do the garden</h1>
+            <h1 className='text font-bold text-2xl'>{title}</h1>
             <div className='flex flex-row mt-4 w-25 justify-between'>
-                <img src='https://randomuser.me/api/portraits/men/83.jpg' alt='logo' 
+                <img src={hostPic} alt='logo' 
                 className='rounded-full'/>
                 <div className='flex flex-col justify-center'>
                     <h1 className='mb-2'>Hosted by</h1>
-                    <h1>Vuyisile Lehola</h1>
+                    <h1>{name}</h1>
                 </div>
             </div>
         </div>
         <div className='grid grid-cols-10 grid-rows-6 h-full pt-6 bg-gray-50'>
             <div className='col-start-2 col-span-4 h-full'>
-                <img src='https://randomuser.me/api/portraits/men/83.jpg' alt='logo'
+                <img src={talkPic} alt='logo'
                     className='w-full'
                 />
                 <h1 className='text-xl font-bold mt-3 mb-4'>Details</h1>
@@ -58,11 +77,11 @@ const Talk = () => {
             </div>
             <div className='col-start-7 col-span-3'>
                 <div className='p-4 border rounded flex'>
-                    <img src='https://randomuser.me/api/portraits/men/83.jpg' alt='logo'
+                    <img src={hostPic} alt='logo'
                             className='w-1/4' />
                     <div className='flex flex-col ml-4'>
-                        <h1 className='font-bold'>Vuyisile Lehola</h1>
-                        <h1 className='mt-2 text-slate-500'>Software developer</h1>
+                        <h1 className='font-bold'>{name}</h1>
+                        <h1 className='mt-2 text-slate-500'>{profession}</h1>
                     </div>
                 </div>
                 <div className='p-4 border rounded flex flex-col justify-between mt-4'>
