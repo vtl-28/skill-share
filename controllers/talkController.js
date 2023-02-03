@@ -33,28 +33,38 @@ const createTalk = async(req, res, next) => {
     }
 }
 
-const updateTalk = (req, res) => {
+const updateTalk = async(req, res) => {
         const talkId = req.params.id;
         console.log(talkId)
 
-        //const { title, body, pic, city } = req.body;
+        const { title, body, pic, city, location, date } = req.body;
+
+        const talk = await Talk.findOne({title: title});
+        if(talk !== null){
+          res.status(404).send('Talk with this title already exists')
+          return;
+        }
 
         let talkParams = {
-            title: req.body.title,
-            body: req.body.body,
-            pic: req.body.pic,
-            city: req.body.city
+            title, body, 
+            pic, city, 
+            location, date
         }
-        console.log(talkParams)
-            Talk.findByIdAndUpdate(talkId,{
-                $set: talkParams,
-            }).then(talk => {
-                console.log(talk)
-                res.status(200).send(talk)  
-            }).catch(error => {
-                console.log(error)
-                res.status(404).send(error)
+
+        Object.keys(talkParams).forEach(detail => {
+            if(talkParams[detail] === ''){
+              delete talkParams[detail]
+            }
+          })
+
+          try {
+            const updatedTalk = await Talk.findByIdAndUpdate(talkId,{
+                $set: talkParams
             })
+            res.status(200).send(updatedTalk)    
+        } catch (error) {
+            res.status(404).send(error)
+        }
 }
 
 const deleteTalk = async(req, res) => {
