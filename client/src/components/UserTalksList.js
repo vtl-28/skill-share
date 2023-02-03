@@ -3,6 +3,8 @@ import { FaAlignJustify, FaPen, FaTrash } from 'react-icons/fa';
 import { Button, Modal, Form, ModalHeader, ModalTitle } from 'react-bootstrap';
 import { TalkContext } from '../Context/TalkProvider';
 import LoadingSpinner from './LoadingSpinner';
+import {updateUserTalk} from './miscellaneous/Utils';
+import {SuccessToast, ErrorToast } from './miscellaneous/Toasts';
 
 
 function EditTalkModal(props){
@@ -21,14 +23,43 @@ function EditTalkModal(props){
 
     const toggleSuccessToast = () => setShowSuccessToast(!showSuccessToast);
     const toggleErrorToast = () => setShowErrorToast(!showErrorToast);
-    const { _id } = user;
-    const { details } = props;
-    console.log(_id);
-    console.log('' + details);
 
-    
-    function updateTalk(){
-        
+
+    const {editTalk} = props
+    const { _id, title: talkTitle, city: talkCity, pic: talkPic, date: talkDate, location: talkLocation, body: talkBody} = editTalk;
+
+    async function updateTalk(e){
+        e.preventDefault();
+        setIsLoading(true);
+
+        const talkDataToUpdate = {
+            title,
+            body,
+            city,
+            location,
+            pic, 
+            date
+        }
+        let response = await updateUserTalk(_id,talkDataToUpdate);
+        const hostDetailsValidation = typeof response === 'object' ? 'yes': 'no';
+
+        if(hostDetailsValidation === 'no'){
+            setIsLoading(false);
+            setErrorMessage(response);
+            toggleErrorToast()
+        }else{
+            setIsLoading(false);
+            setSuccessMessage('Talk details successfully updated')
+            setTitle('')
+            setBody('')
+            setPic('')
+            setDate('')
+            setLocation('')
+            setCity('')
+            toggleSuccessToast();
+        }
+        console.log(response)
+ 
 
     }
     function postDetails(){
@@ -46,29 +77,31 @@ function EditTalkModal(props){
                 <ModalTitle>Edit Talk</ModalTitle>
             </ModalHeader>
           <Modal.Body className='flex'>
+            {showSuccessToast && <SuccessToast message={successMessage} showSuccessToast={showSuccessToast} toggleSuccessToast={toggleSuccessToast}/>}
+            {showErrorToast && <ErrorToast message={errorMessage} showErrorToast={showErrorToast} toggleErrorToast={toggleErrorToast} />}
             <Form>
             <Form.Group className="mb-3" controlId="formBasicEmail">
-                        <Form.Control type="text" onChange={(e) => setTitle(e.target.value)} name="title" placeholder="Title" />
+                        <Form.Control type="text" placeholder={talkTitle} value={title} onChange={(e) => setTitle(e.target.value)} name="title" />
                     </Form.Group>
-                    <textarea onChange={(e) => setBody(e.target.value)} name="body" rows={8} className="w-full" placeholder="Bio" >
+                    <textarea placeholder={talkBody} value={body} onChange={(e) => setBody(e.target.value)} name="body" rows={8} className="w-full" >
 
                     </textarea>
 
                     <Form.Group className="mb-3" controlId="formBasicEmail">
-                        <Form.Control type="text"  onChange={(e) => setLocation(e.target.value)} name="location" placeholder="Venue" />
+                        <Form.Control type="text"  placeholder={talkLocation} value={location} onChange={(e) => setLocation(e.target.value)} name="location"/>
                     </Form.Group>
                     <Form.Group className="mb-3" controlId="formBasicPassword">
-                        <Form.Control type="text"  onChange={(e) => setDate(e.target.value)} name="date" placeholder="Date and time" />
+                        <Form.Control type="text"  placeholder={talkDate} value={date} onChange={(e) => setDate(e.target.value)} name="date"  />
                     </Form.Group>
                     <Form.Group className="mb-3" controlId="formBasicPassword">
-                        <Form.Control type="text"  onChange={(e) => setCity(e.target.value)} name="city" placeholder="City" />
+                        <Form.Control type="text"  placeholder={talkCity} value={city} onChange={(e) => setCity(e.target.value)} name="city" />
                     </Form.Group>
 
                     <Form.Group className="mb-3" name="pic" accept="image/*" onChange={(e) => postDetails(e.target.files[0])}>
                         <Form.Control type="file"/>
                     </Form.Group>
 
-                    <Button type="submit" className="w-full text-black">
+                    <Button type="submit" onClick={updateTalk} className="w-full text-black">
                                     Update Talk {isLoading && <LoadingSpinner />}
                     </Button>
               
@@ -79,9 +112,9 @@ function EditTalkModal(props){
 
 }
 function MyVerticallyCenteredModal(props) {
-    const { user, hostTalks, setHostTalks } = useContext(TalkContext);
     const [modalShow, setModalShow] = React.useState(false);
-    
+    const {talkDetails} = props
+   
     return (
       <Modal
         {...props}
@@ -95,6 +128,7 @@ function MyVerticallyCenteredModal(props) {
                     <FaPen />Edit
                 </a>
                 <EditTalkModal
+                editTalk={talkDetails}
                     show={modalShow}
                     onHide={() => setModalShow(false)}
                 />
