@@ -1,13 +1,17 @@
 import { Button, Container, Nav, Navbar, Form } from "react-bootstrap";
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { TalkContext } from '../Context/TalkProvider';
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
+import { FaBell } from 'react-icons/fa';
 import TalkLoading from "./miscellaneous/TalkLoading";
 
 function NavBar(){
-    const { user, setUser } = useContext(TalkContext);
+  const [notifications, setNotifications] = useState([]);
+  const [open, setOpen] = useState(false);
+
+    const { user, socket } = useContext(TalkContext);
     const [ search , setSearch ] = useState('')
     const [ searchResult , setSearchResult ] = useState([])
     const [ loading, setLoading ] = useState(false)
@@ -16,6 +20,14 @@ function NavBar(){
     console.log(user)
     console.log(_id)
     const api = `/profile/${_id}`;
+
+    useEffect(() => {
+      socket.on("getNotification", (data) => {
+        setNotifications((prev) => [...prev, data]);
+      });
+    }, [socket]);
+
+    console.log(notifications)
 
     function getSearch(){
       return axios.get(`/api/talks/searchTalk?search=${search}`,  {
@@ -28,6 +40,22 @@ function NavBar(){
           return error.response.data
         })
     }
+
+    const displayNotification = ({ senderName, type }) => {
+      // let action;
+  
+      // if (type === 1) {
+      //   action = "liked";
+      // } else if (type === 2) {
+      //   action = "commented";
+      // } else {
+      //   action = "shared";
+      // }
+      return (
+        
+        <li key={senderName._id} className="notification">{`${senderName.name} created a new talk event.`}</li>
+      );
+    };
 
     async function handleSearch(){
       
@@ -83,8 +111,15 @@ function NavBar(){
               style={{ maxHeight: '100px' }}
          
             >
+              
+             
               <Nav.Link href="/hostTalk" className="mr-4">Host talk</Nav.Link>
               <Nav.Link href={api} className="mr-4">Profile</Nav.Link>
+              <Nav.Link href="#" className="mr-4" onClick={() => setOpen(!open)}>{notifications.length}<FaBell className="inline"/></Nav.Link>
+              { open && <ul className="notifications">
+                {notifications.map((n) => displayNotification(n))}
+                
+              </ul> }
               <Nav.Link href="/" onClick={() => {
                  localStorage.removeItem('userInfo');
                  navigate('/')

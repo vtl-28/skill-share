@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from "react";
 import NavBar from './Navbar';
 import Emoji from 'a11y-react-emoji';
 import Calendar from 'react-calendar';
-import OtherTalks from './OtherTalks'
+import OtherTalks from './TalksList'
 import { TalkContext } from '../Context/TalkProvider';
 import axios from "axios";
 import UserTalksList from "./UserTalksList";
@@ -10,18 +10,27 @@ import { useQuery } from "@tanstack/react-query";
 import {displayTalks} from './miscellaneous/DisplayItems'
 import {fetchTalks} from './miscellaneous/Utils'
 
+
 function Dashboard(){
-    const [value, onChange] = useState(new Date());
-    const { user } = useContext(TalkContext);
+ 
+  const [value, onChange] = useState(new Date());
+  const [ componentLoaded, setComponentLoaded ] = useState(false)
+  const { user, socket } = useContext(TalkContext);
+
+  useEffect(() => {
+    socket?.emit('newUser', user);
+  }, [ socket, user]);
+
+   
 
     const { data, error, status, isError } = useQuery({ queryKey: ['talks'], queryFn: fetchTalks})
     if (status === 'loading') {
         return <div>loading talks</div> // loading state
       }
-    
-      if (status === 'error') {
+      if(status === 'error') {
         return <div>{error.message}</div> // error state
       }
+   
 
       const hostedTalksPlaceholder = (
         <div>
@@ -36,7 +45,7 @@ function Dashboard(){
       )
     return(
       <div>
-        <NavBar />
+        <NavBar/>
         <div className="container">
         <h1 className="text-xl mt-11">Welcome, {user ? user.name : ''} <Emoji symbol="👋" label="Hey"/></h1>
           <div className="grid h-full grid-cols-12 grid-rows-6">
@@ -52,7 +61,6 @@ function Dashboard(){
                 </div>
               </div>
               <div className="flex flex-col col-span-4 col-start-1 mt-8">
-               
               </div>
             </div>
             <div className="col-span-7 col-start-6 mt-8">

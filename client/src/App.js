@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Routes, Route } from "react-router-dom";
 import LogIn from './components/LogIn';
 import Dashboard from './components/Dashboard';
@@ -9,7 +9,10 @@ import SignUp from './components/SignUp';
 import HostProfile from './components/HostProfile';
 
 
+
 function App() {
+  
+
   return (
     <div className="App">
      <Routes>
@@ -17,8 +20,9 @@ function App() {
       <Route path="/signup" element={<SignUp />} />
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/hostTalk" element={<HostTalk />} />
-      <Route path="/host" element={<Host />} />
+      <Route path="/host/:id" element={<Host />} />
       <Route path="/profile/:id" element={<HostProfile />} />
+      <Route path="/talk/:id" element={<Talk />} />
 
      </Routes>
     </div>

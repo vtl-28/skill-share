@@ -1,14 +1,21 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate} from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { io } from 'socket.io-client';
 
-export const TalkContext = createContext(null);
+export const TalkContext = createContext();
 
 const TalkProvider = ({ children }) => {
-  const [userTalks, setUserTalks] = useState([]);
+  const [socket, setSocket] = useState(null);
+  const [hostTalks, setHostTalks] = useState([]);
+  const [allTalks, setAllTalks] = useState([]);
   const [user, setUser] = useState({});
   const [notification, setNotification] = useState([]);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    setSocket(io("http://localhost:3001"));
+  }, []);
 
   useEffect(() => {
     const userInfo = JSON.parse(localStorage.getItem("userInfo"));
@@ -29,11 +36,15 @@ const TalkProvider = ({ children }) => {
   return (
     <TalkContext.Provider
       value={{
-        userTalks,
-        setUserTalks,
+        hostTalks,
+        setHostTalks,
         user,
         notification,
-        setNotification
+        allTalks,
+        setAllTalks,
+        setNotification,
+        socket, 
+        setSocket
       }}
     >
       {children}
