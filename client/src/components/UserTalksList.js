@@ -5,6 +5,7 @@ import { TalkContext } from '../Context/TalkProvider';
 import LoadingSpinner from './LoadingSpinner';
 import {updateUserTalk} from './miscellaneous/Utils';
 import {SuccessToast, ErrorToast } from './miscellaneous/Toasts';
+import axios from 'axios';
 
 
 function EditTalkModal(props){
@@ -113,7 +114,8 @@ function EditTalkModal(props){
 }
 function MyVerticallyCenteredModal(props) {
     const [modalShow, setModalShow] = React.useState(false);
-    const {talkDetails} = props
+    const {talkDetails} = props;
+    const { deleteTalk } = props;
    
     return (
       <Modal
@@ -132,7 +134,7 @@ function MyVerticallyCenteredModal(props) {
                     show={modalShow}
                     onHide={() => setModalShow(false)}
                 />
-                <a href='#' className='flex w-1/3 justify-around'>
+                <a href='#' onClick={deleteTalk} name={talkDetails._id}  className='flex w-1/3 justify-around'>
                     <FaTrash />Delete
                 </a>
             </div>
@@ -141,7 +143,7 @@ function MyVerticallyCenteredModal(props) {
     );
   }
 
-function UserTalksList({talk}){
+function UserTalksList({talk, deleteTalk}){
     const [modalShow, setModalShow] = React.useState(false);
 
     const { _id, title, body, date, location, pic } = talk;
@@ -159,6 +161,7 @@ function UserTalksList({talk}){
                 <a href='#' onClick={() => setModalShow(true)}><FaAlignJustify /></a>
                 <MyVerticallyCenteredModal
                 talkDetails={talk}
+                deleteTalk={deleteTalk}
                     show={modalShow}
                     onHide={() => setModalShow(false)}
                 />
