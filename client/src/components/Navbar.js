@@ -9,6 +9,7 @@ import TalkLoading from "./miscellaneous/TalkLoading";
 
 function NavBar(){
   const [notifications, setNotifications] = useState([]);
+  const [tempNotifications, setTempNotifications] = useState([]);
   const [open, setOpen] = useState(false);
 
     const { user, socket } = useContext(TalkContext);
@@ -23,11 +24,17 @@ function NavBar(){
 
     useEffect(() => {
       socket.on("getNotification", (data) => {
-        setNotifications((prev) => [...prev, data]);
+        setTempNotifications((notifications) => [...notifications, data]);
       });
     }, [socket]);
 
-    console.log(notifications)
+    tempNotifications.forEach(n => {
+      if(!notifications.includes(n)){
+        notifications.push(n)
+      }
+      console.log(notifications)
+    })
+
 
     function getSearch(){
       return axios.get(`/api/talks/searchTalk?search=${search}`,  {
@@ -41,7 +48,7 @@ function NavBar(){
         })
     }
 
-    const displayNotification = ({ senderName, type }) => {
+    const displayNotification = ({ sender, type, resp }) => {
       // let action;
   
       // if (type === 1) {
@@ -51,9 +58,9 @@ function NavBar(){
       // } else {
       //   action = "shared";
       // }
+  
       return (
-        
-        <li key={senderName._id} className="notification">{`${senderName.name} created a new talk event.`}</li>
+        <a className="notification" key={sender._id} href={`/talk/${resp._id}`}> {`${sender.name} created a new talk event.`}</a>
       );
     };
 

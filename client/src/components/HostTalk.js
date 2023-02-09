@@ -14,7 +14,7 @@ const HostTalk = () => {
     const talkDetails = `   What's the purpose of the talk? 
     Who should join? 
     What will you do at your talks?`
-    const { user } = useContext(TalkContext);
+    const { user, socket } = useContext(TalkContext);
     const [title, setTitle] = useState('');
     const [body, setBody] = useState('');
     const [location, setLocation] = useState('');
@@ -27,11 +27,11 @@ const HostTalk = () => {
     const [successMessage, setSuccessMessage] = useState("");
     const [errorMessage, setErrorMessage] = useState([]);
     const [ showHostTalks, setShowHostTalks ] = useState(true)
+    const [disabled, setDisabled] = useState(false);
 
     const toggleSuccessToast = () => setShowSuccessToast(!showSuccessToast);
     const toggleErrorToast = () => setShowErrorToast(!showErrorToast);
     const { _id } = user;
- 
 
     const { data: userTalks, error, status, isError } = useQuery({ queryKey: ['userChats'], queryFn: () => fetchHostTalks(_id)})
     if (status === 'loading') {
@@ -41,18 +41,27 @@ const HostTalk = () => {
       if (status === 'error') {
         return <div>{error.message}</div> // error state
       }
-     const saySomething = (<div>You have not hosted any talks. Talks you have hosted will appear here</div>)
+    
+     const caveat = (<div>You have not hosted any talks. Talks you have hosted will appear here</div>)
       
 
-
+    const handleNotification = (type, resp) => {
+        socket?.emit("sendNotification", {
+            sender: user,
+            type,
+            resp
+          });
+    }
     const submitForm = async(e) => {
         e.preventDefault();
+
         setIsLoading(true);
 
         const data = {
             title, body, pic,location, city, date
         }
 
+     
         let response = await addHostTalk(data)
         const hostDetailsValidation = typeof response === 'object' ? 'yes' : 'no' 
 
@@ -60,9 +69,10 @@ const HostTalk = () => {
             setIsLoading(false);
             setErrorMessage(response)
             toggleErrorToast() 
-        }else{
+        }else{    
             setIsLoading(false);
             setSuccessMessage("Successfully created talk");
+            handleNotification(1, response)
             setTitle('')
             setBody('')
             setPic('')
@@ -73,7 +83,12 @@ const HostTalk = () => {
         }
        
     }
-
+    function deleteTalk(e){
+        axios.delete(`/api/talks/delete/${e.target.name}`);
+        userTalks.filter((talks) => talks._id !== e.target.name);
+      
+    }
+    
     const postDetails = async(pics) => {
         setIsLoading(true);
         if (pics === undefined) {
@@ -112,13 +127,13 @@ const HostTalk = () => {
             
             <div className='col-span-5 col-start-1'>
 
-               {userTalks.length > 1 ? displayHostTalks(userTalks) : saySomething }
+               {userTalks.length > 0 ? displayHostTalks(userTalks, deleteTalk) : caveat }
             </div>
             {showSuccessToast && <SuccessToast message={successMessage} showSuccessToast={showSuccessToast} toggleSuccessToast={toggleSuccessToast}/>}
             {showErrorToast && <ErrorToast message={errorMessage} showErrorToast={showErrorToast} toggleErrorToast={toggleErrorToast} />}
             <div className='col-span-5 col-start-7'>
                 <h1 className='mb-4 text-center'>Fill in the form below to host your own talk</h1>
-                <Form>
+                <Form onSubmit={submitForm}>
                     <Form.Group className="mb-3" controlId="formBasicEmail">
                         <Form.Control type="text" value={title} onChange={(e) => setTitle(e.target.value)} name="title" placeholder="Enter the title of the talk" />
                     </Form.Group>
@@ -140,7 +155,7 @@ const HostTalk = () => {
                         <Form.Control type="file"/>
                     </Form.Group>
 
-                    <Button type="submit" className="w-full text-black" onClick={submitForm}>
+                    <Button type="submit" className="w-full text-black">
                                     Submit {isLoading && <LoadingSpinner />}
                     </Button>
                 </Form>
