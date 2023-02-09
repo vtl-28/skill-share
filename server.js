@@ -45,10 +45,11 @@ io.on("connection", (socket) => {
     let name = user ? user.name : ''
     addNewUser(name, socket.id)
   })
-  socket.on('sendNotification', ({senderName, type}) => {
+  socket.on('sendNotification', ({sender, type, resp}) => {
     socket.broadcast.emit('getNotification', {
-      senderName,
-      type
+      sender,
+      type,
+      resp
     })
   })
 
