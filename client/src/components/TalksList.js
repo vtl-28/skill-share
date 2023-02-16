@@ -8,13 +8,6 @@ function TalksList({talk}){
     console.log(_id)
     const [ text, setText ] = useState('');
 
-    const likeTalk = ()=>{
-        like(_id)
-  }
-
-  const unlikeTalk = ()=>{
-    unlike(_id)
-}
 
   const submitComment = (e) => {
     e.preventDefault()
@@ -45,11 +38,11 @@ function TalksList({talk}){
             </div>
             <div className='flex flex-col mt-4 w-50 self-center'>
                     <div className='flex w-1/5'>
-                        <a href="#" onClick={likeTalk} className='text-red-500'><FaHeart/></a>
-                        <a href="#" onClick={unlikeTalk} className='ml-2 text-red-500'><FaHeartBroken/></a>
+                        <a href="#" onClick={() => like(_id)} className='text-red-500'><FaHeart/></a>
+                        <a href="#" onClick={() => unlike(_id)} className='ml-2 text-red-500'><FaHeartBroken/></a>
                     </div>
                     <div>
-                    <h3>likes</h3>
+                    <h3>{likes.length}likes</h3>
 {/*                 
                                 {
                                     comments.map(comment=>{

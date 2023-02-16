@@ -23,13 +23,18 @@ function Dashboard(){
 
    
 
-    const { data, error, status, isError } = useQuery({ queryKey: ['talks'], queryFn: fetchTalks})
+    const { data, error, status, isError } = useQuery({ queryKey: ['talks'], queryFn: fetchTalks,
+            refetchOnMount: true,
+            refetchInterval: 2000,
+            refetchIntervalInBackground: true,
+            refetchOnWindowFocus: true})
     if (status === 'loading') {
         return <div>loading talks</div> // loading state
       }
       if(status === 'error') {
         return <div>{error.message}</div> // error state
       }
+    
    
 
       const hostedTalksPlaceholder = (
