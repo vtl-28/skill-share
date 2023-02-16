@@ -113,7 +113,7 @@ const getTalks = async(req, res) => {
   const { _id } = req.user._id
   //console.log(req.user)
       try {
-        const talks = await Talk.find({hostedBy: mongoose.Types.ObjectId(_id)}).populate('hostedBy', '_id name email pic city body profession')
+        const talks = await Talk.find({hostedBy: mongoose.Types.ObjectId(_id)}).sort({'createdAt': -1}).populate('hostedBy', '_id name email pic city body profession')
         res.status(200).send(talks);
       } catch (error) {
         res.status(400).send(error);

@@ -79,7 +79,7 @@ const deleteTalk = async(req, res) => {
 }
 
 const getTalks = (req, res) => {
-    Talk.find({}).then(talks => {
+    Talk.find({}).sort({'createdAt': -1}).then(talks => {
         res.status(200).send(talks);
     }).catch(error => {
         res.status(400).send(error);
@@ -110,7 +110,6 @@ const searchTalk = async(req, res) => {
   }
 
   const getTalk = async(req, res) => {
-    debugger;
     const talkId = req.params.id;
 
     try {
@@ -124,7 +123,63 @@ const searchTalk = async(req, res) => {
         res.status(400).send(error);
     }
   }
+
+  const like = async(req, res) => {
+    //const talkId = req.params.id;
+    const talkId = req.body.talkId;
+    Talk.findByIdAndUpdate(talkId,{
+        $push:{likes:req.user._id}
+    },{
+        new:true
+    }).exec((err,result)=>{
+        if(err){
+            return res.status(422).json({error:err})
+        }else{
+            res.json(result)
+        }
+    })
+  }
+
+  const unlike = async(req, res) => {
+    //const talkId = req.params.id;
+    const talkId = req.body.talkId;
+    Talk.findByIdAndUpdate(talkId,{
+        $pull:{likes:req.user._id}
+    },{
+        new:true
+    }).exec((err,result)=>{
+        if(err){
+            return res.status(422).json({error:err})
+        }else{
+            res.json(result)
+        }
+    })
+  }
+
+  const comment = async(req, res) => {
+    const talkId = req.params.id;
+    const comment = {
+        text:req.body.text,
+        postedBy:req.user._id
+    }
+    Talk.findByIdAndUpdate(talkId,{
+        $push:{comments:comment}
+    },{
+        new:true
+    })
+    .populate("comments.postedBy","_id name")
+    .populate("hostedBy","_id name")
+    .exec((err,result)=>{
+        if(err){
+            return res.status(422).json({error:err})
+        }else{
+            res.json(result)
+        }
+    })
+
+
+  }
   
 
 
-module.exports = { createTalk, updateTalk, deleteTalk, getTalks, searchTalk, getTalk};
+module.exports = { createTalk, updateTalk, deleteTalk, getTalks, searchTalk, getTalk, like, unlike, comment};
