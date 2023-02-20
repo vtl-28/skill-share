@@ -28,6 +28,13 @@ function NavBar(){
       });
     }, [socket]);
 
+    useEffect(() => {
+      socket.on('getLikeNotification', (data) => {
+        setTempNotifications((notifications) => [...notifications, data]);
+        console.log(data)
+      })
+    }, [socket]);
+
     tempNotifications.forEach(n => {
       if(!notifications.includes(n)){
         notifications.push(n)
@@ -47,8 +54,20 @@ function NavBar(){
           return error.response.data
         })
     }
+    function markAsRead(e){
+      notifications.filter((notif) => notif.id !== e.target.name);
+      
+      if(notifications.length < 1){
+        console.log('Marked')
+        console.log(notifications)
+      }else{
+        console.log('Failed')
+        console.log(notifications)
+      }
+     
+    }
 
-    const displayNotification = ({ sender, type, resp }) => {
+    const displayNotification = ({ id, sender, type, resp }) => {
       // let action;
   
       // if (type === 1) {
@@ -60,7 +79,13 @@ function NavBar(){
       // }
   
       return (
-        <a className="notification" key={sender._id} href={`/talk/${resp._id}`}> {`${sender.name} created a new talk event.`}</a>
+        <div key={id} className="notification" >
+            <p>{`${sender.name} created a new talk event.`}</p>
+            <div className="flex w-full justify-between px-2">
+              <a href="#" name={id} onClick={markAsRead}>Mark as read</a>
+              <a href={`/talk/${resp._id}`} target="blank" className="w-1/2 text-center">Open notification</a>
+            </div>
+        </div>
       );
     };
 
@@ -122,7 +147,7 @@ function NavBar(){
              
               <Nav.Link href="/hostTalk" className="mr-4">Host talk</Nav.Link>
               <Nav.Link href={api} className="mr-4">Profile</Nav.Link>
-              <Nav.Link href="#" className="mr-4" onClick={() => setOpen(!open)}>{notifications.length}<FaBell className="inline"/></Nav.Link>
+              <Nav.Link href="#" className="mr-4" onClick={() => setOpen(!open)}>{notifications.length > 0 ? notifications.length : ''}<FaBell className="inline"/></Nav.Link>
               { open && <ul className="notifications">
                 {notifications.map((n) => displayNotification(n))}
                 

@@ -33,7 +33,13 @@ const HostTalk = () => {
     const toggleErrorToast = () => setShowErrorToast(!showErrorToast);
     const { _id } = user;
 
-    const { data: userTalks, error, status, isError } = useQuery({ queryKey: ['userChats'], queryFn: () => fetchHostTalks(_id)})
+    let { data: userTalks, error, status, isError } = useQuery({ queryKey: ['userChats'], queryFn: () => fetchHostTalks(_id), 
+            enabled: true,
+            refetchOnMount: true,
+            refetchInterval: 2000,
+            refetchIntervalInBackground: true,
+            refetchOnWindowFocus: true
+        })
     if (status === 'loading') {
         return <div>loading user talks...</div> // loading state
       }
@@ -86,7 +92,6 @@ const HostTalk = () => {
     function deleteTalk(e){
         axios.delete(`/api/talks/delete/${e.target.name}`);
         userTalks.filter((talks) => talks._id !== e.target.name);
-      
     }
     
     const postDetails = async(pics) => {

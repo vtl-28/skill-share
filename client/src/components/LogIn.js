@@ -34,12 +34,12 @@ function Home(){
        const hostDetailsValidation = typeof response === 'object' ? 'yes' : 'no' 
        
         if(hostDetailsValidation === 'no'){
-            console.log(response)
+            //console.log(response)
             setIsLoading(false);
             setErrorMessage(response)
             toggleErrorToast() 
         }else{
-            console.log(response)
+            //console.log(response)
             setIsLoading(false);
             navigate("/dashboard", {state: response});
         }

@@ -18,9 +18,9 @@ const Talk = () => {
       if (status === 'error') {
         return <div>{error.message}</div> // error state
       }
-      const { title, hostedBy, body, talkPic } = data;
+      const { title, hostedBy, body, pic } = data;
 
-      const { _id, name, email, about, profession, hostPic } = hostedBy;
+      const { _id: hostId, name, email, about, profession, pic: hostPic } = hostedBy;
 
     
   return (
@@ -29,10 +29,10 @@ const Talk = () => {
       <div className='container mx-auto'>
         <div className='flex flex-col mx-28 py-6 border-b-2 border-red-400'>
             <h1 className='text font-bold text-2xl'>{title}</h1>
-            <div className='flex flex-row mt-4 w-25 justify-between'>
-                <img src={hostPic} alt='logo' 
-                className='rounded-full'/>
-                <div className='flex flex-col justify-center'>
+            <div className='flex flex-row mt-4 justify-content-around w-1/5'>
+                <a href={`/host/${hostId}`}><img src={hostPic} alt='logo' 
+                className='rounded-full' target='blank'/></a>
+                <div className='flex flex-col justify-center ml-4'>
                     <h1 className='mb-2'>Hosted by</h1>
                     <h1>{name}</h1>
                 </div>
@@ -40,7 +40,7 @@ const Talk = () => {
         </div>
         <div className='grid grid-cols-10 grid-rows-6 h-full pt-6 bg-gray-50'>
             <div className='col-start-2 col-span-4 h-full'>
-                <img src={talkPic} alt='logo'
+                <img src={pic} alt='logo'
                     className='w-full'
                 />
                 <h1 className='text-xl font-bold mt-3 mb-4'>Details</h1>
