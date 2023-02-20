@@ -8,6 +8,7 @@ const path = require("path");
 const cors = require("cors");
 const { createServer } = require("http");
 const { Server } = require("socket.io");
+const { v4: uuidv4 } = require('uuid')
 
 const PORT = process.env.PORT || 3001;
 const app = express();
@@ -47,11 +48,32 @@ io.on("connection", (socket) => {
   })
   socket.on('sendNotification', ({sender, type, resp}) => {
     socket.broadcast.emit('getNotification', {
+      id: uuidv4(),
       sender,
       type,
       resp
     })
   })
+
+  socket.on('likeTalk', ({sender, response}) => {
+    const receiver = getUser(response.hostedBy.name);
+    console.log(receiver)
+
+    socket.join(receiver.socketId)
+
+    io.to(receiver.socketId).emit('getLikeNotification', {
+      id: uuidv4(),
+      sender,
+      response
+    })
+
+  })
+  // socket.on('unlikeTalk', ({sender, response}) => {
+  //  debugger;
+  //   console.log(response)
+  //   console.log(response.hostedBy)
+  //   console.log(response.hostedBy.name)
+  // })
 
   socket.on('disconnect', () => {
     removeUser(socket.id)
