@@ -79,7 +79,7 @@ const deleteTalk = async(req, res) => {
 }
 
 const getTalks = (req, res) => {
-    Talk.find({}).sort({'createdAt': -1}).then(talks => {
+    Talk.find({}).sort({'createdAt': -1}).populate('hostedBy', '_id name').then(talks => {
         res.status(200).send(talks);
     }).catch(error => {
         res.status(400).send(error);
@@ -127,33 +127,35 @@ const searchTalk = async(req, res) => {
   const like = async(req, res) => {
     //const talkId = req.params.id;
     const talkId = req.body.talkId;
-    Talk.findByIdAndUpdate(talkId,{
-        $push:{likes:req.user._id}
-    },{
-        new:true
-    }).exec((err,result)=>{
-        if(err){
-            return res.status(422).json({error:err})
-        }else{
-            res.json(result)
-        }
-    })
+
+    try {
+        const talk = await Talk.findByIdAndUpdate(talkId,{
+            $push:{likes:req.user._id}
+        },{
+            new:true
+        }).populate('hostedBy', '_id name email pic')
+        //console.log(talk)
+        res.status(200).send(talk)
+    } catch (error) {
+        res.status(404).send(error)
+    }
+   
   }
 
   const unlike = async(req, res) => {
     //const talkId = req.params.id;
     const talkId = req.body.talkId;
-    Talk.findByIdAndUpdate(talkId,{
-        $pull:{likes:req.user._id}
-    },{
-        new:true
-    }).exec((err,result)=>{
-        if(err){
-            return res.status(422).json({error:err})
-        }else{
-            res.json(result)
-        }
-    })
+    try {
+        const talk = await Talk.findByIdAndUpdate(talkId,{
+            $pull:{likes:req.user._id}
+        },{
+            new:true
+        }).populate('hostedBy', '_id name email pic')
+        //console.log(talk)
+        res.status(200).send(talk)
+    } catch (error) {
+        res.status(404).send(error)
+    }
   }
 
   const comment = async(req, res) => {
