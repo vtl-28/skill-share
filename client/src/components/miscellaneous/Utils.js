@@ -134,3 +134,15 @@ export function fetchUser(id){
         return error.response.data
     })
   }
+
+  export function comment(_id, data){
+    return axios.put(`api/talks/comment/${_id}`, data, { headers: {
+        'Authorization':"Bearer "+localStorage.getItem("jwt").replace(/"/g,"")
+    }}).then(response => {
+        console.log(response.data)
+        return response.data;       
+    }).catch(error => {
+        console.log(error.response.data)
+        return error.response.data
+    })
+  }
