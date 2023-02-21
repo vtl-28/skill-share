@@ -196,7 +196,24 @@ const searchTalk = async(req, res) => {
         res.status(404).send(error)
     }
   }
+
+  const cancelTalk = async(req, res) => {
+    const talkId = req.body.talkId;
+    try {
+        const talk = await Talk.findByIdAndUpdate(talkId,{
+            $pull:{attendants:req.user._id}
+        },{
+            new:true
+        }).populate('hostedBy', '_id name email pic')
+        .populate('attendants', '_id name email')
+        console.log(talk)
+        res.status(200).send(talk)
+    } catch (error) {
+        res.status(404).send(error)
+    }
+  }
+
   
 
 
-module.exports = { createTalk, updateTalk, deleteTalk, getTalks, searchTalk, getTalk, like, unlike, comment, attendTalk};
+module.exports = { createTalk, updateTalk, deleteTalk, getTalks, searchTalk, getTalk, like, unlike, comment, attendTalk, cancelTalk};
