@@ -158,3 +158,15 @@ export function fetchUser(id){
         return error.response.data
     })
   }
+
+  export function cancelTalk(_id){
+    return axios.put(`/api/talks/cancel`, {
+        talkId: _id
+    }, { headers: {
+        'Authorization':"Bearer "+localStorage.getItem("jwt").replace(/"/g,"")
+    }}).then(response => {
+        return response.data;       
+    }).catch(error => {
+        return error.response.data
+    })
+  }

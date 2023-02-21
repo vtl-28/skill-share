@@ -1,15 +1,17 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import { useParams} from 'react-router-dom'
 import Navbar from './Navbar'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faClock,  faCompass } from '@fortawesome/free-regular-svg-icons'
 import { useQuery } from '@tanstack/react-query'
-import { getTalk, attendTalk } from '../components/miscellaneous/Utils';
+import { getTalk, attendTalk, cancelTalk } from '../components/miscellaneous/Utils';
 import { ErrorToast, SuccessToast } from './miscellaneous/Toasts'
-
+import AttendNavbar from '../components/AttendNavbar'
+import { TalkContext } from '../Context/TalkProvider';
 
 const Talk = () => {
     const { id } = useParams();
+    const { user, socket } = useContext(TalkContext);
     const [showSuccessToast, setShowSuccessToast] = useState(false);
     const [showErrorToast, setShowErrorToast] = useState(false);
     const [successMessage, setSuccessMessage] = useState("");
@@ -17,7 +19,13 @@ const Talk = () => {
     const toggleSuccessToast = () => setShowSuccessToast(!showSuccessToast);
     const toggleErrorToast = () => setShowErrorToast(!showErrorToast);
 
-    const { data, error, status, isError } = useQuery({ queryKey: ['userProfile'], queryFn: () => getTalk(id)})
+    const { data, error, status, isError } = useQuery({ queryKey: ['userProfile'], queryFn: () => getTalk(id),
+    enabled: true,
+    refetchOnMount: true,
+    refetchInterval: 2000,
+    refetchIntervalInBackground: true,
+    refetchOnWindowFocus: true })
+    
     if (status === 'loading') {
         return <div>loading profile</div> // loading state
       }
@@ -25,21 +33,43 @@ const Talk = () => {
       if (status === 'error') {
         return <div>{error.message}</div> // error state
       }
-      const { _id, title, hostedBy, body, pic } = data;
+      const { _id, title, hostedBy, body, pic, date, attendants } = data;
 
       const { _id: hostId, name, email, about, profession, pic: hostPic } = hostedBy;
 
       async function bookSeat(e){
         e.preventDefault();
-        const response = await attendTalk(_id)
+        if(attendants.includes(user._id)){
+            setErrorMessage("You are already attending this talk event")
+            toggleErrorToast();
+            return;
+        }else{
+            const response = await attendTalk(_id)
 
+            const hostDetailsValidation = typeof response === 'object' ? 'yes' : 'no' 
+    
+            if(hostDetailsValidation === 'no'){
+                setErrorMessage(response)
+                toggleErrorToast() 
+            }else{    
+                setSuccessMessage("You have successfully booked a seat for the talk event");
+                toggleSuccessToast(); 
+            }
+        }
+        
+      }
+     async function cancelSeat(e){
+        e.preventDefault();
+
+        const response = await cancelTalk(_id)
+        console.log(response)
         const hostDetailsValidation = typeof response === 'object' ? 'yes' : 'no' 
 
         if(hostDetailsValidation === 'no'){
             setErrorMessage(response)
             toggleErrorToast() 
         }else{    
-            setSuccessMessage("You have successfully booked a seat for the talk event");
+            setSuccessMessage("You have successfully cancelled your seat for the talk event");
             toggleSuccessToast(); 
         }
       }
@@ -59,7 +89,7 @@ const Talk = () => {
                 </div>
             </div>
         </div>
-        <div className='grid h-full grid-cols-10 grid-rows-6 pt-6 bg-gray-50'>
+        <div className='grid h-full grid-cols-10 pt-6 bg-gray-50'>
             <div className='h-full col-span-4 col-start-2'>
                 <img src={pic} alt='logo'
                     className='w-full'
@@ -119,6 +149,11 @@ const Talk = () => {
                 {showErrorToast && <ErrorToast message={errorMessage} showErrorToast={showErrorToast} toggleErrorToast={toggleErrorToast} />}
             </div>
         </div>
+       <div className='grid grid-cols-10'>
+            <div className='col-span-8 col-start-2'>
+                <AttendNavbar title={title} date={date} attendants={attendants} book={bookSeat} cancel={cancelSeat}/>
+            </div> 
+       </div>
         
       </div>
     </div>
