@@ -7,7 +7,7 @@ import { TalkContext } from '../Context/TalkProvider';
 
 function TalksList({talk}){
     const { user, socket } = useContext(TalkContext);
-    const { _id, title, body, date, location, pic, comments, likes, hostedBy } = talk;
+    const { _id, title, body, date, location, pic, comments, likes, hostedBy, attendants } = talk;
     console.log(_id)
     const [ isLiked, setIsLiked ] = useState({})
     const [ text, setText ] = useState('');
@@ -57,21 +57,21 @@ function TalksList({talk}){
       <div key={_id}>
           {showSuccessToast && <SuccessToast message={successMessage} showSuccessToast={showSuccessToast} toggleSuccessToast={toggleSuccessToast}/>}
          {showErrorToast && <ErrorToast message={errorMessage} showErrorToast={showErrorToast} toggleErrorToast={toggleErrorToast} />}
-          <div className='flex flex-col border-red-200 border-y-2 py-2'>
-            <div className='justify-around flex w-full '>
+          <div className='flex flex-col py-2 border-red-200 border-y-2'>
+            <div className='flex justify-around w-full '>
                 <div className='w-1/5 border-2 border-green-500'>
                    <a href={`/talk/${_id}`} target='blank'><img src={pic} alt="talk logo"/></a>
                 </div>
-                <div className='w-1/2 flex flex-col border-2 border-green-500'>
+                <div className='flex flex-col w-1/2 border-2 border-green-500'>
                     <h4 className='mb-2'>{date}</h4>
                     <h4 className='mb-2'>{title}</h4>
                     <h4>{location}</h4>
                 </div>
-                <div className='w-1/5 border-green-500 border-2'>
-                    <h1>Attendees</h1>
+                <div className='w-1/5 border-2 border-green-500'>
+                    <h1>{attendants ? attendants.length : ''} Attendants</h1>
                 </div>
             </div>
-            <div className='flex flex-col mt-4 w-50 self-center'>
+            <div className='flex flex-col self-center mt-4 w-50'>
                     <div className='flex w-1/5'>
                     { likes.includes(user._id) ?  
                     <a href="#" onClick={() => unlikeTalk()} className='ml-2 text-red-500'><FaHeartBroken/></a> :

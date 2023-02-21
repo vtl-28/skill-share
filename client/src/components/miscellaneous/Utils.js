@@ -146,3 +146,15 @@ export function fetchUser(id){
         return error.response.data
     })
   }
+
+  export function attendTalk(_id){
+    return axios.put(`/api/talks/attend`, {
+        talkId: _id
+    }, { headers: {
+        'Authorization':"Bearer "+localStorage.getItem("jwt").replace(/"/g,"")
+    }}).then(response => {
+        return response.data;       
+    }).catch(error => {
+        return error.response.data
+    })
+  }
