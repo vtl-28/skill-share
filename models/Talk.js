@@ -22,10 +22,12 @@ const talkSchema = mongoose.Schema({
         type: Date, required: true
       },
     likes:[{type: mongoose.Schema.Types.ObjectId, ref:"User"}],
-    unlikes: [{type: mongoose.Schema.Types.ObjectId, ref:"User"}],
     comments:[{
-        text: {type: "String"},
+        text: {type: "String", required: true, trim: true},
         postedBy:{type: mongoose.Schema.Types.ObjectId, ref:"User"}
+    }],
+    attendants: [{
+      type: mongoose.Schema.Types.ObjectId, ref:"User"
     }]
 },
 {

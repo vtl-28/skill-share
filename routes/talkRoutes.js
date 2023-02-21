@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { createTalk, updateTalk, deleteTalk, getTalks, searchTalk, getTalk, like, unlike, comment} = require('../controllers/talkController');
+const { createTalk, updateTalk, deleteTalk, getTalks, searchTalk, getTalk, like, unlike, comment, attendTalk} = require('../controllers/talkController');
 const { authorizeUser } = require('../middlewares/authMiddleware');
 
 //list all talks
@@ -20,7 +20,9 @@ router.put('/like', authorizeUser, like);
 
 router.put('/unlike', authorizeUser, unlike);
 
-router.post('/comment/:id', authorizeUser, comment)
+router.put('/comment/:id', authorizeUser, comment);
+
+router.put('/attend', authorizeUser, attendTalk);
 
 
 

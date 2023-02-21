@@ -164,24 +164,39 @@ const searchTalk = async(req, res) => {
         text:req.body.text,
         postedBy:req.user._id
     }
-    Talk.findByIdAndUpdate(talkId,{
+   try {
+    const talk = await Talk.findByIdAndUpdate(talkId,{
         $push:{comments:comment}
     },{
         new:true
     })
-    .populate("comments.postedBy","_id name")
-    .populate("hostedBy","_id name")
-    .exec((err,result)=>{
-        if(err){
-            return res.status(422).json({error:err})
-        }else{
-            res.json(result)
-        }
-    })
+    .populate("comments.postedBy","_id name email")
+    .populate("hostedBy","_id name email")
+    console.log(talk)
+    res.status(200).send(talk)
+   } catch (error) {
+    res.status(404).send(error)
+   }
 
 
+  }
+
+  const attendTalk = async(req, res) => {
+    const talkId = req.body.talkId;
+    try {
+        const talk = await Talk.findByIdAndUpdate(talkId,{
+            $push:{attendants:req.user._id}
+        },{
+            new:true
+        }).populate('hostedBy', '_id name email pic')
+        .populate('attendants', '_id name email')
+        console.log(talk)
+        res.status(200).send(talk)
+    } catch (error) {
+        res.status(404).send(error)
+    }
   }
   
 
 
-module.exports = { createTalk, updateTalk, deleteTalk, getTalks, searchTalk, getTalk, like, unlike, comment};
+module.exports = { createTalk, updateTalk, deleteTalk, getTalks, searchTalk, getTalk, like, unlike, comment, attendTalk};
