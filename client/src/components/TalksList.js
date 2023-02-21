@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, { useState, useContext } from 'react'
 import { FaHeart, FaHeartBroken } from 'react-icons/fa';
-import { like, unlike } from '../components/miscellaneous/Utils';
+import { like, unlike, comment } from '../components/miscellaneous/Utils';
 import { SuccessToast, ErrorToast } from '../components/miscellaneous/Toasts';
 import { TalkContext } from '../Context/TalkProvider';
 
@@ -43,15 +43,14 @@ function TalksList({talk}){
     //         response
     //     })
     // }
-  const submitComment = (e) => {
+  const submitComment = async(e) => {
     e.preventDefault()
-    axios.put(`api/talks/comment/${_id}`, text, { headers: {
-        'Authorization':"Bearer "+localStorage.getItem("jwt").replace(/"/g,"")
-    }}).then(response => {
-        console.log(response.data)
-    }).catch(error => {
-        console.log(error.response.data)
-    })
+    const data = {
+        text: text
+    }
+    const response = await comment(_id, data);
+    setText('')
+    console.log(response)
   }
 
     return(
@@ -83,14 +82,16 @@ function TalksList({talk}){
                     </div>
                     <div>
                     <h3>{likes.length > 0 ? likes.length : ''} likes</h3>
-{/*                 
-                                {
-                                    comments.map(comment=>{
-                                        return(
-                                        <h3 key={comment._id}><span style={{fontWeight:"500"}}>{comment.postedBy.name}</span> {comment.text}</h3>
-                                        )
-                                    })
-                                } */}
+                                                
+                                <ul>
+                                    { comments ? 
+                                        comments.map(comment=>{
+                                            return(
+                                            <li key={comment._id}><span style={{fontWeight:"500"}}>{comment.postedBy.name}</span> {comment.text}</li>
+                                            )
+                                        }) : ''
+                                    }
+                                </ul>
                                 <form onSubmit={submitComment}>
                                   <input className='w-full' type="text" placeholder="add a comment" value={text} onChange={(e) => setText(e.target.value)}/>
                                 </form>
