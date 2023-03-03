@@ -1,12 +1,19 @@
 import React, {useState} from 'react'
-import Button from 'react-bootstrap/Button';
-import { Form, ToastContainer, ToastHeader } from "react-bootstrap";
+
 import axios from 'axios';
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import Toast from 'react-bootstrap/Toast';
 import LoadingSpinner from './LoadingSpinner'
 import { SuccessToast, ErrorToast, UploadImageToast } from '../components/miscellaneous/Toasts'
 import { registerHost, uploadImage } from '../components/miscellaneous/Utils'
+import {
+    FormControl,
+    FormLabel,
+    FormErrorMessage,
+    FormHelperText, Card, CardBody, 
+    Text, Input, Button, 
+    chakra, CardHeader, Heading, Flex, Link, Textarea
+  } from '@chakra-ui/react'
 
 const SignUp = () => {
     const navigate = useNavigate();
@@ -77,46 +84,48 @@ const SignUp = () => {
                 {showSuccessToast && <SuccessToast message={successMessage} showSuccessToast={showSuccessToast} toggleSuccessToast={toggleSuccessToast}/>}
                 {showErrorToast && <ErrorToast message={errorMessage} showErrorToast={showErrorToast} toggleErrorToast={toggleErrorToast} />}
                 
-                <Form className='border rounded-md'>
-                                <Form.Group className="mb-3">
-                                    <Form.Control type="text" name="name" value={name} placeholder="Enter your name" onChange={(e) => setName(e.target.value)}/>
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Control type="email" name="email" value={email} placeholder="Enter your email" onChange={(e) => setEmail(e.target.value)} />
-                                </Form.Group>
-
-                               
-                                <textarea name="about" value={about} placeholder="tell us about yourself" rows={5} className="w-full" onChange={(e) => setAbout(e.target.value)}>
-
-                                </textarea>
-
-                                <Form.Group className="mb-3">
-                                    <Form.Control type="text" name="city" value={city} placeholder="City" onChange={(e) => setCity(e.target.value)}/>
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Control type="text" name="profession" value={profession} placeholder="Profession" onChange={(e) => setProfession(e.target.value)}/>
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Control type="file" name="pic" accept="image/*" onChange={(e) => postDetails(e.target.files[0])}/>
-                                </Form.Group>
-
-                                <Form.Group className="mb-3">
-                                    <Form.Control type="password" name="password" value={password} placeholder="Enter password" onChange={(e) => setPassword(e.target.value)}/>
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Control type="password" name="confirmpassword" value={confirmpassword} placeholder="Confirm password" onChange={(e) => setConfirmpassword(e.target.value)}/>
-                                </Form.Group>
-                                
-                                <div className='flex justify-between'>
-                                    <Button type="submit" className="w-1/3 text-black" onClick={submitForm}>
-                                        Sign Up  {isLoading && <LoadingSpinner />}
-                                    </Button>
-                                    <Button type="button" className="w-1/3 text-black">
-                                        <Link to="/">Back</Link>
-                                    </Button>
-                                </div>
-                                
-                </Form>
+                <Card>
+                    <CardBody>
+                        <FormControl className="mb-3">
+                            <FormLabel className='font-link'>Your name</FormLabel>
+                            <Input type='text' />
+                        </FormControl>
+                        <FormControl className="mb-3">
+                            <FormLabel className='font-link'>Email address</FormLabel>
+                            <Input type='email' />
+                        </FormControl>
+                        <FormControl className="mb-3">
+                            <FormLabel className='font-link'>About</FormLabel>
+                            <Textarea placeholder='please tell us about yourself' />
+                        </FormControl>
+                        <FormControl className="mb-3">
+                            <FormLabel className='font-link'>City</FormLabel>
+                            <Input type='text' placeholder='City you reside in'/>
+                        </FormControl>
+                        <FormControl className="mb-3">
+                            <FormLabel className='font-link'>Profession</FormLabel>
+                            <Input type='text' placeholder='What do you do for a living?'/>
+                        </FormControl>
+                        <FormControl className="mb-3">
+                            <FormLabel className='font-link'>Profile pic</FormLabel>
+                            <Input type='file' />
+                        </FormControl>
+                        <FormControl className="mb-3">
+                            <FormLabel className='font-link'>Password</FormLabel>
+                            <Input type='password' />
+                        </FormControl>
+                        <FormControl className="mb-6">
+                            <FormLabel className='font-link'>Confirm password</FormLabel>
+                            <Input type='password' />
+                        </FormControl>
+                        <FormControl className="mb-6">
+                            <Button bgColor='#F64060' className="w-full text-white">Log in</Button>
+                        </FormControl>
+                        <Flex justify='center'>
+                            <Text className="leading-5 text-lg">Already a member? <Link href="/" color='#008294'>Log in</Link></Text>
+                        </Flex>
+                    </CardBody>
+                </Card>
             </div>
         </div>
     </div>
@@ -125,3 +134,43 @@ const SignUp = () => {
 }
 
 export default SignUp;
+{/* <Form className='border rounded-md'>
+<Form.Group className="mb-3">
+    <Form.Control type="text" name="name" value={name} placeholder="Enter your name" onChange={(e) => setName(e.target.value)}/>
+</Form.Group>
+<Form.Group className="mb-3">
+    <Form.Control type="email" name="email" value={email} placeholder="Enter your email" onChange={(e) => setEmail(e.target.value)} />
+</Form.Group>
+
+
+<textarea name="about" value={about} placeholder="tell us about yourself" rows={5} className="w-full" onChange={(e) => setAbout(e.target.value)}>
+
+</textarea>
+
+<Form.Group className="mb-3">
+    <Form.Control type="text" name="city" value={city} placeholder="City" onChange={(e) => setCity(e.target.value)}/>
+</Form.Group>
+<Form.Group className="mb-3">
+    <Form.Control type="text" name="profession" value={profession} placeholder="Profession" onChange={(e) => setProfession(e.target.value)}/>
+</Form.Group>
+<Form.Group className="mb-3">
+    <Form.Control type="file" name="pic" accept="image/*" onChange={(e) => postDetails(e.target.files[0])}/>
+</Form.Group>
+
+<Form.Group className="mb-3">
+    <Form.Control type="password" name="password" value={password} placeholder="Enter password" onChange={(e) => setPassword(e.target.value)}/>
+</Form.Group>
+<Form.Group className="mb-3">
+    <Form.Control type="password" name="confirmpassword" value={confirmpassword} placeholder="Confirm password" onChange={(e) => setConfirmpassword(e.target.value)}/>
+</Form.Group>
+
+<div className='flex justify-between'>
+    <Button type="submit" className="w-1/3 text-black" onClick={submitForm}>
+        Sign Up  {isLoading && <LoadingSpinner />}
+    </Button>
+    <Button type="button" className="w-1/3 text-black">
+        <Link to="/">Back</Link>
+    </Button>
+</div>
+
+</Form> */}

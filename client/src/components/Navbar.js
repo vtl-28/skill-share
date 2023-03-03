@@ -23,13 +23,34 @@ function NavBar(){
     const api = `/profile/${_id}`;
 
     useEffect(() => {
-      socket.on("getNotification", (data) => {
+      socket.on("create talk notification", (data) => {
         setTempNotifications((notifications) => [...notifications, data]);
       });
     }, [socket]);
 
     useEffect(() => {
-      socket.on('getLikeNotification', (data) => {
+      socket.on('like notification', (data) => {
+        setTempNotifications((notifications) => [...notifications, data]);
+        console.log(data)
+      })
+    }, [socket]);
+
+    useEffect(() => {
+      socket.on('comment notification', (data) => {
+        setTempNotifications((notifications) => [...notifications, data]);
+        console.log(data)
+      })
+    }, [socket]);
+
+    useEffect(() => {
+      socket.on('attend talk notification', (data) => {
+        setTempNotifications((notifications) => [...notifications, data]);
+        console.log(data)
+      })
+    }, [socket]);
+
+    useEffect(() => {
+      socket.on('cancel talk notification', (data) => {
         setTempNotifications((notifications) => [...notifications, data]);
         console.log(data)
       })
@@ -54,36 +75,53 @@ function NavBar(){
           return error.response.data
         })
     }
-    function markAsRead(e){
-      notifications.filter((notif) => notif.id !== e.target.name);
+    function markAsRead(e, id){
+      e.preventDefault();
       
-      if(notifications.length < 1){
-        console.log('Marked')
-        console.log(notifications)
-      }else{
-        console.log('Failed')
-        console.log(notifications)
-      }
+      return notifications.filter((notif) => {
+        return notif.id !== id
+      }) ;
+      
+      // if(notifications.length < 1){
+      //   console.log('Marked')
+      //   console.log(notifications)
+      // }else{
+      //   console.log('Failed')
+      //   console.log(notifications)
+      // }
      
     }
 
-    const displayNotification = ({ id, sender, type, resp }) => {
-      // let action;
+    const displayNotification = (notification) => {
+      
+      const { id, sender, response, type } = notification
+      let action;
   
-      // if (type === 1) {
-      //   action = "liked";
-      // } else if (type === 2) {
-      //   action = "commented";
-      // } else {
-      //   action = "shared";
-      // }
+      if (type === 1) {
+        action = "liked";
+      } else if (type === 2) {
+        action = "unliked";
+      } else if(type === 3) {
+        action = "commented on";
+      }else if(type === 4){
+        action = "created"
+      }else if(type === 5){
+        action = "booked"
+      }else{
+        action = "cancelled"
+      }
   
       return (
         <div key={id} className="notification" >
-            <p>{`${sender.name} created a new talk event.`}</p>
+            { type === 1 || type === 2 || type === 3 ? 
+            <p>{`${sender.name} ${action} your talk event`}</p> : ''}
+            { type === 4 ?  <p>{`${sender.name} created a new talk event.`}</p> : ''}
+            { type === 5 ? <p>{`${sender.name} has ${action} a spot on your talk event`}</p> :
+            <p>{`${sender.name} has ${action} their booking.`}</p> }
+
             <div className="flex w-full justify-between px-2">
-              <a href="#" name={id} onClick={markAsRead}>Mark as read</a>
-              <a href={`/talk/${resp._id}`} target="blank" className="w-1/2 text-center">Open notification</a>
+              <a href="#" name={id} onClick={(e) => markAsRead(e, id)}>Mark as read</a>
+              <a href={`/talk/${response._id}`} target="blank" className="w-1/2 text-center">Open</a>
             </div>
         </div>
       );
@@ -117,9 +155,9 @@ function NavBar(){
     }
     return(
       <div>
-          <Navbar bg="light" expand="md">
+          <Navbar expand="md">
         <Container>
-          <Navbar.Brand href="/dashboard">Skill-share</Navbar.Brand>
+        <Navbar.Brand href="/dashboard" className="text-rose-500 font-semibold leading-5 text-lg font-link">Talk Host</Navbar.Brand>
           <Form className="ml-12 d-flex">
               <Form.Control
                 type="search"
@@ -145,14 +183,14 @@ function NavBar(){
             >
               
              
-              <Nav.Link href="/hostTalk" className="mr-4">Host talk</Nav.Link>
-              <Nav.Link href={api} className="mr-4">Profile</Nav.Link>
-              <Nav.Link href="#" className="mr-4" onClick={() => setOpen(!open)}>{notifications.length > 0 ? notifications.length : ''}<FaBell className="inline"/></Nav.Link>
+              <Nav.Link href="/hostTalk" className="mr-4 leading-5 leading-5 font-medium text-slate-900 font-link">Host talk</Nav.Link>
+              <Nav.Link href={api} className="mr-4 leading-5 leading-5 font-medium text-slate-900 font-link">Profile</Nav.Link>
+              <Nav.Link href="#" className="mr-4 leading-5 leading-5 font-medium text-slate-900 font-link" onClick={() => setOpen(!open)}>{notifications.length > 0 ? notifications.length : ''}<FaBell className="inline"/></Nav.Link>
               { open && <ul className="notifications">
                 {notifications.map((n) => displayNotification(n))}
                 
               </ul> }
-              <Nav.Link href="/" onClick={() => {
+              <Nav.Link className="leading-5 leading-5 font-medium text-slate-900 font-link" href="/" onClick={() => {
                  localStorage.removeItem('userInfo');
                  navigate('/')
               }

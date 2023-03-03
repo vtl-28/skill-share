@@ -8,7 +8,7 @@ import { getTalk, attendTalk, cancelTalk } from '../components/miscellaneous/Uti
 import { ErrorToast, SuccessToast } from './miscellaneous/Toasts'
 import AttendNavbar from '../components/AttendNavbar'
 import { TalkContext } from '../Context/TalkProvider';
-
+import Attendant from '../components/Attendant'
 const Talk = () => {
     const { id } = useParams();
     const { user, socket } = useContext(TalkContext);
@@ -33,7 +33,7 @@ const Talk = () => {
       if (status === 'error') {
         return <div>{error.message}</div> // error state
       }
-      const { _id, title, hostedBy, body, pic, date, attendants } = data;
+      const { _id, title, hostedBy, body, pic, date, attendants, location } = data;
 
       const { _id: hostId, name, email, about, profession, pic: hostPic } = hostedBy;
 
@@ -53,6 +53,7 @@ const Talk = () => {
                 toggleErrorToast() 
             }else{    
                 setSuccessMessage("You have successfully booked a seat for the talk event");
+                handleAttendTalkNotification(5,response)
                 toggleSuccessToast(); 
             }
         }
@@ -70,20 +71,36 @@ const Talk = () => {
             toggleErrorToast() 
         }else{    
             setSuccessMessage("You have successfully cancelled your seat for the talk event");
+            handleCancelTalkNotification(6,response)
             toggleSuccessToast(); 
         }
       }
+
+      function handleAttendTalkNotification(type,response){
+        socket?.emit('attend talk', {
+            sender: user,
+            response,
+            type
+        })
+    }
+    function handleCancelTalkNotification(type,response){
+        socket?.emit('cancel talk', {
+            sender: user,
+            response,
+            type
+        })
+    }
     
   return (
     <div>
       <Navbar />
       <div className='container mx-auto'>
         <div className='flex flex-col py-6 border-b-2 border-red-400 mx-28'>
-            <h1 className='text-2xl font-bold text'>{title}</h1>
+            <h1 className='text-3xl font-bold text font-link'>{title}</h1>
             <div className='flex flex-row w-1/5 mt-4 justify-content-around'>
                 <a href={`/host/${hostId}`}><img src={hostPic} alt='logo' 
                 className='rounded-full' target='blank'/></a>
-                <div className='flex flex-col justify-center ml-4'>
+                <div className='flex flex-col justify-center ml-4 w-1/2'>
                     <h1 className='mb-2'>Hosted by</h1>
                     <h1>{name}</h1>
                 </div>
@@ -96,33 +113,19 @@ const Talk = () => {
                 />
                 <h1 className='mt-3 mb-4 text-xl font-bold'>Details</h1>
                 <p className='mb-3 font-bold'>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-                <a href='#'  onClick={(e) => bookSeat(e)} className='mt-8 text-blue-700'>Ticket here</a>
+                <a href='#'  onClick={(e) => bookSeat(e)} className='mt-8 text-teal-600 font-semibold'>Ticket here</a>
                 <div className='flex flex-col mt-6'>
                     <div className='flex justify-between mb-3'>
-                        <h1 className='text-xl font-bold'>Attendees (5)</h1>
-                        <a href='#' className='text-blue-700 '>See all</a>
+                        <h1 className='text-xl font-bold font-link'>Attendees { attendants.length > 0 ? (attendants.length) : ''}</h1>
+                        <a href='#' className='text-teal-600 font-semibold'>See all</a>
                     </div>
-                    <div className='flex justify-between'>
-                        <div className='flex flex-col items-center justify-center w-1/5 border rounded'>
-                            <img src='https://randomuser.me/api/portraits/men/83.jpg' alt='logo'
-                            className='w-1/2 rounded-full' />
-                            <h1>Vuyisile</h1>
-                        </div>
-                        <div className='flex flex-col items-center justify-center w-1/5 border rounded'>
-                            <img src='https://randomuser.me/api/portraits/men/83.jpg' alt='logo'
-                            className='w-1/2 rounded-full' />
-                            <h1>Vuyisile</h1>
-                        </div>
-                        <div className='flex flex-col items-center justify-center w-1/5 border rounded'>
-                            <img src='https://randomuser.me/api/portraits/men/83.jpg' alt='logo'
-                            className='w-1/2 rounded-full' />
-                            <h1>Vuyisile</h1>
-                        </div>
-                        <div className='flex flex-col items-center w-1/5 py-4 border rounded'>
-                            <img src='https://randomuser.me/api/portraits/men/83.jpg' alt='logo'
-                            className='w-1/2 rounded-full' />
-                            <h1>Vuyisile</h1>
-                        </div>
+                    <div>
+                       <ul className='flex justify-between'>
+                        { attendants ? attendants.map(attendant => {
+                           return <Attendant attendant={attendant}/>
+                        }): ( <div>No attendants have booked for this talk event yet</div>)}
+                    
+                       </ul>
                     </div>
                 </div>
             </div>
@@ -138,11 +141,11 @@ const Talk = () => {
                 <div className='flex flex-col justify-between p-4 mt-4 border rounded'>
                     <div className='flex'>
                         <FontAwesomeIcon icon={faClock} />
-                        <h1 className='ml-4'>Date</h1>
+                        <h1 className='ml-4'>{date}</h1>
                     </div>
                     <div className='flex mt-3'>
                         <FontAwesomeIcon icon={ faCompass} />
-                        <h1 className='ml-4'>Date</h1>
+                        <h1 className='ml-4'>{location}</h1>
                     </div>
                 </div>
                 {showSuccessToast && <SuccessToast message={successMessage} showSuccessToast={showSuccessToast} toggleSuccessToast={toggleSuccessToast}/>}

@@ -170,3 +170,13 @@ export function fetchUser(id){
         return error.response.data
     })
   }
+
+  export function getAttendedTalks(_id){
+    return axios.get(`/api/user/bookedTalks/${_id}`, { headers: {
+        'Authorization':"Bearer "+localStorage.getItem("jwt").replace(/"/g,"")
+    }}).then(response => {
+        return response.data;       
+    }).catch(error => {
+        return error.response.data
+    })
+  }

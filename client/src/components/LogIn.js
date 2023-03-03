@@ -1,16 +1,19 @@
 import React, { useState } from "react";
-import Spinner from 'react-bootstrap/Spinner';
-import Tab from 'react-bootstrap/Tab';
-import Tabs from 'react-bootstrap/Tabs';
-import Card from 'react-bootstrap/Card';
-import Button from 'react-bootstrap/Button';
-import { Form } from "react-bootstrap";
 import SignUp from './SignUp'
-import { Link, useNavigate } from 'react-router-dom'
+import {  useNavigate } from 'react-router-dom'
 import LoadingSpinner from "./LoadingSpinner";
 import axios from "axios";
 import { ErrorToast } from './miscellaneous/Toasts';
 import { loginHost } from './miscellaneous/Utils';
+import {
+    FormControl,
+    FormLabel,
+    FormErrorMessage,
+    FormHelperText, Card, CardBody, 
+    Text, Input, Button, 
+    chakra, CardHeader, Heading, Flex, Link
+  } from '@chakra-ui/react'
+
 
 function Home(){
     const [email, setEmail] = useState('');
@@ -47,24 +50,30 @@ function Home(){
     return(
         <div className="container w-full h-full px-12 mx-auto border-2 border-red-200">
             <div className="grid grid-cols-6 grid-rows-6">
-                <div className="h-full col-span-2 col-start-3 row-span-2 row-start-2 border-2 border-green-300">
+                <div className="h-full col-span-2 col-start-3 row-span-2 row-start-2">
                 {showErrorToast && <ErrorToast message={errorMessage} showErrorToast={showErrorToast} toggleErrorToast={toggleErrorToast} />}
-                    <Form className='border rounded-md'>
-                        <Form.Group className="mb-3">
-                            <Form.Control type="text" name="email" value={email} placeholder="Enter email" onChange={(e) => setEmail(e.target.value)}/>
-                        </Form.Group>
-                        <Form.Group className="mb-3">
-                             <Form.Control type="password" name="password" value={password} placeholder="Enter password" onChange={(e) => setPassword(e.target.value)} />
-                        </Form.Group>
-                        <div className="flex justify-between">
-                            <Button type="submit" className="w-1/3 text-black" onClick={submitForm}>
-                                        Log in  {isLoading && <LoadingSpinner />}
-                            </Button>
-                            <Button type="button" className="w-1/3 text-black">
-                                    <Link to="/signup">Sign up</Link>
-                            </Button>
-                        </div>
-                    </Form>
+                <Card>
+                    <CardHeader>
+                       <Flex direction='column' alignItems='center'  h='120px' justifyContent='space-between'>
+                            <Text fontSize='2xl' color='#F64060' className="font-link font-semibold"><Link>Talk Host</Link></Text>
+                            <Heading>Log in</Heading>
+                            <Text className="leading-5 text-lg">Not a member? <Link href="/" color='#008294'>Sign up</Link></Text>
+                       </Flex>
+                    </CardHeader>
+                    <CardBody>
+                        <FormControl className="mb-3">
+                            <FormLabel>Email address</FormLabel>
+                            <Input type='email' />
+                        </FormControl>
+                        <FormControl className="mb-6">
+                            <FormLabel>Password</FormLabel>
+                            <Input type='password' />
+                        </FormControl>
+                        <FormControl>
+                            <Button bgColor='#F64060' className="w-full text-white">Log in</Button>
+                        </FormControl>
+                    </CardBody>
+                </Card>
                 </div>
                 
             </div>

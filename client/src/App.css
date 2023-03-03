@@ -8,12 +8,12 @@ label.label input[type="file"] {
   border-radius: 5px;
   padding: 5px 15px;
   margin: 5px;
-  background: #dddddd;
+  background: #2C7A7B;
   display: inline-block;
   height: 40px;
 }
 .label:hover {
-  background: #5cbd95;
+  background: #285E61;
 }
 .label:active {
   background: #9fa1a0;
@@ -39,7 +39,63 @@ label.label input[type="file"] {
   padding: 5px;
   font-size: 14px;
 }
-
+.font-link {
+  font-family: 'Roboto Mono', cursive;
+}
+.react-calendar__navigation__label__labelText{
+ color:#008294;
+ font-weight: bold;
+}
+.react-calendar__navigation__label__labelText--from{
+  color:#008294;
+  font-weight: bold;
+}
+.react-calendar__navigation__arrow{
+  color:#008294;
+  font-weight: bold;
+}
+.react-calendar__navigation__prev2-button{
+  color:#008294;
+  font-weight: bold;
+}
+.react-calendar__navigation__arrow{
+  color:#008294;
+  font-weight: bold;
+} 
+.react-calendar__navigation__prev-button{
+  color:#008294;
+  font-weight: bold;
+}
+.react-calendar__navigation__arrow{
+  color:#008294;
+  font-weight: bold;
+} 
+.react-calendar__navigation__next-button{
+  color:#008294;
+  font-weight: bold;
+}
+.react-calendar__navigation__arrow{
+  color:#008294;
+  font-weight: bold;
+} 
+.react-calendar__navigation__next2-button{
+  color:#008294;
+  font-weight: bold;
+}
+.react-calendar__month-view__days__day--weekend{
+  color: #F64060;
+}
+.react-calendar__month-view__days__day--neighboringMonth {
+  color: currentColor;
+  font-weight: normal;
+}
+.react-calendar__month-view__days__day--neighboringMonth {
+ 
+}
+.react-calendar__tile span{
+  font-size: 16px;
+  color: inherit
+}
 /* .App {
   text-align: center;
 }

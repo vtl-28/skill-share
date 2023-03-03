@@ -16,6 +16,7 @@ import {
 } from '@tanstack/react-query'
 import { ThemeProvider } from 'react-ui'
 import { tokens, components } from 'react-ui/themes/light'
+import { ChakraProvider } from '@chakra-ui/react'
 
 const queryClient = new QueryClient()
 
@@ -26,7 +27,10 @@ root.render(
       <QueryClientProvider client={queryClient}>
         <TalkProvider>
           <ThemeProvider tokens={tokens} components={components}>
-            <App />
+            <ChakraProvider>
+               <App />
+            </ChakraProvider>
+            
           </ThemeProvider>
         </TalkProvider>
       </QueryClientProvider>

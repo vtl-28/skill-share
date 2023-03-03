@@ -19,63 +19,69 @@ function TalksList({talk}){
     const toggleErrorToast = () => setShowErrorToast(!showErrorToast);
 
 
-    async function likeTalk(){
+    async function likeTalk(e){
+        e.preventDefault();
         const response = await like(_id)
         //console.log(response)
-       handleLikeNotification(response)
+       handleLikeNotification(1,response)
     }
 
-    async function unlikeTalk(){
+    async function unlikeTalk(e){
+        e.preventDefault();
         const response = await unlike(_id)
-        //console.log(response)
-        handleLikeNotification(response)
+        handleLikeNotification(2, response)
     }
 
-    function handleLikeNotification(response){
-        socket?.emit('likeTalk', {
+    const submitComment = async(e) => {
+        e.preventDefault()
+        const data = {
+            text: text
+        }
+        const response = await comment(_id, data);
+        setText('')
+        handleCommentNotification(3, response)
+      }
+
+    function handleLikeNotification(type,response){
+        socket?.emit('like talk', {
             sender: user,
-            response
+            response,
+            type
         })
     }
-    // function handleUnlikeNotification(response){
-    //     socket?.emit('unlikeTalk', {
-    //         sender: user,
-    //         response
-    //     })
-    // }
-  const submitComment = async(e) => {
-    e.preventDefault()
-    const data = {
-        text: text
+    function handleCommentNotification(type,response){
+        socket?.emit('comment talk', {
+            sender: user,
+            response,
+            type
+        })
     }
-    const response = await comment(_id, data);
-    setText('')
-    console.log(response)
-  }
+
+  
 
     return(
       <div key={_id}>
           {showSuccessToast && <SuccessToast message={successMessage} showSuccessToast={showSuccessToast} toggleSuccessToast={toggleSuccessToast}/>}
          {showErrorToast && <ErrorToast message={errorMessage} showErrorToast={showErrorToast} toggleErrorToast={toggleErrorToast} />}
-          <div className='flex flex-col py-2 border-red-200 border-y-2'>
+          <div className='flex flex-col py-2 border-slate-300 border-t-2'>
             <div className='flex justify-around w-full '>
-                <div className='w-1/5 border-2 border-green-500'>
+                <div className='w-1/5'>
                    <a href={`/talk/${_id}`} target='blank'><img src={pic} alt="talk logo"/></a>
                 </div>
-                <div className='flex flex-col w-1/2 border-2 border-green-500'>
+                <div className='flex flex-col w-1/2'>
                     <h4 className='mb-2'>{date}</h4>
                     <h4 className='mb-2'>{title}</h4>
                     <h4>{location}</h4>
                 </div>
-                <div className='w-1/5 border-2 border-green-500'>
+                <div className='w-1/5'>
                     <h1>{attendants ? attendants.length : ''} Attendants</h1>
                 </div>
             </div>
             <div className='flex flex-col self-center mt-4 w-50'>
                     <div className='flex w-1/5'>
                     { likes.includes(user._id) ?  
-                    <a href="#" onClick={() => unlikeTalk()} className='ml-2 text-red-500'><FaHeartBroken/></a> :
-                     <a href="#" onClick={() => likeTalk()} className='text-red-500'><FaHeart/></a>
+                    <a href="#" onClick={(e) => unlikeTalk(e)} className='ml-2 text-red-500'><FaHeartBroken/></a> :
+                     <a href="#" onClick={(e) => likeTalk(e)} className='text-red-500'><FaHeart/></a>
                      }
                         
                        
@@ -87,12 +93,12 @@ function TalksList({talk}){
                                     { comments ? 
                                         comments.map(comment=>{
                                             return(
-                                            <li key={comment._id}><span style={{fontWeight:"500"}}>{comment.postedBy.name}</span> {comment.text}</li>
+                                            <li key={comment._id}><span style={{fontWeight:"500"}}>{comment.postedBy}</span> {comment.text}</li>
                                             )
                                         }) : ''
                                     }
                                 </ul>
-                                <form onSubmit={submitComment}>
+                                <form onSubmit={(e) => submitComment(e)}>
                                   <input className='w-full' type="text" placeholder="add a comment" value={text} onChange={(e) => setText(e.target.value)}/>
                                 </form>
                     </div>

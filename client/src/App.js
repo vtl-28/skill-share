@@ -7,7 +7,8 @@ import Talk from './components/Talk';
 import Host from './components/Host';
 import SignUp from './components/SignUp';
 import HostProfile from './components/HostProfile';
-
+import Home from './components/Home';
+import 'react-calendar/dist/Calendar.css';
 
 
 function App() {
@@ -16,7 +17,7 @@ function App() {
   return (
     <div className="App">
      <Routes>
-      <Route path="/" element={<LogIn />} />
+      <Route path="/" element={<Home />} />
       <Route path="/signup" element={<SignUp />} />
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/hostTalk" element={<HostTalk />} />
