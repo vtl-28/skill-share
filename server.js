@@ -46,8 +46,8 @@ io.on("connection", (socket) => {
     let name = user ? user.name : ''
     addNewUser(name, socket.id)
   })
-  socket.on('sendNotification', ({sender, type, resp}) => {
-    socket.broadcast.emit('getNotification', {
+  socket.on('create talk', ({sender, type, resp}) => {
+    socket.broadcast.emit('create talk notification', {
       id: uuidv4(),
       sender,
       type,
@@ -55,25 +55,71 @@ io.on("connection", (socket) => {
     })
   })
 
-  socket.on('likeTalk', ({sender, response}) => {
+  socket.on('like talk', ({sender, response, type}) => {
     const receiver = getUser(response.hostedBy.name);
-    console.log(receiver)
-
+    
     socket.join(receiver.socketId)
 
-    io.to(receiver.socketId).emit('getLikeNotification', {
+    io.to(receiver.socketId).emit('like notification', {
       id: uuidv4(),
       sender,
-      response
+      response,
+      type
     })
 
   })
-  // socket.on('unlikeTalk', ({sender, response}) => {
-  //  debugger;
-  //   console.log(response)
-  //   console.log(response.hostedBy)
-  //   console.log(response.hostedBy.name)
-  // })
+
+  socket.on('comment talk', ({sender, response, type}) => {
+    console.log(response.hostedBy);
+    console.log(response.hostedBy.name)
+
+    const receiver = getUser(response.hostedBy.name);
+    
+    console.log(receiver);
+    console.log(receiver.socketId)
+    
+
+    socket.join(receiver.socketId)
+
+    io.to(receiver.socketId).emit('comment notification', {
+      id: uuidv4(),
+      sender,
+      response,
+      type
+    })
+
+  })
+
+  socket.on('attend talk', ({sender, response, type}) => {
+   
+    const receiver = getUser(response.hostedBy.name);
+
+    socket.join(receiver.socketId)
+
+    io.to(receiver.socketId).emit('attend talk notification', {
+      id: uuidv4(),
+      sender,
+      response,
+      type
+    })
+
+  })
+
+  socket.on('cancel talk', ({sender, response, type}) => {
+
+    const receiver = getUser(response.hostedBy.name);
+
+    socket.join(receiver.socketId)
+
+    io.to(receiver.socketId).emit('cancel talk notification', {
+      id: uuidv4(),
+      sender,
+      response,
+      type
+    })
+
+  })
+
 
   socket.on('disconnect', () => {
     removeUser(socket.id)

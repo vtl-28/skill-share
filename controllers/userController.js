@@ -153,10 +153,20 @@ const updateUser = async(req, res) => {
       res.status(404).send(error)
   }
   
+}
 
-
-  
+const getAttendedTalks = async(req, res) => {
+  const userId = req.params.id
+ 
+     try {
+       const talks = await Talk.find({attendants: userId}).sort({'createdAt': -1}).populate('hostedBy', '_id name email pic')
+       console.log(talks)
+       res.status(200).send(talks);
+     } catch (error) {
+       res.status(400).send(error);
+     }
 }
 
 
-module.exports = { registerUser, authUser, getUser, getTalks, updateUser}
+
+module.exports = { registerUser, authUser, getUser, getTalks, updateUser, getAttendedTalks}

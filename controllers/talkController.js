@@ -113,11 +113,11 @@ const searchTalk = async(req, res) => {
     const talkId = req.params.id;
 
     try {
-        let talk = await Talk.findById({_id: talkId})
-        let hostedByConverted = talk.hostedBy.toString()
-         let host = await User.findById({_id: hostedByConverted})
-         talk.hostedBy = host;
-       
+        let talk = await Talk.findById({_id: talkId}).populate({path: 'attendants', model: 'User'}).populate({path: 'hostedBy', model: 'User'})
+        // let hostedByConverted = talk.hostedBy.toString()
+        //  let host = await User.findById({_id: hostedByConverted})
+        //  talk.hostedBy = host;
+       console.log(talk)
         res.status(200).send(talk);
     } catch (error) {
         res.status(400).send(error);
@@ -169,9 +169,8 @@ const searchTalk = async(req, res) => {
         $push:{comments:comment}
     },{
         new:true
-    })
-    .populate("comments.postedBy","_id name email")
-    .populate("hostedBy","_id name email")
+    }).populate("hostedBy","_id name email").populate("comments.postedBy","_id name email")
+   
     console.log(talk)
     res.status(200).send(talk)
    } catch (error) {
@@ -183,18 +182,44 @@ const searchTalk = async(req, res) => {
 
   const attendTalk = async(req, res) => {
     const talkId = req.body.talkId;
-    try {
-        const talk = await Talk.findByIdAndUpdate(talkId,{
-            $push:{attendants:req.user._id}
-        },{
-            new:true
-        }).populate('hostedBy', '_id name email pic')
-        .populate('attendants', '_id name email')
-        console.log(talk)
-        res.status(200).send(talk)
-    } catch (error) {
-        res.status(404).send(error)
-    }
+
+    const talk = await Talk.findByIdAndUpdate(talkId,{
+        $push:{attendants:req.user._id}
+    },{
+        new:true
+    }).populate({path: 'hostedBy', model: 'User'}).populate({path: 'attendants', model: 'User'})
+    console.log(talk)
+    res.status(200).send(talk)
+    // Talk.findByIdAndUpdate(talkId, {
+    //     $push:{attendants:req.user._id} 
+    // }, {
+    //     new:true
+    // }).lean().populate('hostedBy', '_id name email pic').populate({
+    //     path: 'attendants', model: 'User'
+    // }).exec(function(err, docs){
+    //     if (err) return res.json(500);
+    //     console.log(docs)
+     
+    //       if (err) return res.json(500);
+    //       Talk.populate(docs, function (err, talks) {
+    //         if(err) return res.json(500);
+    //         console.log(talks)
+    //         res.json(talks);
+    //       });
+    // })
+
+
+    // try {
+        // const talk = await Talk.findByIdAndUpdate(talkId,{
+        //     $push:{attendants:req.user._id}
+        // },{
+        //     new:true
+        // }).populate('hostedBy', '_id name email pic').populate('attendants')
+        // console.log(talk)
+        // res.status(200).send(talk)
+    // } catch (error) {
+    //     res.status(404).send(error)
+    // }
   }
 
   const cancelTalk = async(req, res) => {
@@ -204,16 +229,13 @@ const searchTalk = async(req, res) => {
             $pull:{attendants:req.user._id}
         },{
             new:true
-        }).populate('hostedBy', '_id name email pic')
-        .populate('attendants', '_id name email')
+        }).populate('hostedBy', '_id name email pic').populate('attendants', '_id name email pic')
         console.log(talk)
         res.status(200).send(talk)
     } catch (error) {
         res.status(404).send(error)
     }
   }
-
-  
 
 
 module.exports = { createTalk, updateTalk, deleteTalk, getTalks, searchTalk, getTalk, like, unlike, comment, attendTalk, cancelTalk};
