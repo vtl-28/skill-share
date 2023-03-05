@@ -6,9 +6,19 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { FaFacebookSquare, FaTwitter, FaLinkedin, FaInbox } from 'react-icons/fa';
 import Navbar from './Navbar'
 import { useQuery } from '@tanstack/react-query';
-import {fetchUser } from '../components/miscellaneous/Utils';
+import {fetchHostTalks, fetchUser } from '../components/miscellaneous/Utils';
 import { EmailIcon } from '@chakra-ui/icons'
-import { Flex, Image, Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react';
+import { Flex, Image, Tabs, TabList, TabPanels, Tab, TabPanel, Button } from '@chakra-ui/react';
+import HostEvents from '../components/HostEvents';
+
+const AboutHost = ({about}) => {
+
+  return( 
+    <p>{about}</p>
+
+  )
+}
+
 
 const Host = () => {
   const { id } = useParams();
@@ -21,9 +31,9 @@ const Host = () => {
       if (status === 'error') {
         return <div>{error.message}</div> // error state
       }
-      console.log(data)
+     
 
-      const {  name, email, profession, pic, city } = data;
+      const {  _id, name, email, profession, pic, city, about } = data;
   return (
     <div>
       <Navbar />
@@ -55,27 +65,53 @@ const Host = () => {
               </div> 
             </Flex>
           </Flex>
-          <Flex>
-          <Tabs>
-  <TabList>
-    <Tab>One</Tab>
-    <Tab>Two</Tab>
-    <Tab>Three</Tab>
-  </TabList>
+          <div className='grid grid-rows-6 h-full'>
+          <Tabs size='lg' isFitted>
+                <TabList>
+                  <Tab>About Host</Tab>
+                  <Tab>Events</Tab>
+                  <Tab>Three</Tab>
+                </TabList>
 
-  <TabPanels>
-    <TabPanel>
-      <p>one!</p>
-    </TabPanel>
-    <TabPanel>
-      <p>two!</p>
-    </TabPanel>
-    <TabPanel>
-      <p>three!</p>
-    </TabPanel>
-  </TabPanels>
-</Tabs>
-          </Flex>
+                <TabPanels h='2095px' w='100%' className=''>
+                  <TabPanel h='2095px'>
+                    <AboutHost about={about} />
+                  </TabPanel>
+                  <TabPanel h='2095px'>
+                    <ul className='flex flex-col h-full'>
+                      <HostEvents id={_id}/>
+                    </ul>
+                  </TabPanel>
+                  <TabPanel>
+                    <p>three!</p>
+                  </TabPanel>
+                </TabPanels>
+              </Tabs>
+          </div>
+
+          {/* <Flex className='h-full'>
+          <Tabs size='lg' isFitted>
+                <TabList>
+                  <Tab>About Host</Tab>
+                  <Tab>Events</Tab>
+                  <Tab>Three</Tab>
+                </TabList>
+
+                <TabPanels>
+                  <TabPanel>
+                    <AboutHost about={about} />
+                  </TabPanel>
+                  <TabPanel className='h-full border-2 border-blue-700'>
+                    <ul className='flex flex-col border-2 border-green-700 h-full'>
+                      <HostEvents id={_id}/>
+                    </ul>
+                  </TabPanel>
+                  <TabPanel>
+                    <p>three!</p>
+                  </TabPanel>
+                </TabPanels>
+              </Tabs>
+          </Flex> */}
       </div>
     </div>
   )
