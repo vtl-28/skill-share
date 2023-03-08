@@ -9,6 +9,8 @@ import {fetchHostTalks, addHostTalk, uploadImage} from './miscellaneous/Utils'
 import {displayHostTalks} from './miscellaneous/DisplayItems'
 import { SuccessToast, ErrorToast, UploadImageToast } from '../components/miscellaneous/Toasts'
 import { Heading, chakra, Flex, Text, FormControl, FormLabel, Textarea, Input, CardBody, Card, Button, Divider } from '@chakra-ui/react';
+import usePlacesAutocomplete, { getGeocode, getLatLng } from 'use-places-autocomplete';
+import useOnclickOutside from 'react-cool-onclickoutside';
 
 const HostTalk = () => {
     const talkDetails = `   What's the purpose of the talk? 
@@ -21,63 +23,124 @@ const HostTalk = () => {
     const [date, setDate] = useState('');
     const [city, setCity] = useState('');
     const [pic, setPic] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
     const [showSuccessToast, setShowSuccessToast] = useState(false);
     const [showErrorToast, setShowErrorToast] = useState(false);
     const [successMessage, setSuccessMessage] = useState("");
     const [errorMessage, setErrorMessage] = useState([]);
     const [ showHostTalks, setShowHostTalks ] = useState(true)
     const [disabled, setDisabled] = useState(false);
+    const [picIsLoading, setPicIsLoading] = useState(false);
+    const [dataIsLoading, setDataIsLoading] = useState(false);
+    const [ coordinates, setCoordinates ] = useState({})
 
     const toggleSuccessToast = () => setShowSuccessToast(!showSuccessToast);
     const toggleErrorToast = () => setShowErrorToast(!showErrorToast);
     const { _id } = user;
 
-    let { data: userTalks, error, status, isError } = useQuery({ queryKey: ['userChats'], queryFn: () => fetchHostTalks(_id), 
+    
+    const {
+        ready,
+        value,
+        suggestions: { status, data },
+        setValue,
+        clearSuggestions,
+      } = usePlacesAutocomplete({
+        requestOptions: {
+          /* Define search scope here */
+        },
+        debounce: 300,
+      });
+    
+    
+      const ref = useOnclickOutside(() => {
+        // When user clicks outside of the component, we can dismiss
+        // the searched suggestions by calling this method
+        clearSuggestions();
+      });
+    
+      const handleInput = (e) => {
+        // Update the keyword of the input element
+        setValue(e.target.value);
+      };
+      const renderSuggestions = () =>
+      data.map((suggestion) => {
+        const {
+          place_id,
+          structured_formatting: { main_text, secondary_text },
+        } = suggestion;
+  
+        return (
+          <li key={place_id} onClick={handleSelect(suggestion)}>
+            <a href="#">
+              <strong>{main_text}</strong> <small>{secondary_text}</small>
+            </a>
+          </li>
+        );
+      });
+  
+    
+      const handleSelect =
+        ({ description }) =>
+        () => {
+          // When user selects a place, we can replace the keyword without request data from API
+          // by setting the second parameter to "false"
+          setValue(description, false);
+          clearSuggestions();
+          let locationCoordinates ={};
+          // Get latitude and longitude via utility functions
+          getGeocode({ address: description }).then((results) => {
+            const { lat, lng } = getLatLng(results[0]);
+            locationCoordinates = { lat: lat, lng: lng}
+            setCoordinates(coordinates => ({...coordinates, locationCoordinates}))
+            console.log("📍 Coordinates: ", { lat, lng });
+            
+          });
+        };
+    
+
+    let { data: userTalks, error, isLoading, isError } = useQuery({ queryKey: ['hostTalks'], queryFn: () => fetchHostTalks(_id), 
             enabled: true,
             refetchOnMount: true,
             refetchInterval: 2000,
             refetchIntervalInBackground: true,
             refetchOnWindowFocus: true
         })
-    if (status === 'loading') {
+    if (isLoading) {
         return <div>loading user talks...</div> // loading state
       }
     
-      if (status === 'error') {
-        return <div>{error.message}</div> // error state
-      }
-    
      const caveat = (<div>You have not hosted any talks. Talks you have hosted will appear here</div>)
+
       
 
-    const handleNotification = (type, resp) => {
+    const handleNotification = (type, response) => {
         socket?.emit("create talk", {
             sender: user,
             type,
-            resp
+            response
           });
     }
     const submitForm = async(e) => {
         e.preventDefault();
 
-        setIsLoading(true);
+        setDataIsLoading(true);
 
         const data = {
-            title, body, pic,location, city, date
+            title, body, pic,location, value, date, coordinates
         }
 
      
         let response = await addHostTalk(data)
+        console.log(response)
         const hostDetailsValidation = typeof response === 'object' ? 'yes' : 'no' 
 
         if(hostDetailsValidation === 'no'){
-            setIsLoading(false);
+            setDataIsLoading(false);
             setErrorMessage(response)
             toggleErrorToast() 
         }else{    
-            setIsLoading(false);
-            setSuccessMessage("Successfully created talk");
+            setDataIsLoading(false);
+            setSuccessMessage("Successfully created talk event");
             handleNotification(4, response)
             setTitle('')
             setBody('')
@@ -95,7 +158,7 @@ const HostTalk = () => {
     }
     
     const postDetails = async(pics) => {
-        setIsLoading(true);
+        setDataIsLoading(true);
         if (pics === undefined) {
             <UploadImageToast />
           return;
@@ -108,18 +171,19 @@ const HostTalk = () => {
           data.append("cloud_name", "dd1jqwp94");
 
          let {url} = await uploadImage(data);
+         console.log(url)
          let imageUploadValidation = url.match(/cloudinary/i)
          if(imageUploadValidation){
              setPic(url);
-             setIsLoading(false);
+             setDataIsLoading(false);
          }else{
             setErrorMessage("Problem uploading image")
-            setIsLoading(false);
+            setDataIsLoading(false);
          }
     
         }else{
            <UploadImageToast />
-          setIsLoading(false);
+           setDataIsLoading(false);
           return;
         }
       };
@@ -142,7 +206,7 @@ const HostTalk = () => {
                     <CardBody>
                         <FormControl className="mb-3">
                             <FormLabel className='font-link'>Title</FormLabel>
-                            <Input type="text" value={title} onChange={(e) => setTitle(e.target.value)} name="title" placeholder="Enter the title of the talk" />
+                            <Input type="text" value={title} onChange={(e) => setTitle(e.target.value)} name="title"/>
                         </FormControl>
                         <FormControl className="mb-3">
                             <FormLabel className='font-link'>About</FormLabel>
@@ -150,23 +214,27 @@ const HostTalk = () => {
                         </FormControl>
                         <FormControl className="mb-3">
                             <FormLabel className='font-link'>Venue</FormLabel>
-                            <Input type="text" value={location} onChange={(e) => setLocation(e.target.value)} name="location" placeholder="Enter the venue of the talk"/>
+                            <Input type="text" value={location} onChange={(e) => setLocation(e.target.value)} name="location" placeholder="Enter the venue of the talk event"/>
                         </FormControl>
                         <FormControl className="mb-3">
                             <FormLabel className='font-link'>Date</FormLabel>
-                            <Input type="text" value={date} onChange={(e) => setDate(e.target.value)} name="date" placeholder="Enter the date of the talk"/>
+                            <Input type="text" value={date} onChange={(e) => setDate(e.target.value)} name="date"/>
                         </FormControl>
                         <FormControl className="mb-3">
-                            <FormLabel className='font-link'>City</FormLabel>
-                            <Input type="text" value={city} onChange={(e) => setCity(e.target.value)} name="city" placeholder="City of venue" />
+                            <FormLabel className='font-link'>Physical Address</FormLabel>
+                            <Input type='text' value={value}
+                                  onChange={handleInput}
+                                  disabled={!ready} name="value"/>
+                                {/* We can use the "status" to decide whether we should display the dropdown or not */}
+                                {status === "OK" && <ul>{renderSuggestions()}</ul>}
                         </FormControl>
                         <FormControl className="mb-6">
                             <FormLabel className='font-link'>Upload image</FormLabel>
-                            <Input type="file" value={pic} name="pic" accept="image/*" />
+                            <Input type="file"  name="pic" accept="image/*" onChange={(e) => postDetails(e.target.files[0])} /> {picIsLoading && <LoadingSpinner />}
                         </FormControl>
-                        
+                        {dataIsLoading && <LoadingSpinner />}
                         <FormControl>
-                            <Button bgColor='#F64060' className="w-full text-white">Create talk</Button>
+                            <Button bgColor='#F64060' className="w-full text-white" onClick={submitForm}>Create talk</Button>
                         </FormControl>
                     </CardBody>
                 </Card>

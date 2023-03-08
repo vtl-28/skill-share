@@ -93,8 +93,9 @@ function NavBar(){
     }
 
     const displayNotification = (notification) => {
-      
+      console.log(notification)
       const { id, sender, response, type } = notification
+      console.log(response)
       let action;
   
       if (type === 1) {

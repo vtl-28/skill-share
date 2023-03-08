@@ -13,6 +13,9 @@ import {
     Text, Input, Button, 
     chakra, CardHeader, Heading, Flex, Link, Textarea, Form, Image
   } from '@chakra-ui/react'
+import LoadingSpinner from './LoadingSpinner';
+import usePlacesAutocomplete, { getGeocode, getLatLng } from 'use-places-autocomplete';
+import useOnclickOutside from 'react-cool-onclickoutside';
 
 const HostProfile = () => {
     let { id } = useParams();
@@ -21,47 +24,116 @@ const HostProfile = () => {
     const [ userAbout, setUserAbout ] = useState('')
     const [ userEmail, setUserEmail ] = useState('')
     const [ userName, setUserName ] = useState('')
-
-    const [isLoading, setIsLoading] = useState(false);
+    const [ userProfession, setUserProfession ] = useState('')
     const [showSuccessToast, setShowSuccessToast] = useState(false);
     const [showErrorToast, setShowErrorToast] = useState(false);
     const [successMessage, setSuccessMessage] = useState("");
     const [errorMessage, setErrorMessage] = useState([]);
+    const [picIsLoading, setPicIsLoading] = useState(false);
+    const [dataIsLoading, setDataIsLoading] = useState(false);
+    const [ coordinates, setCoordinates ] = useState({})
 
     const toggleSuccessToast = () => setShowSuccessToast(!showSuccessToast);
     const toggleErrorToast = () => setShowErrorToast(!showErrorToast);
 
-    const { data, error, status, isError } = useQuery({ queryKey: ['userProfile'], queryFn: () => fetchUser(id)})
-    if (status === 'loading') {
+    const {
+        ready,
+        value,
+        suggestions: { status, data },
+        setValue,
+        clearSuggestions,
+      } = usePlacesAutocomplete({
+        requestOptions: {
+          /* Define search scope here */
+        },
+        debounce: 300,
+      });
+    
+    
+      const ref = useOnclickOutside(() => {
+        // When user clicks outside of the component, we can dismiss
+        // the searched suggestions by calling this method
+        clearSuggestions();
+      });
+    
+      const handleInput = (e) => {
+        // Update the keyword of the input element
+        setValue(e.target.value);
+      };
+      const renderSuggestions = () =>
+      data.map((suggestion) => {
+        const {
+          place_id,
+          structured_formatting: { main_text, secondary_text },
+        } = suggestion;
+  
+        return (
+          <li key={place_id} onClick={handleSelect(suggestion)}>
+            <a href="#">
+              <strong>{main_text}</strong> <small>{secondary_text}</small>
+            </a>
+          </li>
+        );
+      })
+    ;
+  
+    
+      const handleSelect =
+        ({ description }) => 
+        () => {
+          // When user selects a place, we can replace the keyword without request data from API
+          // by setting the second parameter to "false"
+          setValue(description, false);
+          clearSuggestions();
+          let locationCoordinates ={};
+          // Get latitude and longitude via utility functions
+          getGeocode({ address: description }).then((results) => {
+            const { lat, lng } = getLatLng(results[0]);
+            locationCoordinates = { lat: lat, lng: lng}
+            setCoordinates(coordinates => ({...coordinates, locationCoordinates}))
+            console.log("📍 Coordinates: ", { lat, lng });
+            
+          });
+        };
+
+    const { data: host, error, isLoading, isError } = useQuery({ queryKey: ['userProfile'], queryFn: () => fetchUser(id)})
+    if (isLoading) {
         return <div>loading profile</div> // loading state
       }
     
-      if (status === 'error') {
+      if (isError) {
         return <div>{error.message}</div> // error state
       }
       console.log(id);
     console.log(data);
-    const { name, email, pic, city, profession, about } = data;
+    const { name, email, pic, city, profession, about } = host;
 
     const updateUser = async(e) => {
         e.preventDefault();
-        setIsLoading(true);
+        setDataIsLoading(true);
         const userDataToUpdate = {
             userName,
             userEmail,
-            userCity,
+            value,
             userAbout,
-            userPic
+            userPic,
+            userProfession,
+            coordinates
         }
         let response = await updateHost(id,userDataToUpdate);
         const hostDetailsValidation = typeof response === 'object' ? 'yes': 'no';
 
         if(hostDetailsValidation === 'no'){
-            setIsLoading(false);
+            setDataIsLoading(false);
             setErrorMessage(response);
             toggleErrorToast()
         }else{
-            setIsLoading(false);
+            setDataIsLoading(false);
+            setUserAbout('')
+            setUserPic('')
+            setUserName('')
+            setUserEmail('')
+            setUserProfession('')
             setSuccessMessage('Host details successfully updated')
             toggleSuccessToast();
         }
@@ -70,7 +142,7 @@ const HostProfile = () => {
     }
 
     const postDetails = async(pics) => {
-        setIsLoading(true);
+        setPicIsLoading(true);
         if (pics === undefined) {
            <UploadImageToast />
           return;
@@ -83,17 +155,18 @@ const HostProfile = () => {
           data.append("cloud_name", "dd1jqwp94");
 
          let {url} = await uploadImage(data);
+         console.log(url)
          let imageUploadValidation = url.match(/cloudinary/i)
          if(imageUploadValidation){
              setUserPic(url);
-             setIsLoading(false);
+             setPicIsLoading(false);
          }else{
             setErrorMessage("Problem uploading image")
-            setIsLoading(false);
+            setPicIsLoading(false);
          }
         }else{
             <UploadImageToast />
-          setIsLoading(false);
+            setPicIsLoading(false);
           return;
         }
       };
@@ -114,41 +187,43 @@ const HostProfile = () => {
         
                    <Card>
                         <CardBody>
+                        {picIsLoading && <LoadingSpinner />}
                         <Flex justifyContent='space-between'  className='mb-3'>
                             <Image className='rounded-full w-1/2' alt='user' src={pic}/>
                             <Flex className='flex pt-4'>
                                 <label className="label">
-                                    <Input type="file" name='pic' value={userPic}  accept="image/*"/>
+                                    <Input type="file" name='pic' accept="image/*" onChange={(e) => postDetails(e.target.files[0])}/>
                                     <span className='text-white font-semibold'>Select a file</span>
                                 </label>
                             </Flex>
                         </Flex>
                     <FormControl className="mb-3">
                             <FormLabel className='font-link'>Your name</FormLabel>
-                            <Input type='text' placeholder={name}/>
+                            <Input type='text' placeholder={name} name='userName' onChange={(e) => setUserName(e.target.value)}/>
                         </FormControl>
                         <FormControl className="mb-3">
                             <FormLabel className='font-link'>Email address</FormLabel>
-                            <Input type='email' placeholder={email} />
+                            <Input type='email' placeholder={email} name='userEmail' onChange={(e) => setUserEmail(e.target.value)}/>
                         </FormControl>
                         <FormControl className="mb-3">
                             <FormLabel className='font-link'>About</FormLabel>
-                            <Textarea placeholder={about} />
+                            <Textarea placeholder={about} name='userAbout' onChange={(e) => setUserAbout(e.target.value)}/>
                         </FormControl>
                         <FormControl className="mb-3">
-                            <FormLabel className='font-link'>City</FormLabel>
-                            <Input type='text' placeholder={city}/>
-                        </FormControl>
-                        <FormControl className="mb-3">
-                            <FormLabel className='font-link'>Profession</FormLabel>
-                            <Input type='text' placeholder={profession}/>
+                            <FormLabel className='font-link'>Physical Address</FormLabel>
+                            <Input type='text' value={value}
+                                  onChange={handleInput}
+                                  disabled={!ready} name="value" placeholder={city}/>
+                                {/* We can use the "status" to decide whether we should display the dropdown or not */}
+                                {status === "OK" && <ul>{renderSuggestions()}</ul>}
                         </FormControl>
                         <FormControl className="mb-6">
-                            <FormLabel className='font-link'>Profile pic</FormLabel>
-                            <Input type='file' />
+                            <FormLabel className='font-link'>Profession</FormLabel>
+                            <Input type='text' placeholder={profession} name='userProfession' onChange={(e) => setUserProfession(e.target.value)}/>
                         </FormControl>
                         <FormControl>
-                            <Button bgColor='#F64060' className="w-full text-white">Save changes</Button>
+                        {dataIsLoading && <LoadingSpinner />}
+                            <Button bgColor='#F64060' className="w-full text-white" onClick={updateUser}>Save changes</Button>
                         </FormControl>
                         </CardBody>
                    </Card>
