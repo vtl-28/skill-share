@@ -9,6 +9,8 @@ import { ErrorToast, SuccessToast } from './miscellaneous/Toasts'
 import AttendNavbar from '../components/AttendNavbar'
 import { TalkContext } from '../Context/TalkProvider';
 import Attendant from '../components/Attendant'
+import TalkLocationMap from './TalkLocationMap';
+
 const Talk = () => {
     const { id } = useParams();
     const { user, socket } = useContext(TalkContext);
@@ -36,6 +38,12 @@ const Talk = () => {
       const { _id, title, hostedBy, body, pic, date, attendants, location } = data;
 
       const { _id: hostId, name, email, about, profession, pic: hostPic } = hostedBy;
+
+      const coordinates = {
+        address: '1600 Amphitheatre Parkway, Mountain View, california.',
+        lat: 37.42216,
+        lng: -122.08427,
+      }
 
       async function bookSeat(e){
         e.preventDefault();
@@ -147,6 +155,9 @@ const Talk = () => {
                         <FontAwesomeIcon icon={ faCompass} />
                         <h1 className='ml-4'>{location}</h1>
                     </div>
+                </div>
+                <div className='mt-4'>
+                    <TalkLocationMap />
                 </div>
                 {showSuccessToast && <SuccessToast message={successMessage} showSuccessToast={showSuccessToast} toggleSuccessToast={toggleSuccessToast}/>}
                 {showErrorToast && <ErrorToast message={errorMessage} showErrorToast={showErrorToast} toggleErrorToast={toggleErrorToast} />}
