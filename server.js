@@ -46,12 +46,13 @@ io.on("connection", (socket) => {
     let name = user ? user.name : ''
     addNewUser(name, socket.id)
   })
-  socket.on('create talk', ({sender, type, resp}) => {
+  socket.on('create talk', ({sender, type, response}) => {
+    console.log({sender, type, response})
     socket.broadcast.emit('create talk notification', {
       id: uuidv4(),
       sender,
       type,
-      resp
+      response
     })
   })
 

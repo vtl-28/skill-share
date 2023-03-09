@@ -4,10 +4,12 @@ const Talk = require('../models/Talk');
 const { default: mongoose } = require('mongoose');
 
 const registerUser = async(req, res) => {
-    const { name, email, password, confirmpassword, pic, about, city, profession } = req.body;
+    console.log(req.body)
+    const { name, email, password, confirmpassword, pic, about, value, profession, coordinates } = req.body;
+    console.log(coordinates.locationCoordinates)
     const emailRegex = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
 
-    if(!name || !email || !password || !about || !profession || !city || !confirmpassword){
+    if(!name || !email || !password || !about || !profession || !value || !confirmpassword){
       res.status(400).send('Please enter all the fields');
       return;
     }
@@ -37,7 +39,8 @@ const registerUser = async(req, res) => {
         pic,
         about,
         profession,
-        city
+        city: value,
+        coordinates: coordinates.locationCoordinates
       });
     
       if(user){
@@ -113,7 +116,8 @@ const getTalks = async(req, res) => {
   const { _id } = req.user._id
   //console.log(req.user)
       try {
-        const talks = await Talk.find({hostedBy: mongoose.Types.ObjectId(_id)}).sort({'createdAt': -1}).populate('hostedBy', '_id name email pic city body profession')
+        const talks = await Talk.find({hostedBy: mongoose.Types.ObjectId(_id)}).sort({'createdAt': -1}).populate('hostedBy', '_id name email pic city body profession').populate({path: 'attendants', model: 'User' })
+        console.log(talks)
         res.status(200).send(talks);
       } catch (error) {
         res.status(400).send(error);
@@ -121,10 +125,11 @@ const getTalks = async(req, res) => {
 }
 
 const updateUser = async(req, res) => {
+  console.log(req.body)
   
   const userId = req.params.id;
 
-  const { userName,userEmail,userCity,userAbout, userPic } = req.body;
+  const { userName,userEmail, userPic, userAbout, value, coordinates, userProfession } = req.body;
   
   const user = await User.findOne({email: userEmail});
   if(user !== null){
@@ -135,8 +140,10 @@ const updateUser = async(req, res) => {
       name: userName, 
       email: userEmail, 
       pic: userPic,
-      city: userCity,
-      about: userAbout
+      city: value,
+      about: userAbout,
+      coordinates: coordinates.locationCoordinates,
+      profession: userProfession
   }
   Object.keys(userParams).forEach(detail => {
     if(userParams[detail] === ''){
@@ -156,10 +163,11 @@ const updateUser = async(req, res) => {
 }
 
 const getAttendedTalks = async(req, res) => {
+  debugger;
   const userId = req.params.id
  
      try {
-       const talks = await Talk.find({attendants: userId}).sort({'createdAt': -1}).populate('hostedBy', '_id name email pic')
+       const talks = await Talk.find({attendants: userId}).sort({'createdAt': -1}).populate('hostedBy', '_id name email pic').populate({path: 'comments', populate: { path: 'postedBy',  model: 'User'}});
        console.log(talks)
        res.status(200).send(talks);
      } catch (error) {

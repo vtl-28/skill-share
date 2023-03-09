@@ -4,7 +4,7 @@ const { registerUser, authUser, getUser, getTalks, updateUser, getAttendedTalks 
 const { authorizeUser } = require('../middlewares/authMiddleware')
 
 //sign up user
-router.post('/user/signup', registerUser);
+router.post('/signup', registerUser);
 //log in user
 router.post('/login', authUser);
 //get user

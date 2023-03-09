@@ -2,13 +2,20 @@ const User = require('../models/User');
 const Talk = require('../models/Talk');
 
 const createTalk = async(req, res, next) => {
+    const dateRegex = /^(0?[1-9]|[12][0-9]|3[01])[\/\-](0?[1-9]|1[012])[\/\-]\d{4}$/;
     
-    const { title, body, pic, city, location, date } = req.body;
+    const { title, body, pic, value, location, date, coordinates } = req.body;
 
-    if(!title || !body || !pic, !city || !location || !date){
+    if(!title || !body || !pic, !value || !location || !date){
         res.status(400).send('Please enter all the fields');
         return;
     }
+    if(!dateRegex.test(date)){
+        res.status(400).send('Invalid date format');
+        return
+    }
+
+
     const talkExist = await Talk.findOne({title: title})
 
     if(talkExist){
@@ -21,14 +28,17 @@ const createTalk = async(req, res, next) => {
         title,
         body,
         pic,
-        city,
+        city: value,
         location,
-        date
+        date,
+        coordinates: coordinates.locationCoordinates
     };
     try {
         const talk = await (await Talk.create(newTalk)).populate('hostedBy', '_id name email pic');
+        console.log(talk)
         res.status(200).send(talk);
     } catch (error) {
+        console.log(error)
         res.status(404).send(error);
     }
 }
@@ -79,7 +89,7 @@ const deleteTalk = async(req, res) => {
 }
 
 const getTalks = (req, res) => {
-    Talk.find({}).sort({'createdAt': -1}).populate('hostedBy', '_id name').then(talks => {
+    Talk.find({}).sort({'createdAt': -1}).populate('hostedBy', '_id name').populate({path: 'comments', populate: { path: 'postedBy',  model: 'User'}}).then(talks => {
         res.status(200).send(talks);
     }).catch(error => {
         res.status(400).send(error);
@@ -93,6 +103,8 @@ const searchTalk = async(req, res) => {
     if(!query){
         res.status(400).send('Please enter field');
     }
+
+  
     //console.log(query)
   
     try {
@@ -103,6 +115,12 @@ const searchTalk = async(req, res) => {
             : {};
   
             const talk = await Talk.find(keyword).populate('hostedBy', '_id name email pic');
+            if(!talk){
+                console.log("Talk event does not exist")
+                res.status(404).send("Talk event does not exist");
+                return;
+            }
+            console.log(talk)
             res.status(200).send(talk);
     } catch (error) {
         res.status(400).send(error);
@@ -169,7 +187,7 @@ const searchTalk = async(req, res) => {
         $push:{comments:comment}
     },{
         new:true
-    }).populate("hostedBy","_id name email").populate("comments.postedBy","_id name email")
+    }).populate("hostedBy","_id name email").populate({path: 'comments', populate: { path: 'postedBy',  model: 'User'}})
    
     console.log(talk)
     res.status(200).send(talk)
@@ -188,38 +206,7 @@ const searchTalk = async(req, res) => {
     },{
         new:true
     }).populate({path: 'hostedBy', model: 'User'}).populate({path: 'attendants', model: 'User'})
-    console.log(talk)
     res.status(200).send(talk)
-    // Talk.findByIdAndUpdate(talkId, {
-    //     $push:{attendants:req.user._id} 
-    // }, {
-    //     new:true
-    // }).lean().populate('hostedBy', '_id name email pic').populate({
-    //     path: 'attendants', model: 'User'
-    // }).exec(function(err, docs){
-    //     if (err) return res.json(500);
-    //     console.log(docs)
-     
-    //       if (err) return res.json(500);
-    //       Talk.populate(docs, function (err, talks) {
-    //         if(err) return res.json(500);
-    //         console.log(talks)
-    //         res.json(talks);
-    //       });
-    // })
-
-
-    // try {
-        // const talk = await Talk.findByIdAndUpdate(talkId,{
-        //     $push:{attendants:req.user._id}
-        // },{
-        //     new:true
-        // }).populate('hostedBy', '_id name email pic').populate('attendants')
-        // console.log(talk)
-        // res.status(200).send(talk)
-    // } catch (error) {
-    //     res.status(404).send(error)
-    // }
   }
 
   const cancelTalk = async(req, res) => {
@@ -230,7 +217,6 @@ const searchTalk = async(req, res) => {
         },{
             new:true
         }).populate('hostedBy', '_id name email pic').populate('attendants', '_id name email pic')
-        console.log(talk)
         res.status(200).send(talk)
     } catch (error) {
         res.status(404).send(error)
