@@ -11,6 +11,7 @@ import {displayTalks} from './miscellaneous/DisplayItems'
 import {fetchTalks, getAttendedTalks } from './miscellaneous/Utils'
 import { FaLessThan } from "react-icons/fa";
 import Navigation from './Navigation'
+import AttendedEvents from "./AttendedEvents";
 
 function Dashboard(){
  
@@ -54,13 +55,11 @@ function Dashboard(){
             <div className="col-span-4 col-start-1 mt-8">
               <Calendar className='rounded-md w-full'  onChange={onChange} showWeekNumbers value={value} />
               <div className="flex flex-col col-span-4 col-start-1 mt-8">
-                <div className="flex justify-between">
-                  <h1>Attended talks</h1>
-                  <a href="#">See all your attended talks</a>
+                <div className="flex justify-between mb-3">
+                  <h1 className="font-semibold text-2xl">Events you have attended will appear here</h1>
                 </div>
-                <div className="p-4 mt-2 text-center border-2 border-black">
-                  <p>You have not registered for any talks. Talks you have registered for will appear here</p>
-                </div>
+                <AttendedEvents />
+                 
               </div>
               <div className="flex flex-col col-span-4 col-start-1 mt-8">
               </div>

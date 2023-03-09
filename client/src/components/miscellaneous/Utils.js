@@ -182,6 +182,7 @@ export function fetchUser(id){
     return axios.get(`/api/user/bookedTalks/${_id}`, { headers: {
         'Authorization':"Bearer "+localStorage.getItem("jwt").replace(/"/g,"")
     }}).then(response => {
+        console.log(response.data)
         return response.data;       
     }).catch(error => {
         return error.response.data

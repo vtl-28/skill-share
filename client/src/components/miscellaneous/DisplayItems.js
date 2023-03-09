@@ -1,5 +1,6 @@
 import UserTalksList from "../UserTalksList";
 import TalksList from "../TalksList";
+import AttendedEventsList from "../AttendedEventsList";
 
  export function displayTalks(data){
     const talks = Object.keys(data)
@@ -13,3 +14,11 @@ import TalksList from "../TalksList";
         return <UserTalksList key={talk._id} talk={talk} deleteTalk={deleteTalk}/>
     })}</ul>
   }
+
+  export function displayAttendedTalks(data){
+    const talks = Object.keys(data)
+   return <ul>{talks.map(talk => {
+       return <AttendedEventsList key={data[talk._id]}   talk={data[talk]}/>
+   })}</ul>
+    
+ }

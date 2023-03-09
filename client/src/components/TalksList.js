@@ -84,7 +84,7 @@ function TalksList({talk}){
                     <h4>{location}</h4>
                 </div>
                 <div className='w-1/5'>
-                    <h1>{attendants ? attendants.length : '0'} Attendants</h1>
+                    <h1>{attendants ? attendants.length : '0'} Attendees</h1>
                 </div>
             </div>
             <div className='flex self-center w-50'>
