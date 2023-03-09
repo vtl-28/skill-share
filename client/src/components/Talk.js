@@ -10,6 +10,8 @@ import AttendNavbar from '../components/AttendNavbar'
 import { TalkContext } from '../Context/TalkProvider';
 import Attendant from '../components/Attendant'
 import TalkLocationMap from './TalkLocationMap';
+import { format } from 'date-fns';
+import parseISO from 'date-fns/parseISO';
 
 const Talk = () => {
     const { id } = useParams();
@@ -149,7 +151,9 @@ const Talk = () => {
                 <div className='flex flex-col justify-between p-4 mt-4 border rounded'>
                     <div className='flex'>
                         <FontAwesomeIcon icon={faClock} />
-                        <h1 className='ml-4'>{date}</h1>
+                            <h1 className='ml-4'>{format(new Date(date), "eee',' MMM d',' y", {
+                            weekStartsOn: 1
+                        })}</h1>
                     </div>
                     <div className='flex mt-3'>
                         <FontAwesomeIcon icon={ faCompass} />

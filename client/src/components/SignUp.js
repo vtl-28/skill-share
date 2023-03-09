@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useRef, useState} from 'react'
 
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom'
@@ -35,6 +35,7 @@ const SignUp = () => {
     const toggleSuccessToast = () => setShowSuccessToast(!showSuccessToast);
     const toggleErrorToast = () => setShowErrorToast(!showErrorToast);
 
+   
         
         const submitForm = (e) => {
             e.preventDefault();
@@ -122,7 +123,7 @@ const SignUp = () => {
                             <Button bgColor='#F64060' className="w-full text-white">Log in</Button>
                         </FormControl>
                         <Flex justify='center'>
-                            <Text className="leading-5 text-lg">Already a member? <Link href="/" color='#008294'>Log in</Link></Text>
+                            <Text className="text-lg leading-5">Already a member? <Link href="/" color='#008294'>Log in</Link></Text>
                         </Flex>
                     </CardBody>
                 </Card>

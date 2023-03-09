@@ -11,6 +11,8 @@ import { SuccessToast, ErrorToast, UploadImageToast } from '../components/miscel
 import { Heading, chakra, Flex, Text, FormControl, FormLabel, Textarea, Input, CardBody, Card, Button, Divider } from '@chakra-ui/react';
 import usePlacesAutocomplete, { getGeocode, getLatLng } from 'use-places-autocomplete';
 import useOnclickOutside from 'react-cool-onclickoutside';
+import { format } from 'date-fns';
+import parseISO from 'date-fns/parseISO';
 
 const HostTalk = () => {
     const talkDetails = `   What's the purpose of the talk? 
@@ -218,7 +220,7 @@ const HostTalk = () => {
                         </FormControl>
                         <FormControl className="mb-3">
                             <FormLabel className='font-link'>Date</FormLabel>
-                            <Input type="text" value={date} onChange={(e) => setDate(e.target.value)} name="date"/>
+                            <Input type="text" value={date} onChange={(e) => setDate(e.target.value)} name="date" placeholder='dd-mm-yyyy'/>
                         </FormControl>
                         <FormControl className="mb-3">
                             <FormLabel className='font-link'>Physical Address</FormLabel>

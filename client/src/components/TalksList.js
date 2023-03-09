@@ -1,14 +1,17 @@
 import axios from 'axios';
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import { FaHeart, FaHeartBroken } from 'react-icons/fa';
 import { like, unlike, comment } from '../components/miscellaneous/Utils';
 import { SuccessToast, ErrorToast } from '../components/miscellaneous/Toasts';
 import { TalkContext } from '../Context/TalkProvider';
+import { Accordion, AccordionButton, AccordionItem, AccordionPanel, Box } from '@chakra-ui/react';
+import { ChatIcon } from '@chakra-ui/icons';
+import { format } from 'date-fns';
+import parseISO from 'date-fns/parseISO';
 
 function TalksList({talk}){
     const { user, socket } = useContext(TalkContext);
-    const { _id, title, body, date, location, pic, comments, likes, hostedBy, attendants } = talk;
-    console.log(_id)
+    const { _id, title, body, date, location, pic, comments, likes, hostedBy, attendants, createdAt } = talk;
     const [ isLiked, setIsLiked ] = useState({})
     const [ text, setText ] = useState('');
     const [showSuccessToast, setShowSuccessToast] = useState(false);
@@ -17,7 +20,8 @@ function TalksList({talk}){
     const [errorMessage, setErrorMessage] = useState([]);
     const toggleSuccessToast = () => setShowSuccessToast(!showSuccessToast);
     const toggleErrorToast = () => setShowErrorToast(!showErrorToast);
-
+    const [ openComments, setOpenComments ] = useState(false)
+    const [ dateResult, setDateResult ] = useState('')
 
     async function likeTalk(e){
         e.preventDefault();
@@ -56,6 +60,10 @@ function TalksList({talk}){
             type
         })
     }
+    function showComments(e){
+        e.preventDefault();
+        setOpenComments((openComments) => !openComments)
+    }
 
   
 
@@ -63,45 +71,52 @@ function TalksList({talk}){
       <div key={_id}>
           {showSuccessToast && <SuccessToast message={successMessage} showSuccessToast={showSuccessToast} toggleSuccessToast={toggleSuccessToast}/>}
          {showErrorToast && <ErrorToast message={errorMessage} showErrorToast={showErrorToast} toggleErrorToast={toggleErrorToast} />}
-          <div className='flex flex-col py-2 border-slate-300 border-t-2'>
-            <div className='flex justify-around w-full '>
+          <div className='flex flex-col py-3 border-slate-300 border-t-2'>
+            <div className='flex justify-around w-full mb-2'>
                 <div className='w-1/5'>
                    <a href={`/talk/${_id}`} target='blank'><img src={pic} alt="talk logo"/></a>
                 </div>
                 <div className='flex flex-col w-1/2'>
-                    <h4 className='mb-2'>{date}</h4>
+                    <h4 className='mb-2'>{date ? format(new Date(date), "eee',' MMM d',' h':'mm a", {
+                        weekStartsOn: 1
+                    }): (<h3>oops</h3>)}</h4>
                     <h4 className='mb-2'>{title}</h4>
                     <h4>{location}</h4>
                 </div>
                 <div className='w-1/5'>
-                    <h1>{attendants ? attendants.length : ''} Attendants</h1>
+                    <h1>{attendants ? attendants.length : '0'} Attendants</h1>
                 </div>
             </div>
-            <div className='flex flex-col self-center mt-4 w-50'>
-                    <div className='flex w-1/5'>
-                    { likes.includes(user._id) ?  
-                    <a href="#" onClick={(e) => unlikeTalk(e)} className='ml-2 text-red-500'><FaHeartBroken/></a> :
-                     <a href="#" onClick={(e) => likeTalk(e)} className='text-red-500'><FaHeart/></a>
-                     }
-                        
-                       
+            <div className='flex self-center w-50'>
+                    <div className='flex w-1/5 align-items-center'>
+                        <span>{likes.length > 0 ? likes.length : '0'}</span>
+                        { likes.includes(user._id) ?  
+                        <a href="#" onClick={(e) => unlikeTalk(e)} className='ml-2 text-red-500'><FaHeartBroken/></a> :
+                        <a href="#" onClick={(e) => likeTalk(e)} className='text-red-500 ml-2'><FaHeart/></a>
+                        }
                     </div>
-                    <div>
-                    <h3>{likes.length > 0 ? likes.length : ''} likes</h3>
-                                                
+                    <div className='flex w-1/5 align-items-center'>
+                                <span className='mr-2'>{comments.length > 0 ? comments.length : '0'}</span>
+                                <a href="#" onClick={(e) => showComments(e)}><ChatIcon /></a>
+                    </div>
+                   
+                </div>
+                <div className='w-50 flex self-center'>
+                        { openComments ? <div>
                                 <ul>
                                     { comments ? 
                                         comments.map(comment=>{
                                             return(
-                                            <li key={comment._id}><span style={{fontWeight:"500"}}>{comment.postedBy}</span> {comment.text}</li>
+                                            <li key={comment._id}><span style={{fontWeight:"500"}}>{comment.postedBy.name}</span> {comment.text}</li>
                                             )
                                         }) : ''
                                     }
                                 </ul>
-                                <form onSubmit={(e) => submitComment(e)}>
+                                <form onSubmit={(e) => submitComment(e)} className='mt-2'>
                                   <input className='w-full' type="text" placeholder="add a comment" value={text} onChange={(e) => setText(e.target.value)}/>
                                 </form>
-                    </div>
+                         </div>: ''
+                        }
                 </div>
         
           </div>

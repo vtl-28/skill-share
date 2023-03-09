@@ -1,6 +1,8 @@
 import { Button } from '@chakra-ui/react';
 import React, {  useContext } from 'react'
 import { TalkContext } from '../Context/TalkProvider';
+import { format } from 'date-fns';
+import parseISO from 'date-fns/parseISO';
 
 const AttendNavbar = ({title, date, attendants, book, cancel}) => {
     const { user } = useContext(TalkContext);
@@ -14,7 +16,9 @@ const AttendNavbar = ({title, date, attendants, book, cancel}) => {
   return (
     <div className='flex justify-between py-4'>
         <div className='flex flex-col w-1/2'>
-            <h1 className='mb-2'>{date}</h1>
+            <h1 className='mb-2'>{format(new Date(date), "eee',' MMM d',' h':'mm a", {
+                        weekStartsOn: 1
+                    })}</h1>
             <h1 className='font-link font-semibold'>{title}</h1>
         </div>
         <div className='flex flex-col'>

@@ -7,17 +7,11 @@ import axios from "axios";
 // }
 
 export function registerHost(data, setIsLoading, setSuccessMessage, toggleSuccessToast, setErrorMessage, toggleErrorToast){
-    return axios.post('/user/signup', data)
+    return axios.post('/api/user/signup', data)
     .then(response => {
-            setIsLoading(false);
-            setSuccessMessage("Sign up successful")
-            toggleSuccessToast();
-            localStorage.setItem("userInfo", JSON.stringify(response.data));
-    
+        return response.data;      
     }).catch(error => {
-        setIsLoading(false);
-        setErrorMessage(error.response.data)
-        toggleErrorToast();
+        return error.response.data; 
     })
 }
 export function loginHost(data){
@@ -64,7 +58,7 @@ export function addHostTalk(data){
 export function uploadImage(data){
     return axios.post("https://api.cloudinary.com/v1_1/dd1jqwp94/image/upload", data)
     .then(response => {
-      
+      console.log(response.data)
       return response.data
     }).catch(error => {
       
@@ -98,6 +92,19 @@ export function fetchUser(id){
         return error.response.data;   
     })
   }
+
+  export function searchTalk(search){
+    return axios.get(`/api/talks/searchTalk?search=${search}`,  {
+      headers: {
+          'Authorization':"Bearer "+localStorage.getItem("jwt").replace(/"/g,"")
+      }
+      }).then(response => {
+        return response.data
+      }).catch(error => {
+        return error.response.data
+      })
+  }
+
   export function updateUserTalk(id, talkDataToUpdate){
     return axios.put(`/api/talks/edit/${id}`, talkDataToUpdate, { headers: {
         'Authorization':"Bearer "+localStorage.getItem("jwt").replace(/"/g,"")

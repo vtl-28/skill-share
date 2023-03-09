@@ -6,6 +6,11 @@ import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 import { FaBell } from 'react-icons/fa';
 import TalkLoading from "./miscellaneous/TalkLoading";
+import { FormControl, FormLabel, Input, InputGroup, InputRightAddon } from "@chakra-ui/react";
+import { Search2Icon } from '@chakra-ui/icons'
+import { searchTalk } from './miscellaneous/Utils'
+import LoadingSpinner from "./LoadingSpinner";
+import { ErrorToast } from "./miscellaneous/Toasts";
 
 function NavBar(){
   const [notifications, setNotifications] = useState([]);
@@ -15,7 +20,11 @@ function NavBar(){
     const { user, socket } = useContext(TalkContext);
     const [ search , setSearch ] = useState('')
     const [ searchResult , setSearchResult ] = useState([])
-    const [ loading, setLoading ] = useState(false)
+    const [ isLoading, setIsLoading ] = useState(false)
+
+    const [showErrorToast, setShowErrorToast] = useState(false);
+    const [errorMessage, setErrorMessage] = useState([]);
+    const toggleErrorToast = () => setShowErrorToast(!showErrorToast);
     const navigate = useNavigate();
     const { _id } = user;
     console.log(user)
@@ -64,17 +73,7 @@ function NavBar(){
     })
 
 
-    function getSearch(){
-      return axios.get(`/api/talks/searchTalk?search=${search}`,  {
-        headers: {
-            'Authorization':"Bearer "+localStorage.getItem("jwt").replace(/"/g,"")
-        }
-        }).then(response => {
-          return response.data
-        }).catch(error => {
-          return error.response.data
-        })
-    }
+   
     function markAsRead(e, id){
       e.preventDefault();
       
@@ -128,54 +127,53 @@ function NavBar(){
       );
     };
 
-    async function handleSearch(){
+    async function handleSearch(e){
+      e.preventDefault()
       
       if (!search) {
       return <div>Please Enter something in search</div>;
     }
 
     try {
-      setLoading(true);
+      setIsLoading(true);
 
-      const response = await getSearch();
-      setLoading(false);
-      setSearch('')
-      Object.keys(response).map(resp => {
-        setSearchResult([...searchResult, response[resp]]);
-        searchResult.push(response[resp])
-        console.log(response[resp])
-        console.log(searchResult)
-        console.log(typeof searchResult)
-      })
+      const response = await searchTalk(search);
+      console.log(response)
 
-   
-      
+      const hostDetailsValidation = typeof response === 'object' ? 'yes' : 'no' 
+
+      if(hostDetailsValidation === 'no'){
+          setIsLoading(false);
+          setErrorMessage(response)
+          toggleErrorToast() 
+      }else{    
+          setIsLoading(false);
+          setSearch('')
+          Object.keys(response).map(resp => {
+            setSearchResult([...searchResult, response[resp]]);
+            searchResult.push(response[resp])
+          })
+      }
     } catch (error) {
       return <div>Error occured</div>
     }
     }
     return(
       <div>
-          <Navbar expand="md">
+          <Navbar expand="md" className="py-3">
         <Container>
-        <Navbar.Brand href="/dashboard" className="text-rose-500 font-semibold leading-5 text-lg font-link">Talk Host</Navbar.Brand>
-          <Form className="ml-12 d-flex">
-              <Form.Control
-                type="search"
-                placeholder="Search"
-                className="me-2"
-                aria-label="Search"
-                value={search}
-                name="search"
-                onChange={(e) => setSearch(e.target.value)}
-              />
-              <Button variant="outline-success" onClick={handleSearch}>Search</Button>
-            </Form>
+        <Navbar.Brand href="/dashboard" className="text-rose-500 font-semibold tracking-widest text-lg font-link">Talk Host</Navbar.Brand>
+              <InputGroup className="ml-11 flex" w='30%'>
+                <Input size='md' type="search"
+                  placeholder="Search for talk events"
+                  className="me-2"
+                  aria-label="Search"
+                  value={search}
+                  name="search"
+                  onChange={(e) => setSearch(e.target.value)} />
+                  <InputRightAddon children={<a href="#" onClick={(e) => handleSearch(e)}><Search2Icon /></a>} />
+              </InputGroup>
           <Navbar.Toggle aria-controls="navbarScroll" />
-          { loading ? (<TalkLoading />) : (<ul>{searchResult.map(result => {
-          <li key={result._id}>{result.title}</li>})}</ul>
-            )
-          }
           <Navbar.Collapse id="navbarScroll" className="flex-row-reverse">
             <Nav
               className="flex justify-between"
@@ -200,7 +198,13 @@ function NavBar(){
           </Navbar.Collapse>
         </Container>
       </Navbar>
-
+          <div className={showErrorToast ? "w-1/4 ml-56 h-52" :  "w-1/4 ml-56"}>
+            { isLoading ? (<LoadingSpinner />) : (<ul>{searchResult.map(result => {
+              return <li key={result._id} className='p-1 bg-slate-300 rounded-md'><a href={`/talk/${result._id}`}>{result.title}</a></li>})}</ul>
+              )
+            }
+            {showErrorToast && <ErrorToast message={errorMessage} showErrorToast={showErrorToast} toggleErrorToast={toggleErrorToast} />}
+          </div>
       </div>
     )
 }

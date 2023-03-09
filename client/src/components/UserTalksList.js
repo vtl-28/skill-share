@@ -6,6 +6,7 @@ import LoadingSpinner from './LoadingSpinner';
 import {updateUserTalk} from './miscellaneous/Utils';
 import {SuccessToast, ErrorToast } from './miscellaneous/Toasts';
 import axios from 'axios';
+import { format } from 'date-fns';
 
 
 function EditTalkModal(props){
@@ -148,15 +149,16 @@ function UserTalksList({talk, deleteTalk}){
 
     const { _id, title, body, date, location, pic } = talk;
     return(
-        <div className='flex justify-around w-full border-slate-300 border-t-2 py-2' key={_id}>
+        <div className='flex justify-around w-full border-slate-300 border-t-2 py-4' key={_id}>
             <div className='w-1/5'>
                 <img src={pic} alt='logo'/>
             </div>
             <div className='w-1/2 flex flex-col'>
-                <h4 className='mb-2'>{date}</h4>
+                <h4 className='mb-2'>{format(new Date(date), "eee',' d MMM y',' h':'mm a", {
+                        weekStartsOn: 1
+                    })}</h4>
                 <h4 className='mb-2'>{title}</h4>
                 <h4>{location}</h4>
-                <h4>Attendees</h4>
             </div>
             <div className=''>
                 <a href='#' onClick={() => setModalShow(true)}><FaAlignJustify /></a>

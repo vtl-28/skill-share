@@ -2,6 +2,8 @@ import { Avatar, Button, Text } from "@chakra-ui/react"
 import { useQuery } from "@tanstack/react-query"
 import AtttendantAvatar from "./AtttendantAvatar"
 import { fetchHostTalks } from "./miscellaneous/Utils"
+import { format } from 'date-fns';
+import parseISO from 'date-fns/parseISO';
 
 const HostEvents = ({id}) => {
   
@@ -27,7 +29,9 @@ const HostEvents = ({id}) => {
         return <a href='#' key={talks._id} className="mb-3 border-2 border-yellow-700 rounded-md p-3">
             <div className='flex justify-between'>
               <div className='flex flex-col h-32 justify-between'>
-                  <h3>{talks.date}</h3>
+                  <h3>{format(new Date(talks.date), "eee',' d MMM y',' h':'mm a", {
+                        weekStartsOn: 1
+                    })}</h3>
                   <h1>{talks.title}</h1>
                   <p>{talks.location}</p>
                   <p>R20.00</p>
