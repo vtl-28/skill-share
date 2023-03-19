@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import Navbar from './Navbar';
 import { useParams } from 'react-router-dom';
 import { SuccessToast, ErrorToast, UploadImageToast } from '../components/miscellaneous/Toasts'
@@ -16,9 +16,12 @@ import {
 import LoadingSpinner from './LoadingSpinner';
 import usePlacesAutocomplete, { getGeocode, getLatLng } from 'use-places-autocomplete';
 import useOnclickOutside from 'react-cool-onclickoutside';
+import Footer from './Footer';
+import { TalkContext } from '../Context/TalkProvider';
 
 const HostProfile = () => {
     let { id } = useParams();
+    const { user, socket, viewport } = useContext(TalkContext);
     const [ userPic, setUserPic ] = useState('')
     const [ userCity, setUserCity ] = useState('')
     const [ userAbout, setUserAbout ] = useState('')
@@ -35,6 +38,9 @@ const HostProfile = () => {
 
     const toggleSuccessToast = () => setShowSuccessToast(!showSuccessToast);
     const toggleErrorToast = () => setShowErrorToast(!showErrorToast);
+
+    console.log(viewport)
+  
 
     const {
         ready,
@@ -172,11 +178,11 @@ const HostProfile = () => {
       };
 
   return (
-    <div>
+    <div className='remove-overflow'>
         <Navbar />
         <div className='container w-full h-full mx-auto'>
-            <div className='grid grid-cols-6 grid-rows-6 '>
-                <div className='flex flex-col h-full col-span-2 col-start-3 py-4'>
+            <div className='grid grid-cols-12'>
+                <div className='flex flex-col h-full xs:col-start-2 xs:col-span-10 lg:col-start-4 lg:col-span-6  py-4'>
                 <Flex direction='column' className='mb-10'>
                     <Heading className='text-2xl'>Edit profile</Heading>
                     <h4 className='mt-3 textbase'>This information will appear on your public profile</h4>
@@ -190,10 +196,10 @@ const HostProfile = () => {
                         {picIsLoading && <LoadingSpinner />}
                         <Flex justifyContent='space-between'  className='mb-3'>
                             <Image className='rounded-full w-1/2' alt='user' src={pic}/>
-                            <Flex className='flex pt-4'>
+                            <Flex className='flex pt-4 align-items-center'>
                                 <label className="label">
                                     <Input type="file" name='pic' accept="image/*" onChange={(e) => postDetails(e.target.files[0])}/>
-                                    <span className='text-white font-semibold'>Select a file</span>
+                                    <span className='text-white font-semibold'>Upload New</span>
                                 </label>
                             </Flex>
                         </Flex>
@@ -234,51 +240,11 @@ const HostProfile = () => {
                 
             </div>
         </div>
+        <div className="footer-two-style">
+          <Footer />
+        </div>
     </div>
   )
 }
 
 export default HostProfile
-{/* <div className='container w-full h-full mx-auto'>
-<div className='grid grid-cols-6 grid-rows-6 '>
-    <div className='flex flex-col h-full col-span-2 col-start-3 py-4'>
-    <div className='flex flex-col'>
-        <h1 className='text-2xl'>Edit profile</h1>
-        <h4 className='mt-3'>This information will appear on your public profile</h4>
-    </div>
-    {showErrorToast && <ErrorToast message={errorMessage} showErrorToast={showErrorToast} toggleErrorToast={toggleErrorToast} />}
-    {showSuccessToast && <SuccessToast message={successMessage} showSuccessToast={showSuccessToast} toggleSuccessToast={toggleSuccessToast}/>}
-   
-    <Form className='mt-4'>
-        <div className='flex mb-3 justify-content-between'>
-            <img value={userPic} className='rounded-full' alt='user'/>
-            <div className='flex pt-4'>
-                <label className="label">
-                    <input type="file" name='pic' accept="image/*"/>
-                    <span>Select a file</span>
-                </label>
-            </div>
-          
-        </div>
-        <Form.Group className="mb-3">
-            <Form.Control type="text" name='name'   value={userName} onChange={(e) => setUserName(e.target.value)}/>
-        </Form.Group>
-        <Form.Group className="mb-3">
-            <Form.Control type="email" name='email'  value={userEmail} onChange={(e) => setUserEmail(e.target.value)}/>
-        </Form.Group>
-        <Form.Group className="mb-3" >
-            <Form.Control type="text" name='city'  value={userCity} onChange={(e) => setUserCity(e.target.value)}/>
-        </Form.Group>
-        <textarea name='about' rows={5} placeholder='Write a little about yourself here' value={userAbout} className='w-full mb-3' onChange={(e) => setUserAbout(e.target.value)}>
-
-        </textarea>
-        <Button type="submit" className="w-full text-black">
-            Save changes
-        </Button>
-    </Form>
-
-    </div>
-
-    
-</div>
-</div> */}

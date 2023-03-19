@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { useNavigate} from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { io } from 'socket.io-client';
 
@@ -11,7 +11,9 @@ const TalkProvider = ({ children }) => {
   const [allTalks, setAllTalks] = useState([]);
   const [user, setUser] = useState({});
   const [notification, setNotification] = useState([]);
+  const [viewport, setViewport] = useState({});
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     setSocket(io("http://localhost:3001"));
@@ -19,11 +21,13 @@ const TalkProvider = ({ children }) => {
 
   useEffect(() => {
     const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+    const windowDimensions = JSON.parse(localStorage.getItem("windowDimensions"));
     setUser(userInfo);
+    setViewport(windowDimensions)
 
     if (!userInfo) navigate("/");
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [navigate]);
+  }, [ navigate]);
   // const { data, error, status } = useQuery({ queryKey: ['userInfo'],
   // queryFn: getUser})
 
@@ -39,6 +43,7 @@ const TalkProvider = ({ children }) => {
         hostTalks,
         setHostTalks,
         user,
+        viewport,
         notification,
         allTalks,
         setAllTalks,

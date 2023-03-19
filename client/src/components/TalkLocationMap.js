@@ -1,19 +1,33 @@
 import React, { Component, useState } from 'react';
 import { Map, GoogleApiWrapper, InfoWindow, Marker } from 'google-maps-react';
+import Radium, { StyleRoot } from 'radium';
+import { useFetchWindowDimensions } from '../hooks/useFetchHostedEvents';
 
 var mapStyles = {
-    width: '28%',
-    height: '25%'
+  // xs: state => ({
+  //   width: '40%',
+  //   height: '25%'
+  // })
+  width: '100%',
+    height: '100%'
+   
   };
+  const containerStyle = { 
+  width: '37%',
+  height: '20%'
+}
 
-
+function WindowDimensions(props) {
+  const dimensions = useFetchWindowDimensions(props.callbackFn);
+  return props.children(dimensions);
+}
 export class TalkLocationMap extends Component{
     state = {
         showingInfoWindow: false,  // Hides or shows the InfoWindow
         activeMarker: {},          // Shows the active marker upon click
-        selectedPlace: {}          // Shows the InfoWindow to the selected place upon a marker
+        selectedPlace: {}
+        //screenSizeFits: window.matchMedia('(min-width: 500px)').matches    // Shows the InfoWindow to the selected place upon a marker
       };
-
       onMarkerClick = (props, marker, e) =>
       this.setState({
         selectedPlace: props,
@@ -29,14 +43,20 @@ export class TalkLocationMap extends Component{
         });
       }
     };
-    
     render(){
         return (
-            <div> 
+            <WindowDimensions>
+              { dimensions =>
+                <div className='flex'>
                  <Map
                         google={window.google}
+                       
                         zoom={14}
                         style={mapStyles}
+                        containerStyle={{
+                          width: dimensions.width <= 768 ? '600px' : '37%' ,
+                          height: dimensions.height <= 768 ? '18%' : '20%'
+                        }}
                         initialCenter={
                         {
                             lat: -1.2884,
@@ -59,7 +79,10 @@ export class TalkLocationMap extends Component{
         </InfoWindow>
                  </Map>
               
+              
             </div>
+              }
+            </WindowDimensions>
           )
     }
 }

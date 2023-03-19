@@ -1,3 +1,4 @@
+import React, { useContext, useEffect, useState } from 'react'
 import { Container, Form, Nav, Navbar } from "react-bootstrap"
 import {
   Modal,
@@ -23,7 +24,6 @@ import {
   Textarea,
 } from '@chakra-ui/react'
 import LogIn from '../components/LogIn'
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { loginHost, registerHost, uploadImage } from "./miscellaneous/Utils";
 import { ErrorToast, SuccessToast, UploadImageToast } from "./miscellaneous/Toasts";
@@ -33,17 +33,39 @@ import usePlacesAutocomplete, {
   getLatLng,
 } from "use-places-autocomplete";
 import useOnclickOutside from "react-cool-onclickoutside";
+import { TalkContext } from '../Context/TalkProvider';
+
+function getWindowDimensions() {
+  const width = window.innerWidth
+  const height = window.innerHeight
+  return {
+      width,
+      height
+  };
+}
 
  function LoginModal({onClose, isOpen}){
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showErrorToast, setShowErrorToast] = useState(false);
+  const { user, socket, viewport } = useContext(TalkContext);
   const [errorMessage, setErrorMessage] = useState([]);
   const { isOpen: isOpenSignup, onOpen: onOpenSignup, onClose: onCloseSignup } = useDisclosure();
 
   const toggleErrorToast = () => setShowErrorToast(!showErrorToast);
   const navigate = useNavigate();
+
+  const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
+  useEffect(() => {
+      function handleResize() {
+          setWindowDimensions(getWindowDimensions());
+      }
+      window.addEventListener('resize', handleResize);
+      return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  //console.log(windowDimensions)
 
 
   const submitForm = async(e) =>{
@@ -63,7 +85,7 @@ import useOnclickOutside from "react-cool-onclickoutside";
           setErrorMessage(response)
           toggleErrorToast() 
       }else{
-          //console.log(response)
+          localStorage.setItem("windowDimensions", JSON.stringify(windowDimensions));
           setIsLoading(false);
           navigate("/dashboard", {state: response});
       }
@@ -328,7 +350,7 @@ const Navigation = () => {
 
     return (
       <div>
-        <Navbar bg="white" expand="md">
+        <Navbar bg="white">
           <Container>
             <Navbar.Brand href="/" className="text-lg font-semibold leading-5 text-rose-500 font-link">Talk Host</Navbar.Brand>
             
@@ -340,8 +362,8 @@ const Navigation = () => {
                 style={{ maxHeight: '100px' }}
            
               >
-                <Nav.Link className="mr-4 font-medium leading-5 text-slate-900 font-link" onClick={onOpenLogin}>Log In</Nav.Link>
-                <Nav.Link  className="mr-4 font-medium leading-5 text-slate-900 font-link" onClick={onOpenSignup}>Sign Up</Nav.Link>
+                <Nav.Link className="mr-4 font-medium leading-5 text-slate-900 hover:text-teal-700 font-link " onClick={onOpenLogin}>Log in</Nav.Link>
+                <Nav.Link  className="mr-4 font-medium leading-5 text-slate-900 hover:text-teal-700 font-link" onClick={onOpenSignup}>Sign up</Nav.Link>
               </Nav>
             </Navbar.Collapse>
           </Container>

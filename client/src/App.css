@@ -42,6 +42,9 @@ label.label input[type="file"] {
 .font-link {
   font-family: 'Roboto Mono', cursive;
 }
+.react-calendar{
+  border: 2px solid black;
+ }
 .react-calendar__navigation__label__labelText{
  color:#008294;
  font-weight: bold;
@@ -96,6 +99,147 @@ label.label input[type="file"] {
   font-size: 16px;
   color: inherit
 }
+.bg-image{
+
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-image: url("http://res.cloudinary.com/dd1jqwp94/image/upload/v1678597441/injim6dcrxfkzvc17txt.png");
+}
+
+.bg-gradient-one{
+  height: 90vh;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-image: url("https://secure.meetupstatic.com/next/images/blobs/green-blob.svg");
+}
+.bg-gradient-two{
+  height: 50vh;
+  width: 70vh;
+  background-size: contain;
+  background-repeat:no-repeat;
+  background-image: url("https://secure.meetupstatic.com/next/images/blobs/red-blob.svg");
+}
+.bg-gradient-three{
+  height: 60vh;
+
+  background-size: contain;
+  background-repeat:no-repeat;
+  background-image: url("https://secure.meetupstatic.com/next/images/blobs/red-blob.svg");
+}
+.footer-one-style{
+  margin-top: 1600px;
+  background-color: #212121;
+}
+.footer-two-style{
+  background-color: #212121;
+}
+.footer-three-style{
+    background-color: #212121;
+}
+.play-bg-image{
+  background-size: contain;
+  height: 145px;
+  width: 45px;
+  background-repeat:no-repeat;
+  background-image: url("http://res.cloudinary.com/dd1jqwp94/image/upload/v1678597472/rq4fmagcxlkwpl6qgybu.png");
+}
+.ios-bg-image{
+  background-size: contain;
+  height: 145px;
+  width: 45px;
+  background-repeat:no-repeat;
+  background-image: url("http://res.cloudinary.com/dd1jqwp94/image/upload/v1678597498/pkkepaa3htdb41bujbxu.png");
+}
+.navbar-toggler-style{
+  border: transparent 0px;
+}
+.hash{
+  border: blue 5px;
+}
+.navbar-toggler-style:active{
+  border: transparent 0px;
+}
+.navbar-toggler-style:hover{
+  border: blue 5px;
+}
+.remove-overflow{
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+.map-style{
+  height: 25%;
+  width: 28%;
+}
+.stick-navbar{
+  position: sticky;
+  top: 20px;
+  z-index: 10;
+  display: block;
+}
+.bb{
+  width: 30%;
+}
+
+ @media (min-width: 500px) {
+  .bg-image{
+    height: 50vh;
+    width: 50vh;
+    background-repeat: no-repeat;
+  }
+  .bg-gradient-one{
+    height: 50vh;
+  }
+  .footer-one-style{
+    margin-top: 3050px;
+    background-color: #212121;
+}
+.footer-two-style{
+  margin-top: 100px;
+}
+.footer-three-style{
+  margin-top: 0px;
+}
+}
+@media (min-width: 640px) {
+  .footer-one-style{
+    margin-top: 3000px;
+    background-color: #212121;
+}
+}
+
+@media (min-width: 768px) {
+  .bg-image{
+    height: 60vh;
+  }
+  .footer-one-style{
+    margin-top: 1900px;
+    background-color: #212121;
+}
+.change-width{
+  width: 35%;
+}
+}
+@media (min-width: 1024px) {
+  .bg-image{
+    height: 80vh;
+  }
+  .bg-gradient-one{
+    height: 80vh;
+  }
+  .footer-one-style{
+    margin-top: 1600px;
+    background-color: #212121;
+}
+.bb{
+  width: 30%;
+}
+}
+@media (min-width: 1280px) {
+  .bg-image{
+    width: 50vh;
+  }
+}
+
 /* .App {
   text-align: center;
 }

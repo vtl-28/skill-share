@@ -12,10 +12,11 @@ import Attendant from '../components/Attendant'
 import TalkLocationMap from './TalkLocationMap';
 import { format } from 'date-fns';
 import parseISO from 'date-fns/parseISO';
+import Footer from './Footer'
 
 const Talk = () => {
     const { id } = useParams();
-    const { user, socket } = useContext(TalkContext);
+    const { user, socket, viewport } = useContext(TalkContext);
     const [showSuccessToast, setShowSuccessToast] = useState(false);
     const [showErrorToast, setShowErrorToast] = useState(false);
     const [successMessage, setSuccessMessage] = useState("");
@@ -37,6 +38,10 @@ const Talk = () => {
       if (status === 'error') {
         return <div>{error.message}</div> // error state
       }
+      console.log(viewport)
+      console.log(data)
+  
+
       const { _id, title, hostedBy, body, pic, date, attendants, location } = data;
 
       const { _id: hostId, name, email, about, profession, pic: hostPic } = hostedBy;
@@ -102,22 +107,24 @@ const Talk = () => {
     }
     
   return (
-    <div>
+    <div className='remove-overflow'>
       <Navbar />
       <div className='container mx-auto'>
-        <div className='flex flex-col py-6 border-b-2 border-red-400 mx-28'>
+        <div className='flex flex-col py-6 border-b-2 border-red-400 xs:mx-0'>
             <h1 className='text-3xl font-bold text font-link'>{title}</h1>
-            <div className='flex flex-row w-1/5 mt-4 justify-content-around'>
-                <a href={`/host/${hostId}`}><img src={hostPic} alt='logo' 
-                className='rounded-full' target='blank'/></a>
-                <div className='flex flex-col justify-center ml-4 w-1/2'>
-                    <h1 className='mb-2'>Hosted by</h1>
-                    <h1>{name}</h1>
+            <div className='flex flex-row xs:w-4/5 mt-4'>
+                <div className='flex xs:align-items-center xs:w-1/5'>
+                    <a href={`/host/${hostId}`}><img src={hostPic} alt='logo' 
+                    className='rounded-full' target='blank'/></a>
+                </div>
+                <div className='flex flex-col justify-center ml-4 xs:w-1/2'>
+                    <h1 className='mb-2 font-semibold'>Hosted By</h1>
+                    <h1 className='font-bold'>{name}</h1>
                 </div>
             </div>
         </div>
-        <div className='grid h-full grid-cols-10 pt-6 bg-gray-50'>
-            <div className='h-full col-span-4 col-start-2'>
+        <div className='grid grid-cols-10 pt-6 bg-gray-50 xs:mb-96 md:mb-0'>
+            <div className='xs:col-start-1 xs:col-span-10 md:col-start-1 md:col-span-5'>
                 <img src={pic} alt='logo'
                     className='w-full'
                 />
@@ -139,8 +146,8 @@ const Talk = () => {
                     </div>
                 </div>
             </div>
-            <div className='col-span-3 col-start-7'>
-                <div className='flex p-4 border rounded'>
+            <div className='xs:col-start-1 xs:col-span-8 md:col-start-7 md:col-span-4'>
+                <div className='flex p-4 border rounded xs:hidden md:flex'>
                     <img src={hostPic} alt='logo'
                             className='w-1/4' />
                     <div className='flex flex-col ml-4'>
@@ -148,7 +155,7 @@ const Talk = () => {
                         <h1 className='mt-2 text-slate-500'>{profession}</h1>
                     </div>
                 </div>
-                <div className='flex flex-col justify-between p-4 mt-4 border rounded'>
+                <div className='flex flex-col justify-between p-4 mt-4 border rounded xs:hidden md:flex'>
                     <div className='flex'>
                         <FontAwesomeIcon icon={faClock} />
                             <h1 className='ml-4'>{format(new Date(date), "eee',' MMM d',' y", {
@@ -168,12 +175,15 @@ const Talk = () => {
             </div>
         </div>
        <div className='grid grid-cols-10'>
-            <div className='col-span-8 col-start-2'>
+            <div className='xs:col-span-10 xs:col-start-1'>
                 <AttendNavbar title={title} date={date} attendants={attendants} book={bookSeat} cancel={cancelSeat}/>
             </div> 
        </div>
         
       </div>
+       <div className="footer-three-style">
+          <Footer />
+        </div>
     </div>
   )
 }

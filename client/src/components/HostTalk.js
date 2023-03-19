@@ -8,17 +8,18 @@ import NavBar from './Navbar';
 import {fetchHostTalks, addHostTalk, uploadImage} from './miscellaneous/Utils'
 import {displayHostTalks} from './miscellaneous/DisplayItems'
 import { SuccessToast, ErrorToast, UploadImageToast } from '../components/miscellaneous/Toasts'
-import { Heading, chakra, Flex, Text, FormControl, FormLabel, Textarea, Input, CardBody, Card, Button, Divider } from '@chakra-ui/react';
+import { Heading, chakra, Flex, Text, FormControl, FormLabel, Textarea, Input, CardBody, Card, Button, Divider, CardHeader } from '@chakra-ui/react';
 import usePlacesAutocomplete, { getGeocode, getLatLng } from 'use-places-autocomplete';
 import useOnclickOutside from 'react-cool-onclickoutside';
 import { format } from 'date-fns';
 import parseISO from 'date-fns/parseISO';
+import Footer from './Footer';
 
 const HostTalk = () => {
     const talkDetails = `   What's the purpose of the talk? 
     Who should join? 
     What will you do at your talks?`
-    const { user, socket } = useContext(TalkContext);
+    const { user, socket, viewport } = useContext(TalkContext);
     const [title, setTitle] = useState('');
     const [body, setBody] = useState('');
     const [location, setLocation] = useState('');
@@ -39,7 +40,7 @@ const HostTalk = () => {
     const toggleErrorToast = () => setShowErrorToast(!showErrorToast);
     const { _id } = user;
 
-    
+    console.log(viewport)
     const {
         ready,
         value,
@@ -194,16 +195,18 @@ const HostTalk = () => {
         <NavBar />
                 <div className='container mx-auto'>
         <Heading className='flex justify-center mt-4'>Host Talk</Heading>
-        <div className='grid grid-cols-12 grid-rows-6 py-8'>
+        <div className='grid grid-cols-12 py-8'>
             
-            <div className='col-span-5 col-start-1'>
+            <div className='xs:col-start-1 xs:col-span-12 lg:col-start-1 lg:col-span-5 xs:mb-16'>
 
                {userTalks.length > 0 ? displayHostTalks(userTalks, deleteTalk) : caveat }
             </div>
             {showSuccessToast && <SuccessToast message={successMessage} showSuccessToast={showSuccessToast} toggleSuccessToast={toggleSuccessToast}/>}
             {showErrorToast && <ErrorToast message={errorMessage} showErrorToast={showErrorToast} toggleErrorToast={toggleErrorToast} />}
-            <div className='col-span-5 col-start-8 gap-6'>
-            
+            <div className='xs:col-start-1 xs:col-span-12 lg:col-start-7 lg:col-span-6 xl:col-start-8 xl:col-span-5'>
+                <div className='flex justify-center mb-4'>
+                  <h1 className='font-semibold  xs:text-xl md:text-2xl lg:text-xl'>Fill in the below form to host your own talk event</h1>
+                </div>
                 <Card>
                     <CardBody>
                         <FormControl className="mb-3">
@@ -244,35 +247,11 @@ const HostTalk = () => {
 
         </div>
     </div>
+    <div className="footer-two-style">
+          <Footer />
+        </div>
         </div>
   )
 }
 
 export default HostTalk;
-
-{/* <Form onSubmit={submitForm}>
-<Form.Group className="mb-3" controlId="formBasicEmail">
-    <Form.Control type="text" value={title} onChange={(e) => setTitle(e.target.value)} name="title" placeholder="Enter the title of the talk" />
-</Form.Group>
-<textarea placeholder={talkDetails} value={body} onChange={(e) => setBody(e.target.value)} name="body" rows={8} className="w-full">
-
-</textarea>
-
-<Form.Group className="mb-3" controlId="formBasicEmail">
-    <Form.Control type="text" value={location} onChange={(e) => setLocation(e.target.value)} name="location" placeholder="Enter the venue of the talk" />
-</Form.Group>
-<Form.Group className="mb-3" controlId="formBasicPassword">
-    <Form.Control type="text" value={date} onChange={(e) => setDate(e.target.value)} name="date" placeholder="Enter the date and time of the talk" />
-</Form.Group>
-<Form.Group className="mb-3" controlId="formBasicPassword">
-    <Form.Control type="text" value={city} onChange={(e) => setCity(e.target.value)} name="city" placeholder="City of venue" />
-</Form.Group>
-
-<Form.Group className="mb-3" value={pic} name="pic" accept="image/*" onChange={(e) => postDetails(e.target.files[0])} controlId="formBasicEmail">
-    <Form.Control type="file"/>
-</Form.Group>
-
-<Button type="submit" className="w-full text-black">
-                Submit {isLoading && <LoadingSpinner />}
-</Button>
-</Form> */}

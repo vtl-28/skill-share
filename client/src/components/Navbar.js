@@ -17,10 +17,12 @@ function NavBar(){
   const [tempNotifications, setTempNotifications] = useState([]);
   const [open, setOpen] = useState(false);
 
-    const { user, socket } = useContext(TalkContext);
+    const { user, socket, viewport } = useContext(TalkContext);
     const [ search , setSearch ] = useState('')
     const [ searchResult , setSearchResult ] = useState([])
     const [ isLoading, setIsLoading ] = useState(false)
+    const [ borderColor, setBorderColor ] = useState('')
+    const [ borderWidth, setBorderWidth ] = useState('')
 
     const [showErrorToast, setShowErrorToast] = useState(false);
     const [errorMessage, setErrorMessage] = useState([]);
@@ -71,8 +73,13 @@ function NavBar(){
       }
       console.log(notifications)
     })
+    console.log(viewport)
 
-
+    const changeStyles = () => {
+      console.log("you just clicked");
+  
+      setBorderColor('hash');
+    }
    
     function markAsRead(e, id){
       e.preventDefault();
@@ -158,12 +165,18 @@ function NavBar(){
       return <div>Error occured</div>
     }
     }
+
+
+
+
+
+
     return(
-      <div>
-          <Navbar expand="md" className="py-3">
+      <div className="border-b border-zinc-200">
+          <Navbar expand="lg" className="py-3">
         <Container>
-        <Navbar.Brand href="/dashboard" className="text-rose-500 font-semibold tracking-widest text-lg font-link">Talk Host</Navbar.Brand>
-              <InputGroup className="ml-11 flex" w='30%'>
+        <Navbar.Brand href="/dashboard" className="text-rose-500 font-semibold tracking-widest text-lg font-link xs:mr-0 md:mr-12 lg:mr-20">Talk Host</Navbar.Brand>
+              <InputGroup className="flex" w={['50%', '50%', '50%', '30%', '30%']}>
                 <Input size='md' type="search"
                   placeholder="Search for talk events"
                   className="me-2"
@@ -171,9 +184,9 @@ function NavBar(){
                   value={search}
                   name="search"
                   onChange={(e) => setSearch(e.target.value)} />
-                  <InputRightAddon children={<a href="#" onClick={(e) => handleSearch(e)}><Search2Icon /></a>} />
+                  <InputRightAddon style={{backgroundColor: 'rgb(244 63 94)'}} children={<a href="#" onClick={(e) => handleSearch(e)}><Search2Icon className="text-white"/></a>} />
               </InputGroup>
-          <Navbar.Toggle aria-controls="navbarScroll" />
+          <Navbar.Toggle aria-controls="responsive-navbar-nav" onClick={changeStyles} className="navbar-toggler-style"/>
           <Navbar.Collapse id="navbarScroll" className="flex-row-reverse">
             <Nav
               className="flex justify-between"
@@ -182,14 +195,14 @@ function NavBar(){
             >
               
              
-              <Nav.Link href="/hostTalk" className="mr-4 leading-5 leading-5 font-medium text-slate-900 font-link">Host talk</Nav.Link>
-              <Nav.Link href={api} className="mr-4 leading-5 leading-5 font-medium text-slate-900 font-link">Profile</Nav.Link>
-              <Nav.Link href="#" className="mr-4 leading-5 leading-5 font-medium text-slate-900 font-link" onClick={() => setOpen(!open)}>{notifications.length > 0 ? notifications.length : ''}<FaBell className="inline"/></Nav.Link>
+              <Nav.Link href="/hostTalk" className="hover:text-teal-700 lg:mr-2 xl:mr-4 leading-5 leading-5 font-medium text-slate-900 font-link">Host talk</Nav.Link>
+              <Nav.Link href={api} className=" hover:text-teal-700 lg:mr-2  xl:mr-4 leading-5 leading-5 font-medium text-slate-900 font-link">Profile</Nav.Link>
+              <Nav.Link href="#" className="hover:text-teal-700 lg:mr-2  xl:mr-4 leading-5 leading-5 font-medium text-slate-900 font-link" onClick={() => setOpen(!open)}>{notifications.length > 0 ? notifications.length : ''}<FaBell className="inline"/></Nav.Link>
               { open && <ul className="notifications">
                 {notifications.map((n) => displayNotification(n))}
                 
               </ul> }
-              <Nav.Link className="leading-5 leading-5 font-medium text-slate-900 font-link" href="/" onClick={() => {
+              <Nav.Link className="hover:text-teal-700  leading-5 font-medium text-slate-900 font-link" href="/" onClick={() => {
                  localStorage.removeItem('userInfo');
                  navigate('/')
               }

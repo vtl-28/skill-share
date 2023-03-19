@@ -4,7 +4,7 @@ import React from 'react'
 const AtttendantAvatar = ({attendee}) => {
   return (
         <div>
-            <a href={`/host/${attendee._id}`} > <Avatar size='sm' name={`${attendee.name}`} src={attendee.pic} /> </a>
+            <a href={`/host/${attendee._id}`} > <Avatar size={['xs','xs','sm', 'md']} name={`${attendee.name}`} src={attendee.pic} /> </a>
         </div>
   )
 }
