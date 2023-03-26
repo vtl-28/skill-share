@@ -1,4 +1,4 @@
-import { Button, Container, Nav, Navbar, Form } from "react-bootstrap";
+import {  Container, Nav, Navbar, Form } from "react-bootstrap";
 import React, { useContext, useEffect, useState } from 'react';
 import { TalkContext } from '../Context/TalkProvider';
 import { useNavigate } from "react-router-dom";
@@ -6,7 +6,14 @@ import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 import { FaBell } from 'react-icons/fa';
 import TalkLoading from "./miscellaneous/TalkLoading";
-import { FormControl, FormLabel, Input, InputGroup, InputRightAddon } from "@chakra-ui/react";
+import { Button, FormControl, FormLabel, Input, InputGroup, InputRightAddon,
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay,
+  useDisclosure, } from "@chakra-ui/react";
 import { Search2Icon } from '@chakra-ui/icons'
 import { searchTalk } from './miscellaneous/Utils'
 import LoadingSpinner from "./LoadingSpinner";
@@ -27,6 +34,8 @@ function NavBar(){
     const [showErrorToast, setShowErrorToast] = useState(false);
     const [errorMessage, setErrorMessage] = useState([]);
     const toggleErrorToast = () => setShowErrorToast(!showErrorToast);
+    const { isOpen, onOpen, onClose } = useDisclosure()
+    const cancelRef = React.useRef()
     const navigate = useNavigate();
     const { _id } = user;
     console.log(user)
@@ -124,11 +133,12 @@ function NavBar(){
             <p>{`${sender.name} ${action} your talk event`}</p> : ''}
             { type === 4 ?  <p>{`${sender.name} created a new talk event.`}</p> : ''}
             { type === 5 ? <p>{`${sender.name} has ${action} a spot on your talk event`}</p> :
-            <p>{`${sender.name} has ${action} their booking.`}</p> }
+            '' }
+            { type === 6 ? <p>{`${sender.name} has ${action} their booking.`}</p> : ''}
 
             <div className="flex w-full justify-between px-2">
               <a href="#" name={id} onClick={(e) => markAsRead(e, id)}>Mark as read</a>
-              <a href={`/talk/${response._id}`} target="blank" className="w-1/2 text-center">Open</a>
+              <a href={`/talk/${response._id}`} className="w-1/2 text-center">Open</a>
             </div>
         </div>
       );
@@ -168,7 +178,10 @@ function NavBar(){
 
 
 
-
+    function logout(){
+      localStorage.removeItem('userInfo');
+      navigate('/')
+    }
 
 
     return(
@@ -202,11 +215,9 @@ function NavBar(){
                 {notifications.map((n) => displayNotification(n))}
                 
               </ul> }
-              <Nav.Link className="hover:text-teal-700  leading-5 font-medium text-slate-900 font-link" href="/" onClick={() => {
-                 localStorage.removeItem('userInfo');
-                 navigate('/')
-              }
-              }>Log out</Nav.Link>
+              <Nav.Link className="hover:text-teal-700  leading-5 font-medium text-slate-900 font-link"
+              onClick={onOpen}
+              >Log out</Nav.Link>
             </Nav>
           </Navbar.Collapse>
         </Container>
@@ -218,6 +229,32 @@ function NavBar(){
             }
             {showErrorToast && <ErrorToast message={errorMessage} showErrorToast={showErrorToast} toggleErrorToast={toggleErrorToast} />}
           </div>
+          <AlertDialog
+        isOpen={isOpen}
+        leastDestructiveRef={cancelRef}
+        onClose={onClose}
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize='lg' fontWeight='bold'>
+              Logging out
+            </AlertDialogHeader>
+
+            <AlertDialogBody>
+              Are you sure you want to log out?
+            </AlertDialogBody>
+
+            <AlertDialogFooter>
+              <Button ref={cancelRef} onClick={onClose}>
+                Cancel
+              </Button>
+              <Button colorScheme='red' onClick={logout} ml={3}>
+                Delete
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
       </div>
     )
 }

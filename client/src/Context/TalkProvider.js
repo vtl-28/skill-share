@@ -2,6 +2,8 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { io } from 'socket.io-client';
+import { useJsApiLoader } from '@react-google-maps/api';
+import { useLoadPlacesScript } from '../hooks/useFetchHostedEvents'
 
 export const TalkContext = createContext();
 
@@ -14,6 +16,10 @@ const TalkProvider = ({ children }) => {
   const [viewport, setViewport] = useState({});
   const navigate = useNavigate();
   const location = useLocation();
+  const [ address, setAddress ] = useState('')
+  const [ addressCoordinates, setAddressCoordinates ] = useState({})
+  const [ picUrl, setPicUrl ] = useState('')
+  const [ talkViewCount, setTalkViewCount ] = useState(0)
 
   useEffect(() => {
     setSocket(io("http://localhost:3001"));
@@ -28,14 +34,19 @@ const TalkProvider = ({ children }) => {
     if (!userInfo) navigate("/");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ navigate]);
-  // const { data, error, status } = useQuery({ queryKey: ['userInfo'],
-  // queryFn: getUser})
+  //load()
 
-  // console.log(data)
-  // function getUser(){
-  //   return JSON.parse(localStorage.getItem("userInfo"));
+  
+  // function load(){
+  //   if(isLoaded === true){
+  //     console.log("true")
+  //     setPlacesScript(true)
+  //   }else{
+  //     console.log("false")
+  //   }
+  //   console.log(placesScript)
   // }
-
+  
 
   return (
     <TalkContext.Provider
@@ -49,7 +60,13 @@ const TalkProvider = ({ children }) => {
         setAllTalks,
         setNotification,
         socket, 
-        setSocket
+        setSocket,
+        address,
+        setAddress,
+        addressCoordinates,
+        setAddressCoordinates,
+        talkViewCount, setTalkViewCount,
+        picUrl, setPicUrl
       }}
     >
       {children}

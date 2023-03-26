@@ -12,14 +12,15 @@ import 'react-calendar/dist/Calendar.css';
 import ReactDependentScript from 'react-dependent-script';
 
 
+
 function App() {
   return (
     <div className="App">
-    <ReactDependentScript
-  scripts={[`https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_PLACES_KEY}&libraries=places`]}
+    {/* <ReactDependentScript
+  scripts={[`https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_PLACES_KEY}&libraries=places&callback=initMap`]}
 >
  
-</ReactDependentScript>
+</ReactDependentScript> */}
      <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/signup" element={<SignUp />} />

@@ -88,7 +88,7 @@ export class TalkLocationMap extends Component{
 }
 
 export default GoogleApiWrapper({
-    apiKey: 'AIzaSyDZp2ZYcK6vz_GCgCWk7xVHIgSWZgoz8-8'
+    apiKey: process.env.REACT_APP_MAPS_KEY
   })(TalkLocationMap);
 
 

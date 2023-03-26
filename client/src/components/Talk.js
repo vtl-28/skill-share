@@ -16,7 +16,7 @@ import Footer from './Footer'
 
 const Talk = () => {
     const { id } = useParams();
-    const { user, socket, viewport } = useContext(TalkContext);
+    const { user, socket, viewport, talkViewCount } = useContext(TalkContext);
     const [showSuccessToast, setShowSuccessToast] = useState(false);
     const [showErrorToast, setShowErrorToast] = useState(false);
     const [successMessage, setSuccessMessage] = useState("");
@@ -38,8 +38,7 @@ const Talk = () => {
       if (status === 'error') {
         return <div>{error.message}</div> // error state
       }
-      console.log(viewport)
-      console.log(data)
+      console.log(talkViewCount)
   
 
       const { _id, title, hostedBy, body, pic, date, attendants, location } = data;
@@ -170,8 +169,8 @@ const Talk = () => {
                 <div className='mt-4'>
                     <TalkLocationMap />
                 </div>
-                {showSuccessToast && <SuccessToast message={successMessage} showSuccessToast={showSuccessToast} toggleSuccessToast={toggleSuccessToast}/>}
-                {showErrorToast && <ErrorToast message={errorMessage} showErrorToast={showErrorToast} toggleErrorToast={toggleErrorToast} />}
+                {showSuccessToast && <SuccessToast placement='middle-center'  message={successMessage} showSuccessToast={showSuccessToast} toggleSuccessToast={toggleSuccessToast}/>}
+                {showErrorToast && <ErrorToast placement='middle-center' message={errorMessage} showErrorToast={showErrorToast} toggleErrorToast={toggleErrorToast} />}
             </div>
         </div>
        <div className='grid grid-cols-10'>

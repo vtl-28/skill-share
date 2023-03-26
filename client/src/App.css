@@ -42,9 +42,9 @@ label.label input[type="file"] {
 .font-link {
   font-family: 'Roboto Mono', cursive;
 }
-.react-calendar{
+/* .react-calendar{
   border: 2px solid black;
- }
+ } */
 .react-calendar__navigation__label__labelText{
  color:#008294;
  font-weight: bold;
@@ -114,7 +114,6 @@ label.label input[type="file"] {
 }
 .bg-gradient-two{
   height: 50vh;
-  width: 70vh;
   background-size: contain;
   background-repeat:no-repeat;
   background-image: url("https://secure.meetupstatic.com/next/images/blobs/red-blob.svg");
@@ -179,6 +178,30 @@ label.label input[type="file"] {
 .bb{
   width: 30%;
 }
+.closebtn {
+  margin-left: 15px;
+  color: white;
+  font-weight: bold;
+  float: right;
+  font-size: 22px;
+  line-height: 20px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+/* When moving the mouse over the close button */
+.closebtn:hover {
+  color: black;
+}
+.error-toast{
+  background-color: #c8000c;
+  border: 2px solid #ffffff;
+  color: #ffffff;
+}
+.spin{
+  top: 500px;
+  left: 500px;
+}
 
  @media (min-width: 500px) {
   .bg-image{
@@ -236,7 +259,7 @@ label.label input[type="file"] {
 }
 @media (min-width: 1280px) {
   .bg-image{
-    width: 50vh;
+    width: 70vh;
   }
 }
 

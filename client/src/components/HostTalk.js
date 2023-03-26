@@ -14,12 +14,17 @@ import useOnclickOutside from 'react-cool-onclickoutside';
 import { format } from 'date-fns';
 import parseISO from 'date-fns/parseISO';
 import Footer from './Footer';
+import Spinner from 'react-bootstrap/Spinner';
+import PlacesAutoComplete from '../components/PlacesAutoComplete'
+import { useJsApiLoader } from '@react-google-maps/api';
+import PostImage from '../components/PostImage'
+import { useFetch } from '../hooks/useFetchHostedEvents';
 
 const HostTalk = () => {
     const talkDetails = `   What's the purpose of the talk? 
     Who should join? 
     What will you do at your talks?`
-    const { user, socket, viewport } = useContext(TalkContext);
+    const { user, socket, viewport, address, addressCoordinates, picUrl } = useContext(TalkContext);
     const [title, setTitle] = useState('');
     const [body, setBody] = useState('');
     const [location, setLocation] = useState('');
@@ -36,82 +41,25 @@ const HostTalk = () => {
     const [dataIsLoading, setDataIsLoading] = useState(false);
     const [ coordinates, setCoordinates ] = useState({})
 
+
     const toggleSuccessToast = () => setShowSuccessToast(!showSuccessToast);
     const toggleErrorToast = () => setShowErrorToast(!showErrorToast);
     const { _id } = user;
 
-    console.log(viewport)
-    const {
-        ready,
-        value,
-        suggestions: { status, data },
-        setValue,
-        clearSuggestions,
-      } = usePlacesAutocomplete({
-        requestOptions: {
-          /* Define search scope here */
-        },
-        debounce: 300,
-      });
-    
-    
-      const ref = useOnclickOutside(() => {
-        // When user clicks outside of the component, we can dismiss
-        // the searched suggestions by calling this method
-        clearSuggestions();
-      });
-    
-      const handleInput = (e) => {
-        // Update the keyword of the input element
-        setValue(e.target.value);
-      };
-      const renderSuggestions = () =>
-      data.map((suggestion) => {
-        const {
-          place_id,
-          structured_formatting: { main_text, secondary_text },
-        } = suggestion;
+  const { data: userTalks, status, error } = useFetch(_id)
+  if (status === 'loading') {
+    return <Spinner 
+    animation="border"
+    size="lg"
+    role="status"
+    aria-hidden="true"
+    variant="secondary"
+    className="spin" />
+  }
   
-        return (
-          <li key={place_id} onClick={handleSelect(suggestion)}>
-            <a href="#">
-              <strong>{main_text}</strong> <small>{secondary_text}</small>
-            </a>
-          </li>
-        );
-      });
-  
-    
-      const handleSelect =
-        ({ description }) =>
-        () => {
-          // When user selects a place, we can replace the keyword without request data from API
-          // by setting the second parameter to "false"
-          setValue(description, false);
-          clearSuggestions();
-          let locationCoordinates ={};
-          // Get latitude and longitude via utility functions
-          getGeocode({ address: description }).then((results) => {
-            const { lat, lng } = getLatLng(results[0]);
-            locationCoordinates = { lat: lat, lng: lng}
-            setCoordinates(coordinates => ({...coordinates, locationCoordinates}))
-            console.log("📍 Coordinates: ", { lat, lng });
-            
-          });
-        };
-    
-
-    let { data: userTalks, error, isLoading, isError } = useQuery({ queryKey: ['hostTalks'], queryFn: () => fetchHostTalks(_id), 
-            enabled: true,
-            refetchOnMount: true,
-            refetchInterval: 2000,
-            refetchIntervalInBackground: true,
-            refetchOnWindowFocus: true
-        })
-    if (isLoading) {
-        return <div>loading user talks...</div> // loading state
-      }
-    
+  if (status === 'error') {
+  return <div>{error.message}</div> // error state
+  }
      const caveat = (<div>You have not hosted any talks. Talks you have hosted will appear here</div>)
 
       
@@ -129,12 +77,10 @@ const HostTalk = () => {
         setDataIsLoading(true);
 
         const data = {
-            title, body, pic,location, value, date, coordinates
+            title, body, picUrl,location, address, date, addressCoordinates
         }
-
      
         let response = await addHostTalk(data)
-        console.log(response)
         const hostDetailsValidation = typeof response === 'object' ? 'yes' : 'no' 
 
         if(hostDetailsValidation === 'no'){
@@ -156,40 +102,16 @@ const HostTalk = () => {
        
     }
     function deleteTalk(e){
+        e.preventDefault()
+        setDataIsLoading(true)
         axios.delete(`/api/talks/delete/${e.target.name}`);
+        setDataIsLoading(false)
+        setSuccessMessage('Talk event successfully deleted')
+        toggleSuccessToast()
         userTalks.filter((talks) => talks._id !== e.target.name);
+        
     }
-    
-    const postDetails = async(pics) => {
-        setDataIsLoading(true);
-        if (pics === undefined) {
-            <UploadImageToast />
-          return;
-        }
 
-        if (pics.type === "image/jpeg" || pics.type === "image/png") {
-          const data = new FormData();
-          data.append("file", pics);
-          data.append("upload_preset", "skill-share");
-          data.append("cloud_name", "dd1jqwp94");
-
-         let {url} = await uploadImage(data);
-         console.log(url)
-         let imageUploadValidation = url.match(/cloudinary/i)
-         if(imageUploadValidation){
-             setPic(url);
-             setDataIsLoading(false);
-         }else{
-            setErrorMessage("Problem uploading image")
-            setDataIsLoading(false);
-         }
-    
-        }else{
-           <UploadImageToast />
-           setDataIsLoading(false);
-          return;
-        }
-      };
   return (
         <div>
         <NavBar />
@@ -201,8 +123,8 @@ const HostTalk = () => {
 
                {userTalks.length > 0 ? displayHostTalks(userTalks, deleteTalk) : caveat }
             </div>
-            {showSuccessToast && <SuccessToast message={successMessage} showSuccessToast={showSuccessToast} toggleSuccessToast={toggleSuccessToast}/>}
-            {showErrorToast && <ErrorToast message={errorMessage} showErrorToast={showErrorToast} toggleErrorToast={toggleErrorToast} />}
+            {showSuccessToast && <SuccessToast placement={'middle-center'} message={successMessage} showSuccessToast={showSuccessToast} toggleSuccessToast={toggleSuccessToast}/>}
+            {showErrorToast && <ErrorToast placement={'middle-center'} message={errorMessage} showErrorToast={showErrorToast} toggleErrorToast={toggleErrorToast} />}
             <div className='xs:col-start-1 xs:col-span-12 lg:col-start-7 lg:col-span-6 xl:col-start-8 xl:col-span-5'>
                 <div className='flex justify-center mb-4'>
                   <h1 className='font-semibold  xs:text-xl md:text-2xl lg:text-xl'>Fill in the below form to host your own talk event</h1>
@@ -225,21 +147,22 @@ const HostTalk = () => {
                             <FormLabel className='font-link'>Date</FormLabel>
                             <Input type="text" value={date} onChange={(e) => setDate(e.target.value)} name="date" placeholder='dd-mm-yyyy'/>
                         </FormControl>
-                        <FormControl className="mb-3">
-                            <FormLabel className='font-link'>Physical Address</FormLabel>
-                            <Input type='text' value={value}
-                                  onChange={handleInput}
-                                  disabled={!ready} name="value"/>
-                                {/* We can use the "status" to decide whether we should display the dropdown or not */}
-                                {status === "OK" && <ul>{renderSuggestions()}</ul>}
-                        </FormControl>
-                        <FormControl className="mb-6">
-                            <FormLabel className='font-link'>Upload image</FormLabel>
-                            <Input type="file"  name="pic" accept="image/*" onChange={(e) => postDetails(e.target.files[0])} /> {picIsLoading && <LoadingSpinner />}
-                        </FormControl>
-                        {dataIsLoading && <LoadingSpinner />}
+                        <PlacesAutoComplete />
+                        <PostImage />
                         <FormControl>
-                            <Button bgColor='#F64060' className="w-full text-white" onClick={submitForm}>Create talk</Button>
+                        <Button bgColor='#F64060' className="w-full" onClick={submitForm}>
+                        { dataIsLoading && ( <Spinner
+                        as="span"
+                        animation="border"
+                        size="sm"
+                        role="status"
+                        aria-hidden="true"
+                        variant="secondary"
+                      />)}
+                        <span className={dataIsLoading ? "visually-hidden text-white" : 'text-white'}>
+                          Host Talk
+                        </span>
+                       </Button>
                         </FormControl>
                     </CardBody>
                 </Card>

@@ -5,7 +5,7 @@ import { like, unlike, comment } from '../components/miscellaneous/Utils';
 import { SuccessToast, ErrorToast } from '../components/miscellaneous/Toasts';
 import { TalkContext } from '../Context/TalkProvider';
 import { Accordion, AccordionButton, AccordionItem, AccordionPanel, Box } from '@chakra-ui/react';
-import { ChatIcon } from '@chakra-ui/icons';
+import { ChatIcon, ViewIcon } from '@chakra-ui/icons';
 import { format } from 'date-fns';
 import parseISO from 'date-fns/parseISO';
 
@@ -99,6 +99,7 @@ function TalksList({talk}){
                                 <span className='mr-2'>{comments.length > 0 ? comments.length : '0'}</span>
                                 <a href="#" onClick={(e) => showComments(e)}><ChatIcon /></a>
                     </div>
+
                    
                 </div>
                 <div className='w-50 flex self-center'>

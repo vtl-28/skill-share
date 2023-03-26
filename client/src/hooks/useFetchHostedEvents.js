@@ -1,6 +1,10 @@
+import { useJsApiLoader } from "@react-google-maps/api";
 import { useQuery } from "@tanstack/react-query";
-import { useState, useEffect } from "react";
-import { fetchHostTalks } from "../components/miscellaneous/Utils";
+import { useState, useEffect, useContext } from "react";
+import { Spinner } from "react-bootstrap";
+import { fetchHostTalks, fetchTalks, uploadImage } from "../components/miscellaneous/Utils";
+import { TalkContext } from "../Context/TalkProvider";
+
 
 export const useFetch = (id) => {
   let { data, error, status, isError } = useQuery({ queryKey: ['hostTalks'], queryFn: () => fetchHostTalks(id), 
@@ -10,15 +14,8 @@ export const useFetch = (id) => {
   refetchIntervalInBackground: true,
   refetchOnWindowFocus: true
 })
-if (status === 'loading') {
-return <div>loading user talks...</div> // loading state
-}
 
-if (status === 'error') {
-return <div>{error.message}</div> // error state
-}
-
-  return { data };
+  return { data, error, status };
 };
 
 export const useFetchWindowDimensions = () => {
@@ -44,3 +41,21 @@ export const useFetchWindowDimensions = () => {
 return windowDimensions;
 
 }
+
+
+export const useFetchTalks = () => {
+  const { data, error, status, isFetched } = useQuery({ queryKey: ['talks'], queryFn: fetchTalks,
+  refetchOnMount: true,
+  refetchInterval: 2000,
+  refetchIntervalInBackground: true,
+  refetchOnWindowFocus: true})
+
+return { data, error, status };
+}
+
+export const useLoadPlacesScript = () => {
+  const { isLoaded } = useJsApiLoader({ library: "places" });
+
+  return { isLoaded }
+}
+

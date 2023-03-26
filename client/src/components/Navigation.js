@@ -21,28 +21,26 @@ import {
   FormLabel,
   Input,
   Box,
-  Textarea,
+  Textarea, Alert,
+  AlertIcon,
+  AlertTitle,
+  AlertDescription,
 } from '@chakra-ui/react'
 import LogIn from '../components/LogIn'
 import { useNavigate } from "react-router-dom";
 import { loginHost, registerHost, uploadImage } from "./miscellaneous/Utils";
 import { ErrorToast, SuccessToast, UploadImageToast } from "./miscellaneous/Toasts";
 import LoadingSpinner from "./LoadingSpinner";
+import Spinner from 'react-bootstrap/Spinner';
 import usePlacesAutocomplete, {
   getGeocode,
   getLatLng,
 } from "use-places-autocomplete";
 import useOnclickOutside from "react-cool-onclickoutside";
 import { TalkContext } from '../Context/TalkProvider';
-
-function getWindowDimensions() {
-  const width = window.innerWidth
-  const height = window.innerHeight
-  return {
-      width,
-      height
-  };
-}
+import { ErrorAlert } from '../components/miscellaneous/Alerts'
+import PlacesAutoComplete from '../components/PlacesAutoComplete'
+import PostImage from '../components/PostImage'
 
  function LoginModal({onClose, isOpen}){
   const [email, setEmail] = useState('');
@@ -56,17 +54,6 @@ function getWindowDimensions() {
   const toggleErrorToast = () => setShowErrorToast(!showErrorToast);
   const navigate = useNavigate();
 
-  const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
-  useEffect(() => {
-      function handleResize() {
-          setWindowDimensions(getWindowDimensions());
-      }
-      window.addEventListener('resize', handleResize);
-      return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  //console.log(windowDimensions)
-
 
   const submitForm = async(e) =>{
       e.preventDefault();
@@ -76,16 +63,15 @@ function getWindowDimensions() {
           email, password
       }
       let response = await loginHost(data);
-     //const answer = response === 'Please enter all fields'|| response === 'User does not exist' || response === 'Invalid Email or Password' ? 'no' : 'yes'
+   
      const hostDetailsValidation = typeof response === 'object' ? 'yes' : 'no' 
      
       if(hostDetailsValidation === 'no'){
-          //console.log(response)
+    
           setIsLoading(false);
           setErrorMessage(response)
           toggleErrorToast() 
       }else{
-          localStorage.setItem("windowDimensions", JSON.stringify(windowDimensions));
           setIsLoading(false);
           navigate("/dashboard", {state: response});
       }
@@ -105,6 +91,7 @@ function getWindowDimensions() {
                             <Text className="text-lg leading-5">Not a member? <Link color='#008294' onClick={onOpenSignup}>Sign up</Link></Text>
                 </Flex>
                 {showErrorToast && <ErrorToast message={errorMessage} showErrorToast={showErrorToast} toggleErrorToast={toggleErrorToast} />}
+               
                 <Box className="pt-10">
                 
                         <FormControl className="mb-3">
@@ -116,7 +103,20 @@ function getWindowDimensions() {
                             <Input type="password" name="password" value={password} onChange={(e) => setPassword(e.target.value)}/>
                         </FormControl>
                         <FormControl>
-                            <Button bgColor='#F64060' className="w-full text-white" onClick={submitForm}> {isLoading && <LoadingSpinner />}Log in</Button>
+                            {/* <Button bgColor='#F64060' className="w-full text-white" onClick={submitForm}> {isLoading && <LoadingSpinner />}Log in</Button> */}
+                            <Button bgColor='#F64060' className="w-full" onClick={submitForm}>
+                              { isLoading && ( <Spinner
+                              as="span"
+                              animation="border"
+                              size="sm"
+                              role="status"
+                              aria-hidden="true"
+                              variant="secondary"
+                            />)}
+                              <span className={isLoading ? "visually-hidden text-white" : 'text-white'}>
+                                Log in
+                              </span>
+                             </Button>
                         </FormControl>
                 </Box>
                 <RegisterModal isOpen={isOpenSignup} onClose={onCloseSignup}/>
@@ -146,113 +146,53 @@ function getWindowDimensions() {
     const [successMessage, setSuccessMessage] = useState("");
     const [errorMessage, setErrorMessage] = useState([]);
     const [ coordinates, setCoordinates ] = useState({})
+    const { address, addressCoordinates, picUrl } = useContext(TalkContext);
 
     const toggleSuccessToast = () => setShowSuccessToast(!showSuccessToast);
     const toggleErrorToast = () => setShowErrorToast(!showErrorToast);
   const { isOpen: isOpenLogin, onOpen: onOpenLogin, onClose: onCloseLogin } = useDisclosure();
 
-
-
-  const {
-    ready,
-    value,
-    suggestions: { status, data },
-    setValue,
-    clearSuggestions,
-  } = usePlacesAutocomplete({
-    requestOptions: {
-      /* Define search scope here */
-    },
-    debounce: 300,
-  });
-
-        const postDetails = async(pics) => {
           
-            setPicIsLoading(true);
-            if (pics === undefined) {
-              <UploadImageToast />
-              return;
-            }
+        //     setPicIsLoading(true);
+        //     if (pics === undefined || pics === '') {
+        //       setErrorMessage("Please select a file")
+        //       setPicIsLoading(false);
+        //       toggleErrorToast()
+        //     }
 
-            if (pics.type === "image/jpeg" || pics.type === "image/png") {
+        //     if (pics.type === "image/jpeg" || pics.type === "image/png") {
              
-              const data = new FormData();
-              data.append("file", pics);
-              data.append("upload_preset", "skill-share");
-              data.append("cloud_name", "dd1jqwp94");
+        //       const data = new FormData();
+        //       data.append("file", pics);
+        //       data.append("upload_preset", "skill-share");
+        //       data.append("cloud_name", "dd1jqwp94");
               
-              console.log(data)
-              let {url} = await uploadImage(data);
-              console.log(url)
-         let imageUploadValidation = url.match(/cloudinary/i)
-         if(imageUploadValidation){
-             setPic(url);
-             setPicIsLoading(false);
-         }else{
-            setErrorMessage("Problem uploading image")
-            setPicIsLoading(false);
-         }
-            }else{
-                <UploadImageToast />
-                setPicIsLoading(false);
-              return;
-            }
-          };
-
-
-  const ref = useOnclickOutside(() => {
-    // When user clicks outside of the component, we can dismiss
-    // the searched suggestions by calling this method
-    clearSuggestions();
-  });
-
-  const handleInput = (e) => {
-    // Update the keyword of the input element
-    setValue(e.target.value);
-  };
-
-  const handleSelect =
-    ({ description }) =>
-    () => {
-      // When user selects a place, we can replace the keyword without request data from API
-      // by setting the second parameter to "false"
-      setValue(description, false);
-      clearSuggestions();
-      let locationCoordinates ={};
-      // Get latitude and longitude via utility functions
-      getGeocode({ address: description }).then((results) => {
-        const { lat, lng } = getLatLng(results[0]);
-        locationCoordinates = { lat: lat, lng: lng}
-        setCoordinates(coordinates => ({...coordinates, locationCoordinates}))
-        console.log("📍 Coordinates: ", { lat, lng });
-        
-      });
-    };
-
-    const renderSuggestions = () =>
-    data.map((suggestion) => {
-      const {
-        place_id,
-        structured_formatting: { main_text, secondary_text },
-      } = suggestion;
-
-      return (
-        <li key={place_id} onClick={handleSelect(suggestion)}>
-          <a href="#">
-            <strong>{main_text}</strong> <small>{secondary_text}</small>
-          </a>
-        </li>
-      );
-    });
+        //       console.log(data)
+        //       let {url} = await uploadImage(data);
+        //       console.log(url)
+        //  let imageUploadValidation = url.match(/cloudinary/i)
+        //  if(imageUploadValidation){
+        //      setPic(url);
+        //      setPicIsLoading(false);
+        //  }else{
+        //     setErrorMessage("Problem uploading image")
+        //     setPicIsLoading(false);
+        //     toggleErrorToast()
+        //  }
+        //     }else{
+        //         setErrorMessage('Please select an image file')
+        //         setPicIsLoading(false);
+        //         toggleErrorToast()
+        //     }
+        //   };
 
     const submitForm = async(e) => {
       e.preventDefault();
       setDataIsLoading(true);
 
       const data = {
-          name, email, pic,about, value, coordinates, profession, password, confirmpassword
+          name, email, picUrl,about, address, addressCoordinates, profession, password, confirmpassword
       }
-     
       const response = await registerHost(data)
       const hostDetailsValidation = typeof response === 'object' ? 'yes' : 'no' 
      
@@ -267,7 +207,6 @@ function getWindowDimensions() {
           setName('')
           setPic('')
           setProfession('')
-          setValue('')
           setPassword('')
           setConfirmpassword('')
           setEmail('')
@@ -275,7 +214,8 @@ function getWindowDimensions() {
           localStorage.setItem("userInfo", JSON.stringify(response.data));
       }
   }
-   
+   //console.log(isLoaded)
+
   return(
     <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
@@ -285,8 +225,8 @@ function getWindowDimensions() {
             <Flex direction='column' className="py-10">
                
                 <Box>
-                {showErrorToast && <ErrorToast message={errorMessage} showErrorToast={showErrorToast} toggleErrorToast={toggleErrorToast} />}
-                {showSuccessToast && <SuccessToast message={successMessage} showSuccessToast={showSuccessToast} toggleSuccessToast={toggleSuccessToast} />}
+                {showErrorToast && <ErrorToast placement={'bottom-center'} message={errorMessage} showErrorToast={showErrorToast} toggleErrorToast={toggleErrorToast} />}
+                {showSuccessToast && <SuccessToast placement={'bottom-center'} message={successMessage} showSuccessToast={showSuccessToast} toggleSuccessToast={toggleSuccessToast} />}
 
                 <FormControl className="mb-3">
                             <FormLabel className='font-link'>Your name</FormLabel>
@@ -300,23 +240,12 @@ function getWindowDimensions() {
                             <FormLabel className='font-link'>About</FormLabel>
                             <Textarea placeholder='please tell us about yourself' onChange={(e) => setAbout(e.target.value)} name="about" value={about}/>
                         </FormControl>
-                        <FormControl className="mb-3" ref={ref}>
-                            <FormLabel className='font-link'>Physical address</FormLabel>
-                              <Input type='text' value={value}
-                                  onChange={handleInput}
-                                  disabled={!ready} name="value"/>
-                                {/* We can use the "status" to decide whether we should display the dropdown or not */}
-                                {status === "OK" && <ul>{renderSuggestions()}</ul>}
-                              
-                         </FormControl>
+                       <PlacesAutoComplete />
                          <FormControl className="mb-3">
                              <FormLabel className='font-link'>Profession</FormLabel>
                              <Input type='text' placeholder='What do you do for a living?' name="profession" value={profession}  onChange={(e) => setProfession(e.target.value)}/>
                          </FormControl>
-                         <FormControl className="mb-3">
-                             <FormLabel className='font-link'>Profile pic</FormLabel>
-                             <Input type="file" name="pic" accept="image/*" onChange={(e) => postDetails(e.target.files[0])} />  {picIsLoading && <LoadingSpinner />}
-                         </FormControl>
+                         <PostImage />
                          <FormControl className="mb-3">
                             <FormLabel className='font-link'>Password</FormLabel>
                              <Input type='password' name="password" value={password} onChange={(e) => setPassword(e.target.value)} />
@@ -325,9 +254,21 @@ function getWindowDimensions() {
                             <FormLabel className='font-link'>Confirm password</FormLabel>
                         <Input type='password' name="confirmpassword" value={confirmpassword} placeholder="Confirm password" onChange={(e) => setConfirmpassword(e.target.value)}/>
                        </FormControl>
-                       {dataIsLoading && <LoadingSpinner />}
+                       {/* {dataIsLoading && <LoadingSpinner />} */}
                         <FormControl className="mb-6">
-                             <Button bgColor='#F64060' className="w-full text-white" onClick={submitForm}>Sign up</Button>
+                             <Button bgColor='#F64060' className="w-full" onClick={submitForm}>
+                              { dataIsLoading && ( <Spinner
+                              as="span"
+                              animation="border"
+                              size="sm"
+                              role="status"
+                              aria-hidden="true"
+                              variant="secondary"
+                            />)}
+                              <span className={dataIsLoading ? "visually-hidden text-white" : 'text-white'}>
+                                Sign up
+                              </span>
+                             </Button>
                         </FormControl>
                         <Flex justify='center'>
                             <Text className="text-lg leading-5">Already a member? <Link color='#008294' onClick={onOpenLogin}>Log in</Link></Text>
@@ -344,14 +285,14 @@ function getWindowDimensions() {
 
 
  }
-const Navigation = () => {
+const Navigation = ({ls}) => {
   const { isOpen: isOpenLogin, onOpen: onOpenLogin, onClose: onCloseLogin } = useDisclosure();
   const { isOpen: isOpenSignup, onOpen: onOpenSignup, onClose: onCloseSignup } = useDisclosure();
-
+  console.log(ls)
     return (
       <div>
         <Navbar bg="white">
-          <Container>
+          <div className='flex justify-between align-items-center px-2 w-full'>
             <Navbar.Brand href="/" className="text-lg font-semibold leading-5 text-rose-500 font-link">Talk Host</Navbar.Brand>
             
             <Navbar.Toggle aria-controls="navbarScroll" />
@@ -362,56 +303,16 @@ const Navigation = () => {
                 style={{ maxHeight: '100px' }}
            
               >
-                <Nav.Link className="mr-4 font-medium leading-5 text-slate-900 hover:text-teal-700 font-link " onClick={onOpenLogin}>Log in</Nav.Link>
-                <Nav.Link  className="mr-4 font-medium leading-5 text-slate-900 hover:text-teal-700 font-link" onClick={onOpenSignup}>Sign up</Nav.Link>
+                <Nav.Link className="mr-4 xs:text-sm font-medium leading-5 text-slate-900 hover:text-teal-700 font-link " onClick={onOpenLogin}>Log in</Nav.Link>
+                <Nav.Link  className="xs:text-sm font-medium leading-5 text-slate-900 hover:text-teal-700 font-link" onClick={onOpenSignup}>Sign up</Nav.Link>
               </Nav>
             </Navbar.Collapse>
-          </Container>
+          </div>
         </Navbar>
         <LoginModal isOpen={isOpenLogin} onClose={onCloseLogin}/>
-        <RegisterModal isOpen={isOpenSignup} onClose={onCloseSignup}/>
+        <RegisterModal isOpen={isOpenSignup} onClose={onCloseSignup} ls={ls}/>
       </div>
     )
   }
 
   export default Navigation;
- {/* <Form className='border rounded-md'>
-<Form.Group className="mb-3">
-    <Form.Control type="text" name="name" value={name} placeholder="Enter your name" onChange={(e) => setName(e.target.value)}/>
-</Form.Group>
-<Form.Group className="mb-3">
-    <Form.Control type="email" name="email" value={email} placeholder="Enter your email" onChange={(e) => setEmail(e.target.value)} />
-</Form.Group>
-
-
-<textarea name="about" value={about} placeholder="tell us about yourself" rows={5} className="w-full" onChange={(e) => setAbout(e.target.value)}>
-
-</textarea>
-
-<Form.Group className="mb-3">
-    <Form.Control type="text" name="city" value={city} placeholder="City" onChange={(e) => setCity(e.target.value)}/>
-</Form.Group>
-<Form.Group className="mb-3">
-    <Form.Control type="text" name="profession" value={profession} placeholder="Profession" onChange={(e) => setProfession(e.target.value)}/>
-</Form.Group>
-<Form.Group className="mb-3">
-    <Form.Control type="file" name="pic" accept="image/*" onChange={(e) => postDetails(e.target.files[0])}/>
-</Form.Group>
-
-<Form.Group className="mb-3">
-    <Form.Control type="password" name="password" value={password} placeholder="Enter password" onChange={(e) => setPassword(e.target.value)}/>
-</Form.Group>
-<Form.Group className="mb-3">
-    <Form.Control type="password" name="confirmpassword" value={confirmpassword} placeholder="Confirm password" onChange={(e) => setConfirmpassword(e.target.value)}/>
-</Form.Group>
-
-<div className='flex justify-between'>
-    <Button type="submit" className="w-1/3 text-black" onClick={submitForm}>
-        Sign Up  {isLoading && <LoadingSpinner />}
-    </Button>
-    <Button type="button" className="w-1/3 text-black">
-        <Link to="/">Back</Link>
-    </Button>
-</div>
-
-</Form> */}

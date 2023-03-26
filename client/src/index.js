@@ -19,6 +19,7 @@ import { tokens, components } from 'react-ui/themes/light'
 import { ChakraProvider } from '@chakra-ui/react'
 import Radium, { StyleRoot } from 'radium';
 
+
 const queryClient = new QueryClient()
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

@@ -50,7 +50,7 @@ const Footer = () => {
                         </div>
                     </div>
                     <div className='flex align-items-end'>
-                        <a href='#' className='mr-5'><img src='http://res.cloudinary.com/dd1jqwp94/image/upload/v1678599038/lbslzalaffj7mk2zdqu2.png'/></a>
+                        <a href='#' className='mr-5'><img src='http://res.cloudinary.com/dd1jqwp94/image/upload/v1679806455/qgjvt2vkgsixanuiihzp.png'/></a>
                         <a href='#'><img src='http://res.cloudinary.com/dd1jqwp94/image/upload/v1678597472/rq4fmagcxlkwpl6qgybu.png'/></a>
                     </div>
                 </div>

@@ -59,39 +59,24 @@ function RegisterModal({onClose, isOpen}){
 
   
 }
-function getWindowDimensions() {
-    const width = window.innerWidth
-    const height = window.innerHeight
-    return {
-        width,
-        height
-    };
-  }
+
 
 const Home = () => {
-    const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
 
     const { isOpen, onOpen, onClose } = useDisclosure();
-    useEffect(() => {
-        function handleResize() {
-            setWindowDimensions(getWindowDimensions());
-        }
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, [windowDimensions]);
-
+    
 
 
   return (
-    <div className='bg-gradient-one xs:bg-right-top'>
-      <Navigation />
-      <div  className='container w-full h-full mx-auto'>
+    <div className=''>
+      <Navigation/>
+      <div  className=' w-full h-full '>
 
         <Box className='flex justify-around xs:pt-0 xs:flex-col md:flex-row md:mb-11 md:pt-28'>
-            <div className='flex flex-col xs:w-full md:w-1/2 pt-10 xs:pl-4'>
-                <Heading as='h1' className='font-bold leading-loose font-link xs:tracking-widest md:tracking-tight lg:tracking-wider xl:tracking-widest'>Connect and Learn with Talk Host: The Platform for Knowledge Sharing!</Heading>
-                <Text className='mt-4 leading-loose font-link lg:tracking-wider xl:tracking-widest bg-gradient-two xs:bg-left-bottom'>Where people with a shared interest come
-together and give small, informal presentations about things they know</Text>
+            <div className='flex flex-col xs:w-full md:w-1/2 pt-10 xs:px-2'>
+                <Heading as='h1' fontSize={['30px']} className='font-bold leading-10 font-link'>Connect and Learn with Talk Host: The Platform for Knowledge Sharing!</Heading>
+                <Text className='mt-4 leading-loose font-link lg:tracking-wider xl:tracking-widest xs:text-sm'>Where people with a shared interest come
+together and give small, informal presentations about things they know to share Knowledge and create meaningful connections</Text>
             </div>
             <div className='bg-image w-1/3 xs:bg-right-top xs:self-center md:bg-center lg:bg-top'>
             </div>
@@ -137,7 +122,7 @@ together and give small, informal presentations about things they know</Text>
                     </Box>
                 </Flex>
             </div>
-            <div className='xs:col-start-1 xs:col-span-9 sm:col-start-2 sm:col-span-8 md:col-start-3 md:col-span-7 lg:col-start-4 lg:col-span-7 mt-24 bg-gradient-two bg-right'>
+            <div className='xs:col-start-1 xs:col-span-9 sm:col-start-1 sm:col-span-9 md:col-start-1 md:col-span-9 lg:col-start-1 lg:col-span-9 mt-24'>
                 <Box className='flex justify-center'>
                     <Button colorScheme='teal' color='#fff' onClick={onOpen}>Join Talk-Host</Button>
                 </Box>
