@@ -69,7 +69,7 @@ const AttendedEventsList = ({talk}) => {
     <div className='flex flex-col py-3 border-slate-300 border-t-2'>
       <div className='flex justify-around w-full mb-2'>
           <div className='w-1/5'>
-             <a href={`/talk/${_id}`} target='blank'><img src={pic} alt="talk logo"/></a>
+             <a href={`/talk/${_id}`} ><img src={pic} alt="talk logo"/></a>
           </div>
           <div className='flex flex-col w-1/2'>
               <h4 className=' text-base tracking-tighter'>{date ? format(new Date(date), "eee',' MMM d',' h':'mm a", {

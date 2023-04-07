@@ -9,6 +9,7 @@ import {fetchHostTalks, addHostTalk, uploadImage} from './miscellaneous/Utils'
 import {displayHostTalks} from './miscellaneous/DisplayItems'
 import { SuccessToast, ErrorToast, UploadImageToast } from '../components/miscellaneous/Toasts'
 import { Heading, chakra, Flex, Text, FormControl, FormLabel, Textarea, Input, CardBody, Card, Button, Divider, CardHeader } from '@chakra-ui/react';
+import { CalendarIcon } from '@chakra-ui/icons';
 import usePlacesAutocomplete, { getGeocode, getLatLng } from 'use-places-autocomplete';
 import useOnclickOutside from 'react-cool-onclickoutside';
 import { format } from 'date-fns';
@@ -19,6 +20,7 @@ import PlacesAutoComplete from '../components/PlacesAutoComplete'
 import { useJsApiLoader } from '@react-google-maps/api';
 import PostImage from '../components/PostImage'
 import { useFetch } from '../hooks/useFetchHostedEvents';
+import DatePicker from 'react-datepicker';
 
 const HostTalk = () => {
     const talkDetails = `   What's the purpose of the talk? 
@@ -28,7 +30,7 @@ const HostTalk = () => {
     const [title, setTitle] = useState('');
     const [body, setBody] = useState('');
     const [location, setLocation] = useState('');
-    const [date, setDate] = useState('');
+    //const [date, setDate] = useState('');
     const [city, setCity] = useState('');
     const [pic, setPic] = useState('');
     const [showSuccessToast, setShowSuccessToast] = useState(false);
@@ -40,7 +42,8 @@ const HostTalk = () => {
     const [picIsLoading, setPicIsLoading] = useState(false);
     const [dataIsLoading, setDataIsLoading] = useState(false);
     const [ coordinates, setCoordinates ] = useState({})
-
+    const [value, onChange] = useState(new Date());
+    const [startDate, setStartDate] = useState(new Date());;
 
     const toggleSuccessToast = () => setShowSuccessToast(!showSuccessToast);
     const toggleErrorToast = () => setShowErrorToast(!showErrorToast);
@@ -75,7 +78,9 @@ const HostTalk = () => {
         e.preventDefault();
 
         setDataIsLoading(true);
-
+        let date = format(new Date(date), "d'-'MMM'-'y',' h':'mm a", {
+            weekStartsOn: 1
+        })
         const data = {
             title, body, picUrl,location, address, date, addressCoordinates
         }
@@ -94,7 +99,7 @@ const HostTalk = () => {
             setTitle('')
             setBody('')
             setPic('')
-            setDate('')
+            setStartDate('')
             setLocation('')
             setCity('')
             toggleSuccessToast();
@@ -111,7 +116,8 @@ const HostTalk = () => {
         userTalks.filter((talks) => talks._id !== e.target.name);
         
     }
-
+   
+    console.log(startDate)
   return (
         <div>
         <NavBar />
@@ -145,7 +151,15 @@ const HostTalk = () => {
                         </FormControl>
                         <FormControl className="mb-3">
                             <FormLabel className='font-link'>Date</FormLabel>
-                            <Input type="text" value={date} onChange={(e) => setDate(e.target.value)} name="date" placeholder='dd-mm-yyyy'/>
+                            {/* <Flex justifyContent='space-between'>
+                                <Input type="text" w='90%' value={date} onChange={(e) => setDate(e.target.value)} name="date" placeholder='dd-mm-yyyy'/>
+                                <a w='5%' className='self-end' onClick={() => setShowDatePicker(true)} href='#'><CalendarIcon /></a>
+                            </Flex> */}
+                            <DatePicker  showIcon isClearable showTimeSelect
+      timeFormat="HH:mm"
+      timeIntervals={15}
+      timeCaption="time"
+      dateFormat="dd-MMMM-yyyy h:mm aa" selected={startDate} onChange={(date) => setStartDate(date)} />
                         </FormControl>
                         <PlacesAutoComplete />
                         <PostImage />

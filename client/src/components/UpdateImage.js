@@ -11,7 +11,7 @@ const UpdateImage = () => {
     <div>
          <label className="label">
                                     <Input type="file" name='pic' accept="image/*" onChange={(e) => postDetails(e.target.files[0])}/>
-                                    <span className='text-white font-semibold'>Upload New</span>
+                                    <span className='text-white font-semibold xs:text-sm'>Upload New</span>
                                 </label>
       
     </div>

@@ -189,7 +189,7 @@ function NavBar(){
           <Navbar expand="lg" className="py-3">
         <Container>
         <Navbar.Brand href="/dashboard" className="text-rose-500 font-semibold tracking-widest text-lg font-link xs:mr-0 md:mr-12 lg:mr-20">Talk Host</Navbar.Brand>
-              <InputGroup className="flex" w={['50%', '50%', '50%', '30%', '30%']}>
+              <InputGroup hideBelow='sm' className="flex" w={['50%', '50%', '50%', '30%', '30%']}>
                 <Input size='md' type="search"
                   placeholder="Search for talk events"
                   className="me-2"
@@ -208,9 +208,9 @@ function NavBar(){
             >
               
              
-              <Nav.Link href="/hostTalk" className="hover:text-teal-700 lg:mr-2 xl:mr-4 leading-5 leading-5 font-medium text-slate-900 font-link">Host talk</Nav.Link>
-              <Nav.Link href={api} className=" hover:text-teal-700 lg:mr-2  xl:mr-4 leading-5 leading-5 font-medium text-slate-900 font-link">Profile</Nav.Link>
-              <Nav.Link href="#" className="hover:text-teal-700 lg:mr-2  xl:mr-4 leading-5 leading-5 font-medium text-slate-900 font-link" onClick={() => setOpen(!open)}>{notifications.length > 0 ? notifications.length : ''}<FaBell className="inline"/></Nav.Link>
+              <Nav.Link href="/hostTalk" className="hover:text-teal-700 lg:mr-2 xl:mr-4 leading-5  font-medium text-slate-900 font-link">Host talk</Nav.Link>
+              <Nav.Link href={api} className=" hover:text-teal-700 lg:mr-2  xl:mr-4 leading-5  font-medium text-slate-900 font-link">Profile</Nav.Link>
+              <Nav.Link href="#" className="hover:text-teal-700 lg:mr-2  xl:mr-4 leading-5  font-medium text-slate-900 font-link" onClick={() => setOpen(!open)}><span className="text-red-600 font-bold">{notifications.length > 0 ? notifications.length : ''}</span><FaBell className="inline"/></Nav.Link>
               { open && <ul className="notifications">
                 {notifications.map((n) => displayNotification(n))}
                 

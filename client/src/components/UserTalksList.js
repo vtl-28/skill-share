@@ -176,11 +176,11 @@ function UserTalksList({talk, deleteTalk}){
                 <img src={pic} alt='logo'/>
             </div>
             <div className='w-1/2 flex flex-col'>
-                <h4 className='mb-2'>{format(new Date(date), "eee',' d MMM y',' h':'mm a", {
+                <h4 className='mb-2 xs:text-sm sm:text-base'>{format(new Date(date), "eee',' d MMM y',' h':'mm a", {
                         weekStartsOn: 1
                     })}</h4>
-                <h4 className='mb-2'>{title}</h4>
-                <h4>{location}</h4>
+                <h4 className='mb-2 xs:text-sm sm:text-base'>{title}</h4>
+                <h4 className='xs:text-sm sm:text-base'>{location}</h4>
             </div>
             <div className=''>
                 <a href='#' onClick={() => setModalShow(true)}><FaAlignJustify /></a>

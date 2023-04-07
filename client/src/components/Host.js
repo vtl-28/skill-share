@@ -12,6 +12,7 @@ import { Flex, Image, Tabs, TabList, TabPanels, Tab, TabPanel, Button } from '@c
 import HostEvents from '../components/HostEvents';
 import { TalkContext } from "../Context/TalkProvider";
 import { SizeMe } from 'react-sizeme'
+import Footer from './Footer';
 const AboutHost = ({about}) => {
 
   return( 
@@ -59,7 +60,7 @@ const Host = () => {
                   <FontAwesomeIcon icon={faUser} />
                   <h3 className='ml-4 tracking-widest leading-5'>Organized by {name}</h3>
               </div>
-              <div className='flex lg:mt-40 xl:mt-48 xs:w-1/2 sm:w-1/3 md:w-2/3 justify-between xs:mt-10 md:mt-14'>
+              <div className='flex lg:mt-40 xl:mt-48 xs:w-1/2 sm:w-1/3 md:w-2/3 justify-between xs:mt-5 md:mt-14'>
                   <h3 className='font-bold text-lg'>Share:</h3>
                   <a href='#' className='mx-1 flex align-items-center justify-center text-xl'><FaFacebookSquare /></a>
                   <a href='#' className='mx-1 flex align-items-center justify-center text-xl'><FaTwitter /></a>
@@ -68,7 +69,7 @@ const Host = () => {
               </div> 
             </Flex>
           </Flex>
-          <div className='grid grid-rows-6 h-full'>
+          <div className='grid  xs:mt-5'>
           <Tabs size='md' variant='line'>
                 <TabList>
                   <Tab _selected={{ color: '#008294', borderBottomColor: '#008294' }}>About Host</Tab>
@@ -76,12 +77,12 @@ const Host = () => {
                   <Tab _selected={{ color: '#008294', borderBottomColor: '#008294' }}>Three</Tab>
                 </TabList>
 
-                <TabPanels h='2095px' w='100%' className='bg-gray-50 '>
-                  <TabPanel h='2095px'>
+                <TabPanels w='100%' className='bg-gray-50 '>
+                  <TabPanel >
                     <AboutHost about={about} />
                   </TabPanel>
-                  <TabPanel h='2095px'>
-                    <ul className='flex flex-col h-full'>
+                  <TabPanel >
+                    <ul className='flex flex-col'>
                       <HostEvents id={_id}/>
                     </ul>
                   </TabPanel>
@@ -91,65 +92,12 @@ const Host = () => {
                 </TabPanels>
               </Tabs>
           </div>
-
-          {/* <Flex className='h-full'>
-          <Tabs size='lg' isFitted>
-                <TabList>
-                  <Tab>About Host</Tab>
-                  <Tab>Events</Tab>
-                  <Tab>Three</Tab>
-                </TabList>
-
-                <TabPanels>
-                  <TabPanel>
-                    <AboutHost about={about} />
-                  </TabPanel>
-                  <TabPanel className='h-full border-2 border-blue-700'>
-                    <ul className='flex flex-col border-2 border-green-700 h-full'>
-                      <HostEvents id={_id}/>
-                    </ul>
-                  </TabPanel>
-                  <TabPanel>
-                    <p>three!</p>
-                  </TabPanel>
-                </TabPanels>
-              </Tabs>
-          </Flex> */}
       </div>
+          <div className='footer-one-style'>
+        <Footer />
+    </div>   
     </div>
   )
 }
 
 export default Host;
-{/* <div className='col-start-2 col-span-4 h-full'>
-<Image src={pic} alt='logo' boxSize='380px' objectFit='cover'/>
-   
-</div>
-<div className='col-start-7 col-span-3'>
-    <div className='flex flex-col'>
-        <h1 className='text-3xl font-bold'>{name}</h1>
-        <div className='flex mt-4'>
-            <EmailIcon />
-            <h3 className='ml-4'>{email}</h3>
-        </div>
-        <div className='flex mt-3'>
-            <FontAwesomeIcon icon={faUserTie} />
-            <h3 className='ml-4'>{profession}</h3>
-        </div>
-        <div className='flex mt-3'>
-            <FontAwesomeIcon icon={faUser} />
-            <h3 className='ml-4'>Organized by {name}</h3>
-        </div>
-        <div className='flex mt-48'>
-            <h3 className='font-bold'>Share:</h3>
-            <a href='#' className='mx-1'><FaFacebookSquare /></a>
-            <a href='#' className='mx-1'><FaTwitter /></a>
-            <a href='#' className='mx-1'><FaLinkedin /></a>
-            <a href='#' className='mx-1'><FaInbox /></a>
-        </div>     
-    </div>
-</div>
-<div div className='col-start-7 col-span-3'>
-    <h1>hi</h1>
-</div>
-</div> */}

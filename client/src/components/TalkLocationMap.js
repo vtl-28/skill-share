@@ -47,14 +47,14 @@ export class TalkLocationMap extends Component{
         return (
             <WindowDimensions>
               { dimensions =>
-                <div className='flex'>
+                <div className='flex grow'>
                  <Map
                         google={window.google}
                        
                         zoom={14}
                         style={mapStyles}
                         containerStyle={{
-                          width: dimensions.width <= 768 ? '600px' : '37%' ,
+                          width: dimensions.width <= 768 ? '40%' : '37%' ,
                           height: dimensions.height <= 768 ? '18%' : '20%'
                         }}
                         initialCenter={

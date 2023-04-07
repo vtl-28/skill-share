@@ -108,11 +108,11 @@ const Talk = () => {
   return (
     <div className='remove-overflow'>
       <Navbar />
-      <div className='container mx-auto'>
+      <div className='container px-0'>
         <div className='flex flex-col py-6 border-b-2 border-red-400 xs:mx-0'>
-            <h1 className='text-3xl font-bold text font-link'>{title}</h1>
+            <h1 className='text-3xl font-bold text-black font-link'>{title}</h1>
             <div className='flex flex-row xs:w-4/5 mt-4'>
-                <div className='flex xs:align-items-center xs:w-1/5'>
+                <div className='flex xs:align-items-center xs:w-20'>
                     <a href={`/host/${hostId}`}><img src={hostPic} alt='logo' 
                     className='rounded-full' target='blank'/></a>
                 </div>
@@ -136,7 +136,7 @@ const Talk = () => {
                         <a href='#' className='text-teal-600 font-semibold'>See all</a>
                     </div>
                     <div>
-                       <ul className='flex justify-between'>
+                       <ul className='flex justify-between flex-wrap'>
                         { attendants ? attendants.map(attendant => {
                            return <Attendant attendant={attendant}/>
                         }): ( <div>No attendants have booked for this talk event yet</div>)}

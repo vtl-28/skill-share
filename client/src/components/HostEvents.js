@@ -33,7 +33,7 @@ const HostEvents = ({id}) => {
 
  
     return( 
-  <div className='w-full h-full flex flex-col justify-between'>
+  <div className='w-full flex flex-col justify-between'>
     {
       userTalks ? userTalks.map(talks => {
         return <a href={`/talk/${talks._id}`} key={talks._id} className="mb-3 bg-white border-0 rounded-lg p-6 hover:text-black">
@@ -46,7 +46,7 @@ const HostEvents = ({id}) => {
                   <p>{talks.location}</p>
                   <p>R20.00</p>
               </div>
-              <div className='flex h-32 xs:hidden'>
+              <div className='flex h-32 xs:hidden sm:flex'>
                 <img src={talks.pic}/>
               </div>
   
@@ -63,7 +63,7 @@ const HostEvents = ({id}) => {
                         </div> 
                         <p ref={inputElement}>{talks.attendants.length > 0 && windowDimensions.width <= 768 ? talks.attendants.length : `${talks.attendants.length} attendees`}</p> 
                 </div>
-                <div className='flex xs:w-1/2  change md:justify-between border-0 xs:justify-end'>
+                <div className='flex xs:w-1/2  md:justify-around lg:w-1/3 border-0 xs:justify-end'>
                   <Show breakpoint='(min-width: 768px)'>
                     <Button variant='outline' colorScheme='teal' size={['sm','sm','md']} className=' hover:text-white'>Comments</Button>
                   </Show>

@@ -72,24 +72,24 @@ const Home = () => {
       <Navigation/>
       <div  className=' w-full h-full '>
 
-        <Box className='flex justify-around xs:pt-0 xs:flex-col md:flex-row md:mb-11 md:pt-28'>
-            <div className='flex flex-col xs:w-full md:w-1/2 pt-10 xs:px-2'>
-                <Heading as='h1' fontSize={['30px']} className='font-bold leading-10 font-link'>Connect and Learn with Talk Host: The Platform for Knowledge Sharing!</Heading>
-                <Text className='mt-4 leading-loose font-link lg:tracking-wider xl:tracking-widest xs:text-sm'>Where people with a shared interest come
+        <Box className='flex justify-around xs:pt-0 xs:flex-col sm:flex-row sm:mb-24 sm:pt-28'>
+            <div className='flex flex-col xs:w-full sm:w-1/2 pt-10 xs:px-2'>
+                <Heading as='h1' fontSize={['30px', '25px', '30px', '35px']} className='font-bold xl:leading-10 font-link'>Connect and Learn with Talk Host: The Platform for Knowledge Sharing!</Heading>
+                <Text className='mt-4 leading-loose font-link xs:text-base sm:text-sm md:text-base xl:leading-8'>Where people with a shared interest come
 together and give small, informal presentations about things they know to share Knowledge and create meaningful connections</Text>
             </div>
-            <div className='bg-image w-1/3 xs:bg-right-top xs:self-center md:bg-center lg:bg-top'>
+            <div className='bg-image w-1/3 xs:mx-auto sm:mx-0 md:bg-top'>
             </div>
         </Box>
      
         <div className='grid grid-cols-8'>  
-            <div className='xs:col-start-1 xs:col-span-8 lg:col-start-2 lg:col-span-6'>
+            <div className='xs:col-start-1 xs:col-span-8 lg:col-start-2 sm:px-4 lg:col-span-6'>
                 <Flex direction='column' align='center'>
-                    <h1 className='text-3xl mb-3 font-bold font-link'>How Talk Host works</h1>
-                    <Text textAlign='center' className='font-medium font-link'>Meet new people who share your interests through online and in-person events. It’s free to create an account.</Text>
+                    <Heading as='h1' fontSize={['25px', '25px', '25px', '30px']} className='mb-3 font-bold font-link'>How Talk Host works</Heading>
+                    <Text textAlign='center' className='font-medium font-link xs:text-sm md:text-base'>Meet new people who share your interests through online and in-person events. It’s free to create an account.</Text>
                 </Flex>
             </div>
-            <div className='col-start-1 col-span-8 mt-10'>
+            <div className='xs:col-start-1 xs:col-span-8 sm:px-4 mt-10'>
                 <Flex direction={['column', 'column', 'row']} justifyContent={'space-between'}>
                     <Box className='flex flex-col items-center' mb={[6]}>
                     <Image
@@ -98,7 +98,7 @@ together and give small, informal presentations about things they know to share 
   alt='Dan Abramov'
 />
                         <chakra.h3 className='sm:text-2xl my-3 font-semibold leading-7 font-link md:text-lg lg:text-2xl' color='#008294'>Find talk event</chakra.h3>
-                        <Text className='sm:text-base leading-5 font-link md:text-center md:text-sm lg:text-base lg:tracking-tight xl:tracking-normal'>Search for in-person or online events</Text>
+                        <Text className='xs:text-sm sm:text-base leading-5 font-link xs:text-center md:text-sm lg:text-base lg:tracking-tight xl:tracking-normal'>Search for in-person or online events</Text>
                     </Box>
                     <Box className='flex flex-col items-center' mb={[6]}>
                     <Image
@@ -108,7 +108,7 @@ together and give small, informal presentations about things they know to share 
   alt='Dan Abramov'
 />
                         <chakra.h3 className='sm:text-2xl my-3 font-semibold leading-7 font-link md:text-lg lg:text-2xl' color='#008294'>Attend talk event</chakra.h3>
-                        <Text className='sm:text-base leading-5 font-link md:text-center md:text-sm lg:text-base lg:tracking-tight xl:tracking-normal'>Attend events in-person or online</Text>
+                        <Text className='xs:text-sm sm:text-base leading-5 font-link xs:text-center md:text-sm lg:text-base lg:tracking-tight xl:tracking-normal'>Attend events in-person or online</Text>
                     </Box>
                     <Box className='flex flex-col items-center'>
                     <Image
@@ -118,7 +118,7 @@ together and give small, informal presentations about things they know to share 
   alt='Dan Abramov'
 />
                         <chakra.h3 className='sm:text-2xl my-3 font-semibold leading-7 font-link md:text-lg lg:text-2xl' color='#008294'>Host talk event</chakra.h3>
-                        <Text className='sm:text-base leading-5 font-link md:text-center md:text-sm lg:text-base lg:tracking-tight xl:tracking-normal'>Host events in-person or online</Text>
+                        <Text className='xs:text-sm sm:text-base leading-5 font-link xs:text-center md:text-sm lg:text-base lg:tracking-tight xl:tracking-normal'>Host events in-person or online</Text>
                     </Box>
                 </Flex>
             </div>
@@ -128,10 +128,10 @@ together and give small, informal presentations about things they know to share 
                 </Box>
                 <RegisterModal isOpen={isOpen} onClose={onClose}/>
             </div>
-            <div className='xs:col-start-1 xs:col-span-8'>
+            <div className='xs:col-start-1 xs:col-span-8 xs:mt-24'>
                     <Box className='flex flex-col items-center'>
-                        <h3 className='text-2xl mb-3 font-bold font-link'>Stories from Talk Host</h3>
-                        <Text textAlign='center' className='font-medium font-link'>People on Talk Host have fostered community, learned new skills, started businesses, and made life-long friends. Learn how.</Text>
+                        <chakra.h3 fontSize={['22px', '22px', '22px', '30px']} className='mb-3 font-bold font-link'>Stories from Talk Host</chakra.h3>
+                        <Text textAlign={['center']} className='xs:text-sm font-medium font-link md:text-base'>People on Talk Host have fostered community, learned new skills, started businesses, and made life-long friends. Learn how.</Text>
                     </Box>
             </div>
             <div className='col-start-1 col-span-8 mt-10'>

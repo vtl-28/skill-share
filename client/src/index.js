@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'react-calendar/dist/Calendar.css';
+import "react-datepicker/dist/react-datepicker.css";
+//import 'react-date-picker/dist/DatePicker.css';
 import './index.css';
 import './App.css';
 import App from './App';

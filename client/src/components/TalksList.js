@@ -4,7 +4,7 @@ import { FaHeart, FaHeartBroken } from 'react-icons/fa';
 import { like, unlike, comment } from '../components/miscellaneous/Utils';
 import { SuccessToast, ErrorToast } from '../components/miscellaneous/Toasts';
 import { TalkContext } from '../Context/TalkProvider';
-import { Accordion, AccordionButton, AccordionItem, AccordionPanel, Box } from '@chakra-ui/react';
+import { Input } from '@chakra-ui/react';
 import { ChatIcon, ViewIcon } from '@chakra-ui/icons';
 import { format } from 'date-fns';
 import parseISO from 'date-fns/parseISO';
@@ -76,26 +76,26 @@ function TalksList({talk}){
                 <div className='w-1/5'>
                    <a href={`/talk/${_id}`}><img src={pic} alt="talk logo"/></a>
                 </div>
-                <div className='flex flex-col w-1/2'>
-                    <h4 className='mb-2'>{date ? format(new Date(date), "eee',' MMM d',' h':'mm a", {
+                <div className='flex flex-col xs:w-3/4 sm:w-1/2'>
+                    <h4 className='mb-2 xs:text-sm sm:text-base'>{date ? format(new Date(date), "eee',' MMM d',' h':'mm a", {
                         weekStartsOn: 1
                     }): (<h3>oops</h3>)}</h4>
-                    <h4 className='mb-2'>{title}</h4>
-                    <h4>{location}</h4>
+                    <h4 className='mb-2 xs:text-sm sm:text-base'>{title}</h4>
+                    <h4 className='xs:text-sm sm:text-base'>{location}</h4>
                 </div>
-                <div className='w-1/5'>
-                    <h1>{attendants ? attendants.length : '0'} Attendees</h1>
+                <div className='w-1/5 xs:hidden sm:block'>
+                    <h1 className='xs:text-sm sm:text-base'>{attendants ? attendants.length : '0'} Attendees</h1>
                 </div>
             </div>
             <div className='flex self-center w-50'>
-                    <div className='flex w-1/5 align-items-center'>
+                    <div className='flex xs:w-1/3 align-items-center'>
                         <span>{likes.length > 0 ? likes.length : '0'}</span>
                         { likes.includes(user._id) ?  
                         <a href="#" onClick={(e) => unlikeTalk(e)} className='ml-2 text-red-500'><FaHeartBroken/></a> :
                         <a href="#" onClick={(e) => likeTalk(e)} className='text-red-500 ml-2'><FaHeart/></a>
                         }
                     </div>
-                    <div className='flex w-1/5 align-items-center'>
+                    <div className='flex xs:w-1/3 align-items-center'>
                                 <span className='mr-2'>{comments.length > 0 ? comments.length : '0'}</span>
                                 <a href="#" onClick={(e) => showComments(e)}><ChatIcon /></a>
                     </div>
@@ -108,13 +108,13 @@ function TalksList({talk}){
                                     { comments ? 
                                         comments.map(comment=>{
                                             return(
-                                            <li key={comment._id}><span style={{fontWeight:"500"}}>{comment.postedBy.name}</span> {comment.text}</li>
+                                            <li key={comment._id} className='xs:text-sm sm:text-base'><span style={{fontWeight:"500"}}>{comment.postedBy.name}</span> {comment.text}</li>
                                             )
                                         }) : ''
                                     }
                                 </ul>
                                 <form onSubmit={(e) => submitComment(e)} className='mt-2'>
-                                  <input className='w-full' type="text" placeholder="add a comment" value={text} onChange={(e) => setText(e.target.value)}/>
+                                  <Input className='w-full' type="text" placeholder="comment" value={text} onChange={(e) => setText(e.target.value)}/>
                                 </form>
                          </div>: ''
                         }

@@ -303,8 +303,8 @@ const Navigation = ({ls}) => {
                 style={{ maxHeight: '100px' }}
            
               >
-                <Nav.Link className="mr-4 xs:text-sm font-medium leading-5 text-slate-900 hover:text-teal-700 font-link " onClick={onOpenLogin}>Log in</Nav.Link>
-                <Nav.Link  className="xs:text-sm font-medium leading-5 text-slate-900 hover:text-teal-700 font-link" onClick={onOpenSignup}>Sign up</Nav.Link>
+                <Nav.Link className="mr-4 xs:text-sm sm:text-base font-medium leading-5 text-slate-900 hover:text-teal-700 font-link " onClick={onOpenLogin}>Log in</Nav.Link>
+                <Nav.Link  className="xs:text-sm sm:text-base font-medium leading-5 text-slate-900 hover:text-teal-700 font-link" onClick={onOpenSignup}>Sign up</Nav.Link>
               </Nav>
             </Navbar.Collapse>
           </div>

@@ -49,7 +49,11 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
-
-    <!-- <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyArYbB6_L3LNuAd_4DTI8v1R4TTj7xY8RY&libraries=places"></script> -->
+     <script>
+        var apiKey = "AIzaSyArYbB6_L3LNuAd_4DTI8v1R4TTj7xY8RY";
+        var scriptElement = document.createElement("script");
+        scriptElement.src = 'https://maps.googleapis.com/maps/api/js?key=' + encodeURIComponent(apiKey) + "&libraries=places&callback=initMap";
+        document.head.appendChild(scriptElement);
+     </script>
   </body>
 </html>
