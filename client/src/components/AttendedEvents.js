@@ -21,7 +21,7 @@ const AttendedEvents = () => {
     if(status === 'loading') {
         return <div>loading talks</div> // loading state
       }
-      console.log(data)
+      //console.log(data)
   return (
     <div>
       {

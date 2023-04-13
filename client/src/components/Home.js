@@ -91,7 +91,7 @@ together and give small, informal presentations about things they know to share 
             </div>
             <div className='xs:col-start-1 xs:col-span-8 sm:px-4 mt-10'>
                 <Flex direction={['column', 'column', 'row']} justifyContent={'space-between'}>
-                    <Box className='flex flex-col items-center' mb={[6]}>
+                    <Box className='flex flex-col items-center how' mb={[6]} >
                     <Image
   boxSize='150px'
   src='/images1/undraw_the_search_s0xf.png'

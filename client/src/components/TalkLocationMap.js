@@ -44,6 +44,7 @@ export class TalkLocationMap extends Component{
       }
     };
     render(){
+        console.log(this.props)
         return (
             <WindowDimensions>
               { dimensions =>
@@ -90,36 +91,3 @@ export class TalkLocationMap extends Component{
 export default GoogleApiWrapper({
     apiKey: process.env.REACT_APP_MAPS_KEY
   })(TalkLocationMap);
-
-
-
-// import React from 'react';
-// import GoogleMapReact from 'google-map-react';
-// import '../map.css';
-// import LocationPin from '../components/LocationPin';
-
-// const TalkLocationMap = ({coordinates, zoomLevel}) => {
-   
-//   return (
-//     <div>
-//         <h2 className="map-h2">Come Visit Us At Our Campus</h2>
-
-//         <div className="google-map">
-//         <GoogleMapReact
-//             bootstrapURLKeys={{ key: 'AIzaSyDZp2ZYcK6vz_GCgCWk7xVHIgSWZgoz8-8'}}
-//             defaultCenter={coordinates}
-//             defaultZoom={zoomLevel}
-//         >
-//         <LocationPin
-//             lat={coordinates.lat}
-//             lng={coordinates.lng}
-//             text={coordinates.address}
-//             />
-//         </GoogleMapReact>
-//         </div>
-      
-//     </div>
-//   )
-// }
-
-// export default TalkLocationMap

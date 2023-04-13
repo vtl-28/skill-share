@@ -33,8 +33,15 @@ label.label input[type="file"] {
   display: flex;
   flex-direction: column;
   padding: 10px;
+  border: 2px solid #E4E4E7;
+  border-radius: 5px;
+  right: 160px;
 }
-
+.searchResult {
+  border: 2px solid #E4E4E7;
+  border-radius: 5px;
+  padding: 10px;
+}
 .notification {
   padding: 5px;
   font-size: 14px;
@@ -195,11 +202,8 @@ label.label input[type="file"] {
   height: 25%;
   width: 28%;
 }
-.stick-navbar{
-  position: sticky;
-  top: 20px;
-  z-index: 10;
-  display: block;
+.trigger{
+ background-color: #c8000c;
 }
 .bb{
   width: 30%;
@@ -228,6 +232,9 @@ label.label input[type="file"] {
   top: 500px;
   left: 500px;
 }
+/* .how.fade-in{
+  background-color: #c8000c;
+} */
 @media (min-width: 300px) {
   .bg-image{
     height: 50vh;

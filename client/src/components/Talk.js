@@ -13,6 +13,9 @@ import TalkLocationMap from './TalkLocationMap';
 import { format } from 'date-fns';
 import parseISO from 'date-fns/parseISO';
 import Footer from './Footer'
+import { Button } from '@chakra-ui/react'
+import { FaShareSquare } from 'react-icons/fa'
+import { Heading } from 'react-ui'
 
 const Talk = () => {
     const { id } = useParams();
@@ -38,18 +41,12 @@ const Talk = () => {
       if (status === 'error') {
         return <div>{error.message}</div> // error state
       }
-      console.log(talkViewCount)
-  
 
-      const { _id, title, hostedBy, body, pic, date, attendants, location } = data;
+
+      const { _id, title, hostedBy, body, pic, date, attendants, location, city, coordinates } = data;
 
       const { _id: hostId, name, email, about, profession, pic: hostPic } = hostedBy;
 
-      const coordinates = {
-        address: '1600 Amphitheatre Parkway, Mountain View, california.',
-        lat: 37.42216,
-        lng: -122.08427,
-      }
 
       async function bookSeat(e){
         e.preventDefault();
@@ -107,7 +104,8 @@ const Talk = () => {
     
   return (
     <div className='remove-overflow'>
-      <Navbar />
+       
+        <Navbar />
       <div className='container px-0'>
         <div className='flex flex-col py-6 border-b-2 border-red-400 xs:mx-0'>
             <h1 className='text-3xl font-bold text-black font-link'>{title}</h1>
@@ -132,7 +130,7 @@ const Talk = () => {
                 <a href='#'  onClick={(e) => bookSeat(e)} className='mt-8 text-teal-600 font-semibold'>Ticket here</a>
                 <div className='flex flex-col mt-6'>
                     <div className='flex justify-between mb-3'>
-                        <h1 className='text-xl font-bold font-link'>Attendees { attendants.length > 0 ? (attendants.length) : ''}</h1>
+                        <Heading as='h1' className='text-xl font-bold font-link'>Attendees { attendants.length > 0 ? (attendants.length) : ''}</Heading>
                         <a href='#' className='text-teal-600 font-semibold'>See all</a>
                     </div>
                     <div>
@@ -163,19 +161,19 @@ const Talk = () => {
                     </div>
                     <div className='flex mt-3'>
                         <FontAwesomeIcon icon={ faCompass} />
-                        <h1 className='ml-4'>{location}</h1>
+                        <h1 className='ml-4'>{city}</h1>
                     </div>
                 </div>
                 <div className='mt-4'>
-                    <TalkLocationMap />
+                    <TalkLocationMap address={city} addressCoordinates={coordinates}/>
                 </div>
                 {showSuccessToast && <SuccessToast placement='middle-center'  message={successMessage} showSuccessToast={showSuccessToast} toggleSuccessToast={toggleSuccessToast}/>}
                 {showErrorToast && <ErrorToast placement='middle-center' message={errorMessage} showErrorToast={showErrorToast} toggleErrorToast={toggleErrorToast} />}
             </div>
         </div>
-       <div className='grid grid-cols-10'>
+       <div className='grid grid-cols-10 '>
             <div className='xs:col-span-10 xs:col-start-1'>
-                <AttendNavbar title={title} date={date} attendants={attendants} book={bookSeat} cancel={cancelSeat}/>
+                <AttendNavbar title={title} date={date} book={bookSeat} cancel={cancelSeat} attendants={attendants}/>
             </div> 
        </div>
         

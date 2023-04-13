@@ -1,7 +1,7 @@
 import {  Container, Nav, Navbar, Form } from "react-bootstrap";
 import React, { useContext, useEffect, useState } from 'react';
 import { TalkContext } from '../Context/TalkProvider';
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation, NavLink } from "react-router-dom";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 import { FaBell } from 'react-icons/fa';
@@ -37,10 +37,12 @@ function NavBar(){
     const { isOpen, onOpen, onClose } = useDisclosure()
     const cancelRef = React.useRef()
     const navigate = useNavigate();
+    const location = useLocation();
     const { _id } = user;
     console.log(user)
     console.log(_id)
     const api = `/profile/${_id}`;
+ 
 
     useEffect(() => {
       socket.on("create talk notification", (data) => {
@@ -182,7 +184,10 @@ function NavBar(){
       localStorage.removeItem('userInfo');
       navigate('/')
     }
-
+    let activeStyle = {
+      fontWeight: "bold",
+      color: "rgb(15 118 110)"
+    };
 
     return(
       <div className="border-b border-zinc-200">
@@ -204,13 +209,13 @@ function NavBar(){
             <Nav
               className="flex justify-between"
               style={{ maxHeight: '100px' }}
-         
+             
             >
               
              
-              <Nav.Link href="/hostTalk" className="hover:text-teal-700 lg:mr-2 xl:mr-4 leading-5  font-medium text-slate-900 font-link">Host talk</Nav.Link>
-              <Nav.Link href={api} className=" hover:text-teal-700 lg:mr-2  xl:mr-4 leading-5  font-medium text-slate-900 font-link">Profile</Nav.Link>
-              <Nav.Link href="#" className="hover:text-teal-700 lg:mr-2  xl:mr-4 leading-5  font-medium text-slate-900 font-link" onClick={() => setOpen(!open)}><span className="text-red-600 font-bold">{notifications.length > 0 ? notifications.length : ''}</span><FaBell className="inline"/></Nav.Link>
+              <Nav.Link style={({ isActive }) => (isActive ? activeStyle : undefined)}  as={NavLink}  to="/hostTalk" className="hover:text-teal-700 lg:mr-2 xl:mr-4 leading-5  font-medium text-slate-900 font-link">Host talk</Nav.Link>
+              <Nav.Link style={({ isActive }) => (isActive ? activeStyle : undefined)} as={NavLink} to={api} className=" hover:text-teal-700 lg:mr-2  xl:mr-4 leading-5  font-medium text-slate-900 font-link">Profile</Nav.Link>
+              <Nav.Link href="#" className="hover:text-teal-700 lg:mr-2  xl:mr-4 leading-5  font-medium text-slate-900 font-link" onClick={() => setOpen(!open)}><span>{notifications.length > 0 ? notifications.length : ''}</span><FaBell className="inline"/></Nav.Link>
               { open && <ul className="notifications">
                 {notifications.map((n) => displayNotification(n))}
                 
@@ -222,9 +227,9 @@ function NavBar(){
           </Navbar.Collapse>
         </Container>
       </Navbar>
-          <div className={showErrorToast ? "w-1/4 ml-56 h-52" :  "w-1/4 ml-56"}>
-            { isLoading ? (<LoadingSpinner />) : (<ul>{searchResult.map(result => {
-              return <li key={result._id} className='p-1 bg-slate-300 rounded-md'><a href={`/talk/${result._id}`}>{result.title}</a></li>})}</ul>
+          <div className={showErrorToast ? "w-1/4 ml-56 h-52 z-50" :  "w-1/4 ml-56 z-50"}>
+            { isLoading ? (<LoadingSpinner />) : (<ul className='z-50'>{searchResult.map(result => {
+              return <li key={result._id} className='searchResult z-50'><a href={`/talk/${result._id}`}>{result.title}</a></li>})}</ul>
               )
             }
             {showErrorToast && <ErrorToast message={errorMessage} showErrorToast={showErrorToast} toggleErrorToast={toggleErrorToast} />}
@@ -249,7 +254,7 @@ function NavBar(){
                 Cancel
               </Button>
               <Button colorScheme='red' onClick={logout} ml={3}>
-                Delete
+                Log out
               </Button>
             </AlertDialogFooter>
           </AlertDialogContent>

@@ -49,11 +49,29 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.7/ScrollMagic.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.7/plugins/debug.addIndicators.min.js"></script>
      <script>
+      $(document).ready(function(){
         var apiKey = "AIzaSyArYbB6_L3LNuAd_4DTI8v1R4TTj7xY8RY";
         var scriptElement = document.createElement("script");
         scriptElement.src = 'https://maps.googleapis.com/maps/api/js?key=' + encodeURIComponent(apiKey) + "&libraries=places&callback=initMap";
         document.head.appendChild(scriptElement);
+
+        // var controller = new ScrollMagic.Controller();
+
+        // var scene = new ScrollMagic.Scene({
+        //   triggerElement: '#triggerElement'
+        // }).setClassToggle('#scene', 'fade-in')
+        // .addIndicators({
+        //   name: 'fade-scene',
+        //   colorTrigger: 'black',
+        //   colorStart: '#75695',
+        // })
+        // .addTo(controller)
+      })
+        
      </script>
   </body>
 </html>
