@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Routes, Route } from "react-router-dom";
-import LogIn from './components/LogIn';
-import Dashboard from './components/Dashboard';
-import HostTalk from './components/HostTalk';
-import Talk from './components/Talk';
-import Host from './components/Host';
-import SignUp from './components/SignUp';
-import HostProfile from './components/HostProfile';
-import Home from './components/Home';
+import Dashboard from './Pages/Dashboard/Index';
+import HostTalk from './Pages/HostTalk/Index';
+import Talk from './Pages/Talk/Index';
+import Host from './Pages/Host/Index';
+import HostProfile from './Pages/HostProfile/Index';
+import Home from './Pages/Home/Index';
 import 'react-calendar/dist/Calendar.css';
 import ReactDependentScript from 'react-dependent-script';
 
@@ -23,7 +21,6 @@ function App() {
 </ReactDependentScript> */}
      <Routes>
       <Route path="/" element={<Home />} />
-      <Route path="/signup" element={<SignUp />} />
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/hostTalk" element={<HostTalk />} />
       <Route path="/host/:id" element={<Host />} />

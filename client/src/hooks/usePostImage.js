@@ -2,7 +2,7 @@ import { useJsApiLoader } from "@react-google-maps/api";
 import { useQuery } from "@tanstack/react-query";
 import { useState, useEffect, useContext } from "react";
 import { Spinner } from "react-bootstrap";
-import { fetchHostTalks, fetchTalks, uploadImage } from "../components/miscellaneous/Utils";
+import { uploadImage } from "../Utils/image";
 import { TalkContext } from "../Context/TalkProvider";
 
 const usePostImage = () => {

@@ -2,9 +2,9 @@
 import { useQuery } from '@tanstack/react-query';
 import React, { useContext } from 'react'
 import { TalkContext } from '../Context/TalkProvider';
-import { displayTalks, displayAttendedTalks } from './miscellaneous/DisplayItems';
-import { getAttendedTalks } from './miscellaneous/Utils';
+import { displayAttendedTalks } from './miscellaneous/DisplayItems';
 import { InfoIcon } from '@chakra-ui/icons';
+import { fetchAttendedTalks } from '../Utils/talk'
 
 const AttendedEvents = () => {
    
@@ -13,7 +13,7 @@ const AttendedEvents = () => {
 
     console.log(_id)
 
-    const { data, error, status, isFetched } = useQuery({ queryKey: ['attendedTalks'], queryFn: () => getAttendedTalks(_id),
+    const { data, error, status, isFetched } = useQuery({ queryKey: ['attendedTalks'], queryFn: () => fetchAttendedTalks(_id),
             refetchOnMount: true,
             refetchInterval: 2000,
             refetchIntervalInBackground: true,

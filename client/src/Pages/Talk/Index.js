@@ -1,23 +1,21 @@
-import React, { useState, useContext } from 'react'
-import { useParams} from 'react-router-dom'
-import Navbar from './Navbar'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faClock,  faCompass } from '@fortawesome/free-regular-svg-icons'
-import { useQuery } from '@tanstack/react-query'
-import { getTalk, attendTalk, cancelTalk } from '../components/miscellaneous/Utils';
-import { ErrorToast, SuccessToast } from './miscellaneous/Toasts'
-import AttendNavbar from '../components/AttendNavbar'
-import { TalkContext } from '../Context/TalkProvider';
-import Attendant from '../components/Attendant'
-import TalkLocationMap from './TalkLocationMap';
+import { Heading } from '@chakra-ui/react';
+import { faClock, faCompass } from '@fortawesome/free-regular-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useQuery } from '@tanstack/react-query';
 import { format } from 'date-fns';
-import parseISO from 'date-fns/parseISO';
-import Footer from './Footer'
-import { Button } from '@chakra-ui/react'
-import { FaShareSquare } from 'react-icons/fa'
-import { Heading } from 'react-ui'
+import React, { useContext, useState } from 'react'
+import { useParams } from 'react-router-dom';
+import Attendant from '../../components/Attendant';
+import AttendNavbar from '../../components/AttendNavbar';
+import Footer from '../../components/Footer';
+import { attendTalk, cancelTalk, fetchTalk } from '../../Utils/talk';
+import DashboardNavbar from '../../components/Navigation/DashboardNavbar';
+import TalkLocationMap from '../../components/TalkLocationMap';
+import ErrorToast from '../../components/Toasts/ErrorToast';
+import SuccessToast from '../../components/Toasts/SuccessToast';
+import { TalkContext } from '../../Context/TalkProvider';
 
-const Talk = () => {
+const Index = () => {
     const { id } = useParams();
     const { user, socket, viewport, talkViewCount } = useContext(TalkContext);
     const [showSuccessToast, setShowSuccessToast] = useState(false);
@@ -27,7 +25,7 @@ const Talk = () => {
     const toggleSuccessToast = () => setShowSuccessToast(!showSuccessToast);
     const toggleErrorToast = () => setShowErrorToast(!showErrorToast);
 
-    const { data, error, status, isError } = useQuery({ queryKey: ['userProfile'], queryFn: () => getTalk(id),
+    const { data, error, status, isError } = useQuery({ queryKey: ['userProfile'], queryFn: () => fetchTalk(id),
     enabled: true,
     refetchOnMount: true,
     refetchInterval: 2000,
@@ -105,7 +103,7 @@ const Talk = () => {
   return (
     <div className='remove-overflow'>
        
-        <Navbar />
+        <DashboardNavbar />
       <div className='container px-0'>
         <div className='flex flex-col py-6 border-b-2 border-red-400 xs:mx-0'>
             <h1 className='text-3xl font-bold text-black font-link'>{title}</h1>
@@ -185,4 +183,4 @@ const Talk = () => {
   )
 }
 
-export default Talk;
+export default Index

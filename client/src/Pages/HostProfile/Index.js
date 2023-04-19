@@ -1,27 +1,18 @@
+import { Button, Card, CardBody, Flex, FormControl, FormLabel, Heading, Image, Input, Textarea } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
-import React, { useContext, useState } from 'react';
-import Navbar from './Navbar';
+import React, { useContext, useState } from 'react'
 import { useParams } from 'react-router-dom';
-import { SuccessToast, ErrorToast, UploadImageToast } from '../components/miscellaneous/Toasts'
-import { uploadImage, fetchUser, updateHost } from '../components/miscellaneous/Utils';
-import {
-    FormControl,
-    FormLabel,
-    FormErrorMessage,
-    FormHelperText, Card, CardBody, 
-    Text, Input, Button, 
-    chakra, CardHeader, Heading, Flex, Link, Textarea, Form, Image
-  } from '@chakra-ui/react'
-import LoadingSpinner from './LoadingSpinner';
-import usePlacesAutocomplete, { getGeocode, getLatLng } from 'use-places-autocomplete';
-import useOnclickOutside from 'react-cool-onclickoutside';
-import Footer from './Footer';
-import { TalkContext } from '../Context/TalkProvider';
-import PlacesAutoComplete from './PlacesAutoComplete';
-import UpdateImage from './UpdateImage';
+import Footer from '../../components/Footer';
+import LoadingSpinner from '../../components/LoadingSpinner';
+import { fetchHost, updateHost } from '../../Utils/host';
+import DashboardNavbar from '../../components/Navigation/DashboardNavbar';
+import PlacesAutoComplete from '../../components/PlacesAutoComplete';
+import ErrorToast from '../../components/Toasts/ErrorToast';
+import SuccessToast from '../../components/Toasts/SuccessToast';
+import UpdateHostProfilePic from '../../components/UpdateHostProfilePic';
+import { TalkContext } from '../../Context/TalkProvider';
 
-const HostProfile = () => {
+const Index = () => {
     let { id } = useParams();
     const { address, addressCoordinates, picUrl } = useContext(TalkContext);
     const [ userPic, setUserPic ] = useState('')
@@ -43,7 +34,7 @@ const HostProfile = () => {
   
 
 
-    const { data: host, error, isLoading, isError } = useQuery({ queryKey: ['userProfile'], queryFn: () => fetchUser(id)})
+    const { data: host, error, isLoading, isError } = useQuery({ queryKey: ['userProfile'], queryFn: () => fetchHost(id)})
     if (isLoading) {
         return <div>loading profile</div> // loading state
       }
@@ -54,7 +45,7 @@ const HostProfile = () => {
       
     const { name, email, pic, city, profession, about } = host;
 
-    const updateUser = async(e) => {
+    const submitForm = async(e) => {
         e.preventDefault();
         setDataIsLoading(true);
         const userDataToUpdate = {
@@ -66,6 +57,7 @@ const HostProfile = () => {
             picUrl,
             userProfession
         }
+      
         let response = await updateHost(id,userDataToUpdate);
         const hostDetailsValidation = typeof response === 'object' ? 'yes': 'no';
 
@@ -90,7 +82,7 @@ const HostProfile = () => {
 
   return (
     <div className='remove-overflow'>
-        <Navbar />
+        <DashboardNavbar />
         <div className='container w-full h-full mx-auto'>
             <div className='grid grid-cols-12'>
                 <div className='flex flex-col h-full xs:col-start-2 xs:col-span-10 lg:col-start-4 lg:col-span-6  py-4'>
@@ -108,7 +100,7 @@ const HostProfile = () => {
                         <Flex justifyContent='space-between'  className='mb-3'>
                             <Image className='rounded-full w-1/2' alt='user' src={pic}/>
                             <Flex className='flex pt-4 align-items-center'>
-                               <UpdateImage />
+                               <UpdateHostProfilePic />
                             </Flex>
                         </Flex>
                     <FormControl className="mb-3">
@@ -130,7 +122,7 @@ const HostProfile = () => {
                         </FormControl>
                         <FormControl>
                         {dataIsLoading && <LoadingSpinner />}
-                            <Button bgColor='#F64060' className="w-full text-white" onClick={updateUser}>Save changes</Button>
+                            <Button bgColor='#F64060' className="w-full text-white" onClick={submitForm}>Save changes</Button>
                         </FormControl>
                         </CardBody>
                    </Card>
@@ -148,4 +140,4 @@ const HostProfile = () => {
   )
 }
 
-export default HostProfile
+export default Index

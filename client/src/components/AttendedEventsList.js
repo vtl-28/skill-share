@@ -3,8 +3,9 @@ import { format } from 'date-fns';
 import React, { useContext, useState } from 'react'
 import { FaHeart, FaHeartBroken } from 'react-icons/fa';
 import { TalkContext } from '../Context/TalkProvider';
-import { ErrorToast, SuccessToast } from './miscellaneous/Toasts';
-import { comment, like, unlike } from './miscellaneous/Utils';
+import  ErrorToast from '../components/Toasts/ErrorToast';
+import  SuccessToast from '../components/Toasts/SuccessToast';
+import { commentTalk, likeTalk, unlikeTalk } from '../Utils/talk';
 
 const AttendedEventsList = ({talk}) => {
     const { user, socket } = useContext(TalkContext);
@@ -22,14 +23,14 @@ const AttendedEventsList = ({talk}) => {
 
     async function likeTalk(e){
         e.preventDefault();
-        const response = await like(_id)
+        const response = await likeTalk(_id)
         //console.log(response)
        handleLikeNotification(1,response)
     }
 
     async function unlikeTalk(e){
         e.preventDefault();
-        const response = await unlike(_id)
+        const response = await unlikeTalk(_id)
         handleLikeNotification(2, response)
     }
 
@@ -38,7 +39,7 @@ const AttendedEventsList = ({talk}) => {
         const data = {
             text: text
         }
-        const response = await comment(_id, data);
+        const response = await commentTalk(_id, data);
         setText('')
         handleCommentNotification(3, response)
       }

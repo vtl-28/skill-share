@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect, useRef } from "react";
 import { Avatar, Button, Text,Show, Hide } from "@chakra-ui/react"
 import { useQuery } from "@tanstack/react-query"
 import AtttendantAvatar from "./AtttendantAvatar"
-import { fetchHostTalks } from "./miscellaneous/Utils"
+import { fetchHostTalks } from "../Utils/talk"
 import { format } from 'date-fns';
 import parseISO from 'date-fns/parseISO';
 import { TalkContext } from "../Context/TalkProvider";

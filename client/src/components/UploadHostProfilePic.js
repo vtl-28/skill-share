@@ -2,10 +2,10 @@ import { FormControl, FormLabel, Input } from '@chakra-ui/react'
 import React, { useContext, useState } from 'react'
 import { Spinner } from 'react-bootstrap'
 import { TalkContext } from '../Context/TalkProvider';
-import { uploadImage } from './miscellaneous/Utils';
+import { uploadImage } from '../Utils/image';
 import usePostImage from '../hooks/usePostImage'
 
-const PostImage = () => {
+const UploadHostProfilePic = () => {
      const [picIsLoading, setPicIsLoading] = useState(false);
     // const [errorMessage, setErrorMessage] = useState([]);
     // const toggleErrorToast = () => setShowErrorToast(!showErrorToast);
@@ -36,4 +36,4 @@ const PostImage = () => {
   )
 }
 
-export default PostImage
+export default UploadHostProfilePic

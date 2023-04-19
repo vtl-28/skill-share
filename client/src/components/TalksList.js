@@ -1,8 +1,9 @@
 import axios from 'axios';
 import React, { useState, useContext, useEffect } from 'react'
 import { FaHeart, FaHeartBroken } from 'react-icons/fa';
-import { like, unlike, comment } from '../components/miscellaneous/Utils';
-import { SuccessToast, ErrorToast } from '../components/miscellaneous/Toasts';
+import { likeTalk, unlikeTalk, commentTalk } from '../Utils/talk';
+import  ErrorToast from '../components/Toasts/ErrorToast';
+import  SuccessToast from '../components/Toasts/SuccessToast';
 import { TalkContext } from '../Context/TalkProvider';
 import { Input } from '@chakra-ui/react';
 import { ChatIcon, ViewIcon } from '@chakra-ui/icons';
@@ -25,14 +26,14 @@ function TalksList({talk}){
 
     async function likeTalk(e){
         e.preventDefault();
-        const response = await like(_id)
+        const response = await likeTalk(_id)
         //console.log(response)
        handleLikeNotification(1,response)
     }
 
     async function unlikeTalk(e){
         e.preventDefault();
-        const response = await unlike(_id)
+        const response = await unlikeTalk(_id)
         handleLikeNotification(2, response)
     }
 
@@ -41,7 +42,7 @@ function TalksList({talk}){
         const data = {
             text: text
         }
-        const response = await comment(_id, data);
+        const response = await commentTalk(_id, data);
         setText('')
         handleCommentNotification(3, response)
       }

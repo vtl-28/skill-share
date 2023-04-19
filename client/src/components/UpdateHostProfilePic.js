@@ -3,7 +3,7 @@ import React, { useContext } from 'react'
 import { TalkContext } from '../Context/TalkProvider';
 import usePostImage from '../hooks/usePostImage'
 
-const UpdateImage = () => {
+const UpdateHostProfilePic = () => {
     const {  picUrl, setPicUrl } = useContext(TalkContext);
     const { postDetails } = usePostImage()
 
@@ -18,4 +18,4 @@ const UpdateImage = () => {
   )
 }
 
-export default UpdateImage
+export default UpdateHostProfilePic

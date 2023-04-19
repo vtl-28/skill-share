@@ -1,32 +1,25 @@
-import axios from 'axios';
-import React, { useContext, useEffect, useState } from 'react';
-import LoadingSpinner from './LoadingSpinner';
-import UserTalksList from './UserTalksList';
-import { TalkContext } from '../Context/TalkProvider';
-import { useQuery } from '@tanstack/react-query';
-import NavBar from './Navbar';
-import {fetchHostTalks, addHostTalk, uploadImage} from './miscellaneous/Utils'
-import {displayHostTalks} from './miscellaneous/DisplayItems'
-import { SuccessToast, ErrorToast, UploadImageToast } from '../components/miscellaneous/Toasts'
-import { Heading, chakra, Flex, Text, FormControl, FormLabel, Textarea, Input, CardBody, Card, Button, Divider, CardHeader } from '@chakra-ui/react';
-import { CalendarIcon } from '@chakra-ui/icons';
-import usePlacesAutocomplete, { getGeocode, getLatLng } from 'use-places-autocomplete';
-import useOnclickOutside from 'react-cool-onclickoutside';
-import { format } from 'date-fns';
-import parseISO from 'date-fns/parseISO';
-import Footer from './Footer';
-import Spinner from 'react-bootstrap/Spinner';
-import PlacesAutoComplete from '../components/PlacesAutoComplete'
-import { useJsApiLoader } from '@react-google-maps/api';
-import PostImage from '../components/PostImage'
-import { useFetch } from '../hooks/useFetchHostedEvents';
+import { Button, Card, CardBody, FormControl, FormLabel, Heading, Input, Textarea } from "@chakra-ui/react";
+import axios from "axios";
+import { format } from "date-fns";
+import { useContext, useState } from "react";
 import DatePicker from 'react-datepicker';
+import { Spinner } from "react-bootstrap";
+import Footer from "../../components/Footer";
+import { displayHostTalks } from "../../components/miscellaneous/DisplayItems";
+import { addHostTalk } from "../../Utils/talk";
+import DashboardNavbar from "../../components/Navigation/DashboardNavbar";
+import PlacesAutoComplete from "../../components/PlacesAutoComplete";
+import UploadHostProfilePic from "../../components/UploadHostProfilePic";
+import ErrorToast from "../../components/Toasts/ErrorToast";
+import SuccessToast from "../../components/Toasts/SuccessToast";
+import { TalkContext } from "../../Context/TalkProvider";
+import { useFetch } from "../../hooks/useFetchHostedEvents";
 
-const HostTalk = () => {
+const Index = () => {
     const talkDetails = `   What's the purpose of the talk? 
     Who should join? 
     What will you do at your talks?`
-    const { user, socket, viewport, address, addressCoordinates, picUrl } = useContext(TalkContext);
+    const { user, socket, address, addressCoordinates, picUrl } = useContext(TalkContext);
     const [title, setTitle] = useState('');
     const [body, setBody] = useState('');
     const [location, setLocation] = useState('');
@@ -78,7 +71,7 @@ const HostTalk = () => {
         e.preventDefault();
 
         setDataIsLoading(true);
-        let date = format(new Date(date), "d'-'MMM'-'y',' h':'mm a", {
+        let date = format(new Date(startDate), "d'-'MMM'-'y',' h':'mm a", {
             weekStartsOn: 1
         })
         const data = {
@@ -117,10 +110,11 @@ const HostTalk = () => {
         
     }
    
-    console.log(startDate)
+    // console.log(startDate)
+    // console.log(picUrl)
   return (
         <div>
-        <NavBar />
+        <DashboardNavbar />
                 <div className='container mx-auto'>
         <Heading className='flex justify-center mt-4'>Host Talk</Heading>
         <div className='grid grid-cols-12 py-8'>
@@ -162,7 +156,7 @@ const HostTalk = () => {
       dateFormat="dd-MMMM-yyyy h:mm aa" selected={startDate} onChange={(date) => setStartDate(date)} />
                         </FormControl>
                         <PlacesAutoComplete />
-                        <PostImage />
+                        <UploadHostProfilePic />
                         <FormControl>
                         <Button bgColor='#F64060' className="w-full" onClick={submitForm}>
                         { dataIsLoading && ( <Spinner
@@ -191,4 +185,4 @@ const HostTalk = () => {
   )
 }
 
-export default HostTalk;
+export default Index
