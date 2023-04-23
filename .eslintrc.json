@@ -1,0 +1,19 @@
+{
+    "env": {
+        "browser": true,
+        "commonjs": true,
+        "es2021": true,
+        "node": true
+    },
+    "extends": ["airbnb-base","eslint:recommended", "prettier"],
+    "overrides": [
+    ],
+    "parserOptions": {
+        "ecmaVersion": "latest"
+    },
+    "rules": {
+        "no-underscore-dangle": ["error", { "allow": ["user_", "_id"] }],
+        "arrow-body-style": ["error", "always"],
+        "no-unused-expressions": ["error", { "allowShortCircuit": true, "allowTernary": true }]
+    }
+}

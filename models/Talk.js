@@ -1,38 +1,59 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const talkSchema = mongoose.Schema({
+const talkSchema = mongoose.Schema(
+  {
     title: {
-        type: "String", required: true, trim: true, unique: true
+      type: "String",
+      required: true,
+      trim: true,
+      unique: true,
     },
     hostedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     body: { type: "String", required: true, trim: true },
     pic: {
-        type: "String",
-        required: true,
-        default:
-          "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg",
+      type: "String",
+      required: true,
+      default:
+        "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg",
+    },
+    city: {
+      type: "String",
+      required: true,
+      trim: true,
+    },
+    coordinates: {
+      lat: {
+        type: "Number",
       },
-      city: {
-        type: "String", required: true, trim: true
+      lng: {
+        type: "Number",
       },
-      location: {
-        type: "String", required: true
+    },
+    location: {
+      type: "String",
+      required: true,
+    },
+    date: {
+      type: Date,
+      required: true,
+    },
+    likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+    comments: [
+      {
+        text: { type: "String", required: true, trim: true },
+        postedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
       },
-      date: {
-        type: Date, required: true
+    ],
+    attendants: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
       },
-    likes:[{type: mongoose.Schema.Types.ObjectId, ref:"User"}],
-    comments:[{
-        text: {type: "String", required: true, trim: true},
-        postedBy:{type: mongoose.Schema.Types.ObjectId, ref:"User"}
-    }],
-    attendants: [{
-      type: mongoose.Schema.Types.ObjectId, ref:"User"
-    }]
-},
-{
-    timestamps: true
-})
+    ],
+  },
+  {
+    timestamps: true,
+  }
+);
 
 module.exports = mongoose.model("Talk", talkSchema);
-

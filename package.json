@@ -4,7 +4,9 @@
   "main": "server.js",
   "description": "Skill-sharing website example from Eloquent JavaScript",
   "scripts": {
-    "start": "nodemon server.js"
+    "start": "nodemon server.js",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "dependencies": {
     "bcrypt": "^5.1.0",
@@ -23,13 +25,16 @@
   "homepage": "https://eloquentjavascript.net/21_skillsharing.html",
   "maintainers": [
     {
-      "name": "Marijn Haverbeke",
-      "email": "marijnh@gmail.com",
-      "web": "https://marijnhaverbeke.nl/"
+      "name": "Vuyisile Lehola",
+      "email": "vtlehola23@gmail.com"
     }
   ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/marijnh/Eloquent-JavaScript.git"
+  "devDependencies": {
+    "eslint": "^8.39.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-prettier": "^4.2.1",
+    "prettier": "^2.8.8"
   }
 }

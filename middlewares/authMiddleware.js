@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
-const authorizeUser =  async(req, res, next) => {
+const authorizeUser = async (req, res, next) => {
   let token;
 
   if (
@@ -9,13 +9,11 @@ const authorizeUser =  async(req, res, next) => {
     req.headers.authorization.startsWith("Bearer")
   ) {
     try {
-     
-      token = req.headers.authorization.split(" ")[1]; 
-      //decodes token id
+      [token] = req.headers.authorization;
+      // decodes token id
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
       req.user = await User.findById(decoded.id).select("-password");
-      
 
       next();
     } catch (error) {

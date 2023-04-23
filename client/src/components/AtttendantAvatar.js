@@ -1,12 +1,19 @@
-import { Avatar, AvatarGroup } from '@chakra-ui/react'
-import React from 'react'
+import { Avatar } from "@chakra-ui/react";
+import React from "react";
 
-const AtttendantAvatar = ({attendee}) => {
+const AtttendantAvatar = ({ attendee }) => {
   return (
-        <div>
-            <a href={`/host/${attendee._id}`} > <Avatar size={['xs','xs','sm', 'md']} name={`${attendee.name}`} src={attendee.pic} /> </a>
-        </div>
-  )
-}
+    <div>
+      <a href={`/host/${attendee._id}`}>
+        {" "}
+        <Avatar
+          size={["xs", "xs", "sm", "md"]}
+          name={`${attendee.name}`}
+          src={attendee.pic}
+        />{" "}
+      </a>
+    </div>
+  );
+};
 
-export default AtttendantAvatar
+export default AtttendantAvatar;

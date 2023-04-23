@@ -1,61 +1,63 @@
 import { useJsApiLoader } from "@react-google-maps/api";
 import { useQuery } from "@tanstack/react-query";
-import { useState, useEffect, useContext } from "react";
-import { Spinner } from "react-bootstrap";
-import { fetchHostTalks, fetchTalks } from "../Utils/talk";
-import { TalkContext } from "../Context/TalkProvider";
+import { useState, useEffect } from "react";
 
+import { fetchHostTalks, fetchTalks } from "../Utils/talk";
 
 export const useFetch = (id) => {
-  let { data, error, status, isError } = useQuery({ queryKey: ['hostTalks'], queryFn: () => fetchHostTalks(id), 
-  enabled: true,
-  refetchOnMount: true,
-  refetchInterval: 2000,
-  refetchIntervalInBackground: true,
-  refetchOnWindowFocus: true
-})
+  let { data, error, status } = useQuery({
+    queryKey: ["hostTalks"],
+    queryFn: () => fetchHostTalks(id),
+    enabled: true,
+    refetchOnMount: true,
+    refetchInterval: 2000,
+    refetchIntervalInBackground: true,
+    refetchOnWindowFocus: true,
+  });
 
   return { data, error, status };
 };
 
 export const useFetchWindowDimensions = () => {
-  const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
+  const [windowDimensions, setWindowDimensions] = useState(
+    getWindowDimensions()
+  );
 
   function getWindowDimensions() {
-    const width = window.innerWidth
-    const height = window.innerHeight
+    const width = window.innerWidth;
+    const height = window.innerHeight;
     return {
-        width,
-        height
+      width,
+      height,
     };
   }
 
   useEffect(() => {
     function handleResize() {
-        setWindowDimensions(getWindowDimensions());
+      setWindowDimensions(getWindowDimensions());
     }
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-}, [windowDimensions]);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [windowDimensions]);
 
-return windowDimensions;
-
-}
-
+  return windowDimensions;
+};
 
 export const useFetchTalks = () => {
-  const { data, error, status, isFetched } = useQuery({ queryKey: ['talks'], queryFn: fetchTalks,
-  refetchOnMount: true,
-  refetchInterval: 2000,
-  refetchIntervalInBackground: true,
-  refetchOnWindowFocus: true})
+  const { data, error, status } = useQuery({
+    queryKey: ["talks"],
+    queryFn: fetchTalks,
+    refetchOnMount: true,
+    refetchInterval: 2000,
+    refetchIntervalInBackground: true,
+    refetchOnWindowFocus: true,
+  });
 
-return { data, error, status };
-}
+  return { data, error, status };
+};
 
 export const useLoadPlacesScript = () => {
   const { isLoaded } = useJsApiLoader({ library: "places" });
 
-  return { isLoaded }
-}
-
+  return { isLoaded };
+};

@@ -1,4 +1,3 @@
-import { useDisclosure } from '@chakra-ui/react';
 import React from 'react'
 import { Modal } from 'react-bootstrap';
 import { FaPen, FaTrash } from 'react-icons/fa';
@@ -8,8 +7,6 @@ const TalkActionsModal = (props) => {
     const [modalShow, setModalShow] = React.useState(false);
     const {talkDetails} = props;
     const { deleteTalk } = props;
-    const { isOpen, onOpen, onClose } = useDisclosure()
-  const cancelRef = React.useRef()
 
     return (
       <Modal
