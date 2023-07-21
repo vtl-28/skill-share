@@ -9,8 +9,6 @@ const AttendedEvents = () => {
   const { user } = useContext(TalkContext);
   const { _id } = user;
 
-  console.log(_id);
-
   const { data, status } = useQuery({
     queryKey: ["attendedTalks"],
     queryFn: () => fetchAttendedTalks(_id),
@@ -28,8 +26,8 @@ const AttendedEvents = () => {
       {data.length > 0 ? (
         displayAttendedTalks(data)
       ) : (
-        <div className="p-4 mt-2 text-center bg-slate-200 rounded-md">
-          <div className="bg-white p-4 flex flex-col">
+        <div className="p-4 mt-2 text-center rounded-md bg-slate-200">
+          <div className="flex flex-col p-4 bg-white">
             <InfoIcon className="self-center text-2xl" />
             <p className="mt-2">
               You have not registered for any talks. Talks you have registered

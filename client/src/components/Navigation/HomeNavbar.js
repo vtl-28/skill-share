@@ -15,11 +15,10 @@ const HomeNavbar = ({ ls }) => {
     onOpen: onOpenSignup,
     onClose: onCloseSignup,
   } = useDisclosure();
-  console.log(ls);
   return (
     <div>
       <Navbar bg="white">
-        <div className="flex justify-between align-items-center px-2 w-full">
+        <div className="flex justify-between w-full px-2 align-items-center">
           <Navbar.Brand
             href="/"
             className="text-lg font-semibold leading-5 text-rose-500 font-link"
@@ -35,13 +34,13 @@ const HomeNavbar = ({ ls }) => {
               style={{ maxHeight: "100px" }}
             >
               <Nav.Link
-                className="mr-4 xs:text-sm sm:text-base font-medium leading-5 text-slate-900 hover:text-teal-700 font-link "
+                className="mr-4 font-medium leading-5 xs:text-sm sm:text-base text-slate-900 hover:text-teal-700 font-link "
                 onClick={onOpenLogin}
               >
                 Log in
               </Nav.Link>
               <Nav.Link
-                className="xs:text-sm sm:text-base font-medium leading-5 text-slate-900 hover:text-teal-700 font-link"
+                className="font-medium leading-5 xs:text-sm sm:text-base text-slate-900 hover:text-teal-700 font-link"
                 onClick={onOpenSignup}
               >
                 Sign up

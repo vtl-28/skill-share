@@ -63,7 +63,7 @@ const Index = () => {
     return <div>{error.message}</div>;
   }
 
-  const { name, email, pic, profession, about } = host;
+  const { name, email, pic, profession, about, city } = host;
 
   const submitForm = async (e) => {
     e.preventDefault();

@@ -13,13 +13,18 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "react-ui";
 import { tokens, components } from "react-ui/themes/light";
 import { ChakraProvider } from "@chakra-ui/react";
+import ReactDependentScript from 'react-dependent-script';
 
 const queryClient = new QueryClient();
+
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <BrowserRouter>
+    <ReactDependentScript
+      scripts={[`https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_PLACES_KEY}&libraries=places&callback=initMap`]}
+      >
+      <BrowserRouter>
       <QueryClientProvider client={queryClient}>
         <TalkProvider>
           <ThemeProvider tokens={tokens} components={components}>
@@ -30,5 +35,7 @@ root.render(
         </TalkProvider>
       </QueryClientProvider>
     </BrowserRouter>
+    </ReactDependentScript>
+
   </React.StrictMode>
 );

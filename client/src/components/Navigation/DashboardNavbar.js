@@ -32,8 +32,6 @@ const DashboardNavbar = () => {
   const cancelRef = React.useRef();
 
   const { _id } = user;
-  console.log(user);
-  console.log(_id);
   const api = `/profile/${_id}`;
 
   useEffect(() => {
@@ -110,7 +108,7 @@ const DashboardNavbar = () => {
           ""
         )}
 
-        <div className="flex w-full justify-between px-2">
+        <div className="flex justify-between w-full px-2">
           <a href="#" name={id}>
             Mark as read
           </a>
@@ -163,7 +161,7 @@ const DashboardNavbar = () => {
         <Container>
           <Navbar.Brand
             href="/dashboard"
-            className="text-rose-500 font-semibold tracking-widest text-lg font-link xs:mr-0 md:mr-12 lg:mr-20"
+            className="text-lg font-semibold tracking-widest hover:text-teal-700 text-rose-500 font-link xs:mr-0 md:mr-12 lg:mr-20"
           >
             Talk Host
           </Navbar.Brand>
@@ -204,7 +202,7 @@ const DashboardNavbar = () => {
                 style={({ isActive }) => (isActive ? activeStyle : undefined)}
                 as={NavLink}
                 to="/hostTalk"
-                className="hover:text-teal-700 lg:mr-2 xl:mr-4 leading-5  font-medium text-slate-900 font-link"
+                className="font-medium leading-5 hover:text-teal-700 lg:mr-2 xl:mr-4 text-slate-900 font-link"
               >
                 Host talk
               </Nav.Link>
@@ -212,13 +210,13 @@ const DashboardNavbar = () => {
                 style={({ isActive }) => (isActive ? activeStyle : undefined)}
                 as={NavLink}
                 to={api}
-                className=" hover:text-teal-700 lg:mr-2  xl:mr-4 leading-5  font-medium text-slate-900 font-link"
+                className="font-medium leading-5  hover:text-teal-700 lg:mr-2 xl:mr-4 text-slate-900 font-link"
               >
                 Profile
               </Nav.Link>
               <Nav.Link
                 href="#"
-                className="hover:text-teal-700 lg:mr-2  xl:mr-4 leading-5  font-medium text-slate-900 font-link"
+                className="font-medium leading-5 hover:text-teal-700 lg:mr-2 xl:mr-4 text-slate-900 font-link"
                 onClick={() => setOpen(!open)}
               >
                 <span>
@@ -232,7 +230,7 @@ const DashboardNavbar = () => {
                 </ul>
               )}
               <Nav.Link
-                className="hover:text-teal-700  leading-5 font-medium text-slate-900 font-link"
+                className="font-medium leading-5 hover:text-teal-700 text-slate-900 font-link"
                 onClick={onOpen}
               >
                 Log out
@@ -252,7 +250,7 @@ const DashboardNavbar = () => {
           <ul className="z-50">
             {searchResult.map((result) => {
               return (
-                <li key={result._id} className="searchResult z-50">
+                <li key={result._id} className="z-50 searchResult">
                   <a href={`/talk/${result._id}`}>{result.title}</a>
                 </li>
               );

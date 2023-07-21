@@ -9,12 +9,10 @@ const UploadHostProfilePic = () => {
   const { picUrl } = useContext(TalkContext);
   const { postDetails } = usePostImage();
 
-  console.log(picUrl);
-
   return (
     <div>
       <FormControl className="mb-3">
-        <FormLabel className="font-link">Profile pic</FormLabel>
+        <FormLabel className="font-link">Pic</FormLabel>
         <Input
           type="file"
           name="pic"

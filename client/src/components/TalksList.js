@@ -10,7 +10,7 @@ import useInteractWithTalk from "../hooks/useInteractWithTalk";
 
 function TalksList({ talk }) {
   const { user } = useContext(TalkContext);
-  const { _id, title, date, location, pic, comments, likes, attendants } = talk;
+  const { _id, title, date, city, pic, comments, likes, attendants } = talk;
   const [text, setText] = useState("");
   const [showSuccessToast, setShowSuccessToast] = useState(false);
   const [showErrorToast, setShowErrorToast] = useState(false);
@@ -60,7 +60,7 @@ function TalksList({ talk }) {
               )}
             </h4>
             <h4 className="mb-2 xs:text-sm sm:text-base">{title}</h4>
-            <h4 className="xs:text-sm sm:text-base">{location}</h4>
+            <h4 className="xs:text-sm sm:text-base">{city}</h4>
           </div>
           <div className="w-1/5 xs:hidden sm:block">
             <h1 className="xs:text-sm sm:text-base">
@@ -118,8 +118,8 @@ function TalksList({ talk }) {
                     })
                   : ""}
               </ul>
-              <form onSubmit={(e) => submitComment(e, _id)} className="mt-2">
-                <Input
+              <form onSubmit={(e) => submitComment(e, _id, text, setText)} className="mt-2">
+                <input
                   className="w-full"
                   type="text"
                   placeholder="comment"

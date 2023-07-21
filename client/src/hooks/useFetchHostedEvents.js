@@ -2,7 +2,7 @@ import { useJsApiLoader } from "@react-google-maps/api";
 import { useQuery } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
 
-import { fetchHostTalks, fetchTalks } from "../Utils/talk";
+import {  fetchHostTalks, fetchTalks} from "../Utils/talk";
 
 export const useFetch = (id) => {
   let { data, error, status } = useQuery({

@@ -22,7 +22,7 @@ const useInteractWithTalk = () => {
     handleLikeNotification(2, response, socket, user);
   }
 
-  const submitComment = async (e, _id) => {
+  const submitComment = async (e, _id, text, setText) => {
     e.preventDefault();
     const data = {
       text: text,

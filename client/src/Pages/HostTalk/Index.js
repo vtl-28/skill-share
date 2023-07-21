@@ -177,6 +177,7 @@ const Index = () => {
                     name="body"
                   />
                 </FormControl>
+                <UploadHostProfilePic />
                 <FormControl className="mb-3">
                   <FormLabel className="font-link">Venue</FormLabel>
                   <Input
@@ -203,7 +204,6 @@ const Index = () => {
                   />
                 </FormControl>
                 <PlacesAutoComplete />
-                <UploadHostProfilePic />
                 <FormControl>
                   <Button
                     bgColor="#F64060"

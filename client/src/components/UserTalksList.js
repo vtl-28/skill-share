@@ -6,7 +6,7 @@ import TalkActionsModal from "./Modals/TalkActionsModal";
 function UserTalksList({ talk, deleteTalk }) {
   const [modalShow, setModalShow] = React.useState(false);
 
-  const { _id, title, date, location, pic } = talk;
+  const { _id, title, date, location, pic, city } = talk;
   return (
     <div
       className="flex justify-around w-full border-slate-300 border-t-2 py-4"
@@ -22,7 +22,7 @@ function UserTalksList({ talk, deleteTalk }) {
           })}
         </h4>
         <h4 className="mb-2 xs:text-sm sm:text-base">{title}</h4>
-        <h4 className="xs:text-sm sm:text-base">{location}</h4>
+        <h4 className="xs:text-sm sm:text-base">{city}</h4>
       </div>
       <div className="">
         <a href="#" onClick={() => setModalShow(true)}>

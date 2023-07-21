@@ -8,11 +8,9 @@ import HostProfile from './Pages/HostProfile/Index';
 import Home from './Pages/Home/Index';
 import 'react-calendar/dist/Calendar.css';
 
-
 function App() {
   return (
     <div className="App">
-
      <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/dashboard" element={<Dashboard />} />

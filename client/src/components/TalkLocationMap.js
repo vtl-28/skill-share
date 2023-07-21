@@ -34,7 +34,6 @@ export class TalkLocationMap extends Component {
     }
   };
   render() {
-    console.log(this.props);
     return (
       <WindowDimensions>
         {(dimensions) => (
@@ -48,13 +47,13 @@ export class TalkLocationMap extends Component {
                 height: dimensions.height <= 768 ? "18%" : "20%",
               }}
               initialCenter={{
-                lat: -1.2884,
-                lng: 36.8233,
+                lat: this.props.addressCoordinates.lat,
+                lng: this.props.addressCoordinates.lng,
               }}
             >
               <Marker
                 onClick={this.onMarkerClick}
-                name={"Kenyatta International Convention Centre"}
+                name={this.props.address}
               />
               <InfoWindow
                 marker={this.state.activeMarker}
