@@ -20,7 +20,7 @@ really fun and not-too-challenging project to build to practice and solidify my 
 pending
 
 ## Recorded Visual
-<iframe src="https://www.loom.com/embed/0a9880d11abc469fad61f4932350285b" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe>
+https://github.com/vtl-28/skill-share/assets/73833164/c8a0a014-afc5-48e8-959d-0fe2d9d620cd
 
 ## Getting Started
 - To run this application on your machine, one must have git and nodejs installed on their machine
@@ -36,6 +36,8 @@ pending
 - Users can like and comment on talk events
 - Users can search talk events by title or location
 - Can send and receive real-time notifications when both users are online
+- Users can edit and delete talk events
+- Users can edit profile
 
 ## Tech stack
 This project was built using Mongo, Express, React, Nodejs and Tailwindcss, Socketio and React-Query
