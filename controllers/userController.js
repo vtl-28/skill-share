@@ -24,6 +24,7 @@ const registerUser = async (req, res) => {
     !about ||
     !profession ||
     !address ||
+    !picUrl ||
     !confirmpassword
   ) {
     res.status(400).send("Please enter all the fields");
@@ -46,7 +47,7 @@ const registerUser = async (req, res) => {
     res.status(400).send("Passwords do not match");
     return;
   }
-
+  
   try {
     const user = await User.create({
       name,
@@ -62,6 +63,7 @@ const registerUser = async (req, res) => {
     if (user) {
       const token = generateToken(user._id);
       user.token = token;
+      console.log(user)
       res.status(201).send(user);
     } else {
       res.status(400).send("Could not register user");
@@ -87,7 +89,7 @@ const authUser = async (req, res) => {
   }
 
   try {
-    if (user && (await user.matchPassword(password))) {
+    if(user && (await user.matchPassword(password))) {
       const token = generateToken(user._id);
       user.token = token;
       res.status(201).send(user);

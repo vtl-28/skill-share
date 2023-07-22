@@ -38,11 +38,11 @@ const userSchema = mongoose.Schema({
     timestamps: true
 })
 
-userSchema.methods.matchPassword = (enteredPassword) => {
-    return  bcrypt.compare(enteredPassword, this.password);
+userSchema.methods.matchPassword = function(enteredPassword){
+     return bcrypt.compare(enteredPassword, this.password)
   };
   
-  userSchema.pre("save", async(next) => {
+  userSchema.pre("save", async function(next){
     if (!this.isModified) {
       next();
     }

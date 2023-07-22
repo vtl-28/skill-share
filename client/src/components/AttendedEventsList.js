@@ -42,7 +42,7 @@ const AttendedEventsList = ({ talk }) => {
           toggleErrorToast={toggleErrorToast}
         />
       )}
-      <div className="flex flex-col py-3 border-slate-300 border-t-2">
+      <div className="flex flex-col py-3 border-t-2 border-slate-300">
         <div className="flex justify-around w-full mb-2">
           <div className="w-1/5">
             <a href={`/talk/${_id}`}>
@@ -50,7 +50,7 @@ const AttendedEventsList = ({ talk }) => {
             </a>
           </div>
           <div className="flex flex-col w-1/2">
-            <h4 className=" text-base tracking-tighter">
+            <h4 className="text-base tracking-tighter ">
               {date ? (
                 format(new Date(date), "eee',' MMM d',' h':'mm a", {
                   weekStartsOn: 1,
@@ -59,7 +59,7 @@ const AttendedEventsList = ({ talk }) => {
                 <h3>oops</h3>
               )}
             </h4>
-            <h4 className=" text-base tracking-tighter">{title}</h4>
+            <h4 className="text-base tracking-tighter ">{title}</h4>
             <h4 className="text-base tracking-tighter">{location}</h4>
           </div>
           <div className="w-1/5">
@@ -83,7 +83,7 @@ const AttendedEventsList = ({ talk }) => {
               <a
                 href="#"
                 onClick={(e) => like(e, _id)}
-                className="text-red-500 ml-2"
+                className="ml-2 text-red-500"
               >
                 <FaHeart />
               </a>
@@ -98,7 +98,7 @@ const AttendedEventsList = ({ talk }) => {
             </a>
           </div>
         </div>
-        <div className="w-50 flex self-center">
+        <div className="flex self-center w-50">
           {openComments ? (
             <div>
               <ul>

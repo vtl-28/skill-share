@@ -26,7 +26,6 @@ const addNewUser = (name, socketId) => {
   !onlineUsers.some((user) => {
     return user.name === name;
   }) && onlineUsers.push({ name, socketId });
-  console.log(`${name} added as new user`);
 };
 
 const removeUser = (socketId) => {
@@ -56,57 +55,64 @@ io.on("connection", (socket) => {
   });
 
   socket.on("like talk", ({ sender, response, type }) => {
-    const receiver = getUser(response.hostedBy.name);
-
-    socket.join(receiver.socketId);
-
-    io.to(receiver.socketId).emit("like notification", {
-      id: uuidv4(),
-      sender,
-      response,
-      type,
-    });
+    const receiverIsOnline = getUser(response.hostedBy.name);
+    if(receiverIsOnline){
+      socket.join(receiverIsOnline.socketId);
+      io.to(receiverIsOnline.socketId).emit("like notification", {
+        id: uuidv4(),
+        sender,
+        response,
+        type,
+      });
+    }
+      
+   
   });
 
   socket.on("comment talk", ({ sender, response, type }) => {
-    const receiver = getUser(response.hostedBy.name);
-    socket.join(receiver.socketId);
+    const receiverIsOnline = getUser(response.hostedBy.name);
+    if(receiverIsOnline){
+      socket.join(receiverIsOnline.socketId);
 
-    io.to(receiver.socketId).emit("comment notification", {
-      id: uuidv4(),
-      sender,
-      response,
-      type,
-    });
+      io.to(receiverIsOnline.socketId).emit("comment notification", {
+        id: uuidv4(),
+        sender,
+        response,
+        type,
+      });
+    }
   });
 
   socket.on("attend talk", ({ sender, response, type }) => {
-    const receiver = getUser(response.hostedBy.name);
-    socket.join(receiver.socketId);
+    const receiverIsOnline = getUser(response.hostedBy.name);
+    if(receiverIsOnline){
+      socket.join(receiverIsOnline.socketId);
 
-    io.to(receiver.socketId).emit("attend talk notification", {
-      id: uuidv4(),
-      sender,
-      response,
-      type,
-    });
+      io.to(receiverIsOnline.socketId).emit("attend talk notification", {
+        id: uuidv4(),
+        sender,
+        response,
+        type,
+      });
+    }
   });
 
   socket.on("cancel talk", ({ sender, response, type }) => {
-    const receiver = getUser(response.hostedBy.name);
-    socket.join(receiver.socketId);
+    const receiverIsOnline = getUser(response.hostedBy.name);
+    if(receiverIsOnline){
+      socket.join(receiverIsOnline.socketId);
 
-    io.to(receiver.socketId).emit("cancel talk notification", {
-      id: uuidv4(),
-      sender,
-      response,
-      type,
-    });
+      io.to(receiverIsOnline.socketId).emit("cancel talk notification", {
+        id: uuidv4(),
+        sender,
+        response,
+        type,
+      });
+    }
   });
 
   socket.on("disconnect", () => {
     removeUser(socket.id);
-    console.log("user disconnected");
   });
 });
 
@@ -127,5 +133,5 @@ app.use(errorHandler);
 
 httpServer.listen(
   PORT,
-  console.log(`Server running on PORT ${PORT}...`.yellow.bold)
+  console.log(`Server running on PORT ${PORT}...`)
 );

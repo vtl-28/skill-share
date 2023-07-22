@@ -38,8 +38,4 @@ router.put("/comment/:id", authorizeUser, comment);
 router.put("/attend", authorizeUser, attendTalk);
 
 router.put("/cancel", authorizeUser, cancelTalk);
-
-// comment on talk
-// like and unlike talk
-
 module.exports = router;
