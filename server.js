@@ -9,7 +9,7 @@ const talkRoutes = require("./routes/talkRoutes");
 const userRoutes = require("./routes/userRoutes");
 const connectDB = require("./config/db");
 
-const PORT = process.env.PORT || 3001;
+
 const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
@@ -123,6 +123,12 @@ app.use(
     extended: true,
   })
 ); // to accept json data
+const PORT = process.env.PORT || 3001;
+
+if(process.env.NODE_ENV === 'production'){
+  app.use(express.static('client/build'));
+}
+
 
 app.use("/api/user", userRoutes);
 app.use("/api/talks", talkRoutes);
