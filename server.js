@@ -4,7 +4,7 @@ const cors = require("cors");
 const { createServer } = require("http");
 const { Server } = require("socket.io");
 const { v4: uuidv4 } = require("uuid");
-const { notFound, errorHandler } = require("./middlewares/errorMiddleware");
+// const { notFound, errorHandler } = require("./middlewares/errorMiddleware");
 const talkRoutes = require("./routes/talkRoutes");
 const userRoutes = require("./routes/userRoutes");
 const connectDB = require("./config/db");
@@ -134,8 +134,8 @@ app.use("/api/user", userRoutes);
 app.use("/api/talks", talkRoutes);
 
 // Error Handling middlewares
-app.use(notFound);
-app.use(errorHandler);
+// app.use(notFound);
+// app.use(errorHandler);
 
 httpServer.listen(
   PORT,
