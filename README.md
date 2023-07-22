@@ -1,4 +1,4 @@
-# Absa Service Desk password manager
+# Talk Host
 Talk Host is a platform that brings people with a shared interest together and allows them to give small, informal presentations about things they know. At a gardening skill-sharing meeting, someone might explain how to cultivate celery. Or in a 
 programming skill-sharing group, you could drop by and tell people about Node.js. An individual would host a group of people to give a talk about something he or she knows or is good at
 
